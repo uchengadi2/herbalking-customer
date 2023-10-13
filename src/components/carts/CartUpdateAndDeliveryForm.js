@@ -192,7 +192,7 @@ const renderRequestedQuantityField = ({
   return (
     <TextField
       //error={touched && invalid}
-      helperText="Requested Learner Slot"
+      helperText="Quantity"
       variant="outlined"
       label={label}
       id={input.name}
@@ -215,7 +215,7 @@ const renderRequestedQuantityField = ({
           style: {
             height: 1,
           },
-          readOnly: true,
+          //readOnly: true,
         },
       }}
     />
@@ -244,7 +244,7 @@ function CartUpdateAndDeliveryForm(props) {
   const [countryList, setCountryList] = useState([]);
   const [stateList, setStateList] = useState([]);
   const [total, setTotal] = useState();
-  const [minimumQuantity, setMinimumQuantity] = useState(1);
+  const [minimumQuantity, setMinimumQuantity] = useState(props.minimumQuantity);
 
   const dispatch = useDispatch();
 
@@ -382,7 +382,7 @@ function CartUpdateAndDeliveryForm(props) {
         error={touched && invalid}
         //placeholder="category description"
         variant="outlined"
-        helperText="Course Cost"
+        helperText="Total Cost"
         label={label}
         id={input.name}
         name={input.name}
@@ -417,7 +417,7 @@ function CartUpdateAndDeliveryForm(props) {
     return (
       <TextField
         //error={touched && invalid}
-        helperText="Minimum Learners Slot Required"
+        helperText="Minimum Required Quantity"
         variant="outlined"
         label={label}
         id={input.name}
@@ -426,7 +426,7 @@ function CartUpdateAndDeliveryForm(props) {
         //required
         type={type}
         {...custom}
-        defaultValue={`${minimumQuantity} `}
+        defaultValue={`${minimumQuantity} ${props.unit}`}
         onChange={input.onChange}
         //   inputProps={{
         //     style: {
@@ -548,6 +548,8 @@ function CartUpdateAndDeliveryForm(props) {
     return <React.Fragment>Remove from Cart</React.Fragment>;
   };
 
+  //function to remove product from cart
+
   const onItemRemovalSubmit = () => {
     setLoadingRemoval(true);
 
@@ -585,6 +587,8 @@ function CartUpdateAndDeliveryForm(props) {
     }
   };
 
+  //function to update the cart
+
   const onSubmit = (formValues) => {
     setLoading(true);
 
@@ -620,10 +624,10 @@ function CartUpdateAndDeliveryForm(props) {
 
     data = {
       quantity: quantity,
-      price: props.price,
-      currency: props.currency,
-      // totalDeliveryCost: totalDeliveryCost,
-      contactMeForTheDeliveryCost: false,
+      // price: props.price,
+      // currency: props.currency,
+      // // totalDeliveryCost: totalDeliveryCost,
+      // contactMeForTheDeliveryCost: false,
     };
 
     if (data) {
@@ -711,6 +715,21 @@ function CartUpdateAndDeliveryForm(props) {
             />
           </Grid>
         </Grid>
+
+        <Button
+          variant="outlined"
+          //component={Link}
+          // to="/mobileapps"
+          // to={`/checkouts/${userId}`}
+          className={classes.submitButton}
+          onClick={onSubmit}
+        >
+          {loading ? (
+            <CircularProgress size={30} color="inherit" />
+          ) : (
+            buttonContent()
+          )}
+        </Button>
 
         <Button
           variant="outlined"

@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     //width: 600,
     marginLeft: 15,
-    height: 350,
+    //height: 500,
   },
   rootMobile: {
     maxWidth: "100%",
@@ -66,19 +66,19 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 10,
     height: 40,
     width: 180,
-    marginLeft: 200,
-    marginTop: 10,
+    marginLeft: 90,
+    marginTop: 30,
     color: "white",
     backgroundColor: theme.palette.common.green,
     "&:hover": {
       backgroundColor: theme.palette.common.green,
     },
   },
-  submitAuditButton: {
+  submitEmptyFieldButton: {
     borderRadius: 10,
     height: 40,
-    width: 280,
-    marginLeft: 150,
+    width: 200,
+    marginLeft: 80,
     marginTop: 10,
     color: "white",
     backgroundColor: theme.palette.common.green,
@@ -166,7 +166,6 @@ const renderRecipientNameField = ({
       name={input.name}
       fullWidth
       type={type}
-      //style={{ marginTop: 10, width: 600 }}
       onChange={input.onChange}
       InputProps={{
         inputProps: {
@@ -242,9 +241,88 @@ const renderRecipientPhoneNumberField = ({
   );
 };
 
+const renderNearestBusstopField = ({
+  input,
+  label,
+  meta: { touched, error, invalid },
+  type,
+  id,
+  ...custom
+}) => {
+  return (
+    <TextField
+      error={touched && invalid}
+      //placeholder="category description"
+      variant="outlined"
+      helperText="Nearest Bus Stop/Land marks(Optional)"
+      label={label}
+      id={input.name}
+      name={input.name}
+      fullWidth
+      type={type}
+      //style={{ marginTop: 10, width: 300 }}
+      onChange={input.onChange}
+      InputProps={{
+        inputProps: {
+          min: 1,
+          style: {
+            height: 1,
+            //fontSize: "2em",
+          },
+        },
+      }}
+    />
+  );
+};
+
+const renderPostalCodeField = ({
+  input,
+  label,
+  meta: { touched, error, invalid },
+  type,
+  id,
+  ...custom
+}) => {
+  return (
+    <TextField
+      error={touched && invalid}
+      //placeholder="category description"
+      variant="outlined"
+      helperText="Zip/Postal Code(Optional)"
+      label={label}
+      id={input.name}
+      name={input.name}
+      fullWidth
+      type={type}
+      //style={{ marginTop: 10, width: 300 }}
+      onChange={input.onChange}
+      InputProps={{
+        inputProps: {
+          min: 1,
+          style: {
+            height: 1,
+            //fontSize: "2em",
+          },
+        },
+      }}
+    />
+  );
+};
+
 function CheckoutDeliveryAndPayment(props) {
   const theme = useTheme();
-  const { totalCost, currency, token, userId } = props;
+  const {
+    totalCost,
+    currency,
+    token,
+    userId,
+    totalWeight,
+    vatRate,
+    vat,
+    implementVatCollection,
+    policy,
+    implementSalesTaxCollection,
+  } = props;
   const [quantity, setQuantity] = useState(+props.quantity);
   const [productQuantityInCart, setProductQuantityInCart] = useState();
   const [productLocation, setProductLocation] = useState();
@@ -253,33 +331,63 @@ function CheckoutDeliveryAndPayment(props) {
   const [cartId, setCartId] = useState();
   const [location, setLocation] = useState();
   const [country, setCountry] = useState();
-  const [recipientName, setRecipientName] = useState();
-  const [recipientPhoneNumber, setRecipientPhoneNumber] = useState();
-  const [recipientAddress, setRecipientAddress] = useState();
+  const [state, setState] = useState();
+  const [city, setCity] = useState();
+
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
   const matchesXS = useMediaQuery(theme.breakpoints.down("xs"));
   const matchesMD = useMediaQuery(theme.breakpoints.up("md"));
   const [isVisible, setIsVisible] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState("audit");
+  const [paymentMethod, setPaymentMethod] = useState("card");
   const [isCheckoutVisible, setIsCheckoutVisible] = useState(false);
   const [provideDeliveryCost, setProvideDeliveryCost] = useState(false);
   const [countryList, setCountryList] = useState([]);
   const [stateList, setStateList] = useState([]);
+  const [cityList, setCityList] = useState([]);
   const [orderDetails, setOrderDetails] = useState({});
   const [ordered, setOrdered] = useState(false);
-  const [isOnlinePayment, setIsOnlinePayment] = useState(false);
+  const [isOnlinePayment, setIsOnlinePayment] = useState(true);
   const [customerEmail, setCustomerEmail] = useState();
   const [customerName, setCustomerName] = useState();
   const [customerPhoneNumber, setCustomerPhoneNumber] = useState();
-  const [currencyName, setCurrencyName] = useState("naira");
+  const [currencyName, setCurrencyName] = useState();
   const [total, setTotal] = useState();
   const [ukRate, setUkRate] = useState(650);
   const [usRate, setUsRate] = useState(560);
   const [isSuccessful, setIsSuccessful] = useState(false);
+  const [deliveryModeList, setDeliveryModeList] = useState([]);
+  const [deliveryMode, setDeliveryMode] = useState();
+  const [recipientName, setRecipientName] = useState();
+  const [recipientPhoneNumber, setRecipientPhoneNumber] = useState();
+  const [recipientAddress, setRecipientAddress] = useState();
+  const [nearestBusstop, setNearestBusStop] = useState();
+  const [postalCode, setPostalCode] = useState();
 
   const [orderNumber, setOrderNumber] = useState(
     "OR-" + Math.floor(Math.random() * 10000000000000) + "-" + "ES"
   );
+
+  const [allowPayOnDelivery, setAllowPayOnDelivery] = useState(false);
+  const [allowSameDayDelivery, setAllowSameDayDelivery] = useState(false);
+  const [allowStandardDelivery, setAllowStandardDelivery] = useState(false);
+  const [allowPriorityDelivery, setAllowPriorityDelivery] = useState(false);
+  const [daysToStandardDelivery, setDaysToStandardDelivery] = useState();
+  const [daysToPriorityDelivery, setDaysToPriorityDelivery] = useState();
+  const [daysToSameDayDelivery, setDaysToSameDayDelivery] = useState();
+  const [baseDeliveryWeight, setBaseDeliveryWeight] = useState();
+  const [baseDeliveryStandardRate, setBaseDeliveryStandardRate] = useState();
+  const [baseDeliveryPriorityRate, setBaseDeliveryPriorityRate] = useState();
+  const [baseDeliverySameDayRate, setBaseDeliverySameDayRate] = useState();
+  const [extraKgDeliveryStandardRate, setExtraKgDeliveryStandardRate] =
+    useState();
+  const [extraKgDeliveryPriorityRate, setExtraKgDeliveryPriorityRate] =
+    useState();
+  const [extraKgDeliverySameDayRate, setExtraKgDeliverySameDayRate] =
+    useState();
+  const [payOnDeliveryMaxWeightInKg, setPayOnDeliveryMaxWeightInKg] =
+    useState();
+  const [prevailingSalesTax, setPrevailingSalesTax] = useState();
+  const [destinationSalesTax, setDestinationSalesTax] = useState();
 
   const dispatch = useDispatch();
 
@@ -318,9 +426,208 @@ function CheckoutDeliveryAndPayment(props) {
     //call the function
 
     fetchData().catch(console.error);
+  }, [props]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/currencies/${props.currency}`);
+      const currency = response.data.data.data;
+
+      allData.push({
+        id: currency._id,
+        name: currency.name,
+      });
+      setCurrencyName(allData[0].name);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [props]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/countries`);
+      const workingData = response.data.data.data;
+      workingData.map((country) => {
+        allData.push({ id: country._id, name: country.name });
+      });
+      setCountryList(allData);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
   }, []);
 
-  console.log("props.courseList.length:", props.courseList.length);
+  useEffect(() => {
+    // 👇️ scroll to top on page load
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/states`, {
+        params: { country: country },
+      });
+      const workingData = response.data.data.data;
+      workingData.map((state) => {
+        allData.push({ id: state._id, name: state.name });
+      });
+      setStateList(allData);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [country]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/cities`, {
+        params: { state: state },
+      });
+      const workingData = response.data.data.data;
+      workingData.map((city) => {
+        allData.push({ id: city._id, name: city.name });
+      });
+      setCityList(allData);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [state]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/cities/${city}`);
+      const items = response.data.data.data;
+
+      allData.push({
+        id: items._id,
+        allowPayOnDelivery: items.allowPayOnDelivery,
+        allowSameDayDelivery: items.allowSameDayDelivery,
+        allowStandardDelivery: items.allowStandardDelivery,
+        allowPriorityDelivery: items.allowPriorityDelivery,
+        baseDeliveryWeight: items.baseDeliveryWeight,
+        daysToStandardDelivery: items.daysToStandardDelivery,
+        daysToPriorityDelivery: items.daysToPriorityDelivery,
+        daysToSameDayDelivery: items.daysToSameDayDelivery,
+        baseDeliveryStandardRate: items.baseDeliveryStandardRate,
+        baseDeliveryPriorityRate: items.baseDeliveryPriorityRate,
+        baseDeliverySameDayRate: items.baseDeliverySameDayRate,
+        extraKgDeliveryStandardRate: items.extraKgDeliveryStandardRate,
+        extraKgDeliveryPriorityRate: items.extraKgDeliveryPriorityRate,
+        extraKgDeliverySameDayRate: items.extraKgDeliverySameDayRate,
+        payOnDeliveryMaxWeightInKg: items.payOnDeliveryMaxWeightInKg,
+      });
+      // workingData.map((city) => {
+      //   allData.push({ id: city._id, name: city.deliveryMode });
+      // });
+      setAllowPayOnDelivery(allData[0].allowPayOnDelivery);
+      setAllowSameDayDelivery(allData[0].allowSameDayDelivery);
+      setAllowStandardDelivery(allData[0].allowStandardDelivery);
+      setAllowPriorityDelivery(allData[0].allowPriorityDelivery);
+
+      setDaysToStandardDelivery(allData[0].daysToStandardDelivery);
+      setDaysToPriorityDelivery(allData[0].daysToPriorityDelivery);
+      setDaysToSameDayDelivery(allData[0].daysToSameDayDelivery);
+
+      setBaseDeliveryWeight(allData[0].baseDeliveryWeight);
+      setBaseDeliveryStandardRate(allData[0].baseDeliveryStandardRate);
+      setBaseDeliveryPriorityRate(allData[0].baseDeliveryPriorityRate);
+      setBaseDeliverySameDayRate(allData[0].baseDeliverySameDayRate);
+
+      setExtraKgDeliveryStandardRate(allData[0].extraKgDeliveryStandardRate);
+      setExtraKgDeliveryPriorityRate(allData[0].extraKgDeliveryPriorityRate);
+      setExtraKgDeliverySameDayRate(allData[0].extraKgDeliverySameDayRate);
+      setPayOnDeliveryMaxWeightInKg(allData[0].payOnDeliveryMaxWeightInKg);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [city]);
+
+  //origin sales tax
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/states/${props.policy.onlineOrigin}`);
+      const state = response.data.data.data;
+
+      allData.push({
+        id: state._id,
+        salesTaxRate: state.salesTaxRate,
+      });
+      setPrevailingSalesTax(allData[0].salesTaxRate);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [props]);
+
+  //destination sales tax
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/states/${state}`);
+      const items = response.data.data.data;
+
+      allData.push({
+        id: items._id,
+        salesTaxRate: items.salesTaxRate,
+      });
+      setDestinationSalesTax(allData[0].salesTaxRate);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [props, state]);
+
+  //compute the delivery cost of this order
+  let deliveryCost = 0;
+
+  if (baseDeliveryWeight && deliveryMode) {
+    if (+totalWeight <= +baseDeliveryWeight) {
+      if (deliveryMode === "standard") {
+        deliveryCost = +baseDeliveryStandardRate;
+      } else if (deliveryMode == "priority") {
+        deliveryCost = +baseDeliveryPriorityRate;
+      } else if (deliveryMode === "sameday") {
+        deliveryCost = baseDeliverySameDayRate;
+      }
+    } else if (totalWeight > baseDeliveryWeight) {
+      const weightDiff = +totalWeight - baseDeliveryWeight;
+      if (deliveryMode === "standard") {
+        const deliveryCostExtra = +weightDiff * +extraKgDeliveryStandardRate;
+        deliveryCost = baseDeliveryStandardRate + deliveryCostExtra;
+      } else if (deliveryMode === "priority") {
+        const deliveryCostExtra = +weightDiff * +extraKgDeliveryPriorityRate;
+        deliveryCost = baseDeliveryPriorityRate + deliveryCostExtra;
+      } else if (deliveryMode === "sameday") {
+        const deliveryCostExtra = +weightDiff * +extraKgDeliverySameDayRate;
+        deliveryCost = baseDeliverySameDayRate + deliveryCostExtra;
+      }
+    }
+  }
 
   const onRecipientNameChange = (e) => {
     setRecipientName(e.target.value);
@@ -332,6 +639,14 @@ function CheckoutDeliveryAndPayment(props) {
 
   const onRecipientAddressChange = (e) => {
     setRecipientAddress(e.target.value);
+  };
+
+  const onNearestBusStopChange = (e) => {
+    setNearestBusStop(e.target.value);
+  };
+
+  const onPostalCodeChange = (e) => {
+    setPostalCode(e.target.value);
   };
 
   const handleLocationChange = (event) => {
@@ -358,9 +673,32 @@ function CheckoutDeliveryAndPayment(props) {
     setCountry(event.target.value);
   };
 
+  const handleStateChange = (event) => {
+    setState(event.target.value);
+  };
+
+  const handleCityChange = (event) => {
+    setCity(event.target.value);
+  };
+
+  const handleDeliveryModeChange = (event) => {
+    setDeliveryMode(event.target.value);
+  };
+
   //get the state list
-  const renderLocationList = () => {
+  const renderStateList = () => {
     return stateList.map((item) => {
+      return (
+        <MenuItem key={item.id} value={item.id}>
+          {item.name}
+        </MenuItem>
+      );
+    });
+  };
+
+  //get the city list
+  const renderCityList = () => {
+    return cityList.map((item) => {
       return (
         <MenuItem key={item.id} value={item.id}>
           {item.name}
@@ -390,7 +728,7 @@ function CheckoutDeliveryAndPayment(props) {
     }
   };
 
-  const renderProductCountryField = ({
+  const renderCountryField = ({
     input,
     label,
     meta: { touched, error, invalid },
@@ -403,14 +741,14 @@ function CheckoutDeliveryAndPayment(props) {
         <FormControl variant="outlined">
           {/* <InputLabel id="vendor_city">City</InputLabel> */}
           <Select
-            labelId="locationCountry"
-            id="locationCountry"
+            labelId="country"
+            id="country"
             value={country}
             onChange={handleCountryChange}
             label="Country"
             style={
               matchesMD
-                ? { width: 350, marginLeft: 0, height: 38 }
+                ? { width: 770, marginLeft: 0, height: 38 }
                 : { width: 350, height: 38, marginTop: 10 }
             }
             //{...input}
@@ -423,7 +761,7 @@ function CheckoutDeliveryAndPayment(props) {
     );
   };
 
-  const renderProductLocationField = ({
+  const renderStateField = ({
     input,
     label,
     meta: { touched, error, invalid },
@@ -436,23 +774,95 @@ function CheckoutDeliveryAndPayment(props) {
         <FormControl variant="outlined">
           {/* <InputLabel id="vendor_city">City</InputLabel> */}
           <Select
-            labelId="location"
-            id="location"
-            value={location}
-            onChange={handleLocationChange}
-            label="Location"
+            labelId="state"
+            id="state"
+            value={state}
+            onChange={handleStateChange}
+            label="State"
             style={
               matchesMD
-                ? { width: 415, marginLeft: 20, height: 38 }
+                ? { width: 770, marginLeft: 0, height: 38 }
                 : { width: 350, height: 38, marginTop: 10 }
             }
             //{...input}
           >
-            {renderLocationList()}
+            {renderStateList()}
           </Select>
-          <FormHelperText style={{ marginLeft: 0 }}>
-            State/Region
-          </FormHelperText>
+          <FormHelperText>State/Region</FormHelperText>
+        </FormControl>
+      </Box>
+    );
+  };
+
+  const renderCityField = ({
+    input,
+    label,
+    meta: { touched, error, invalid },
+    type,
+    id,
+    ...custom
+  }) => {
+    return (
+      <Box>
+        <FormControl variant="outlined">
+          {/* <InputLabel id="vendor_city">City</InputLabel> */}
+          <Select
+            labelId="city"
+            id="city"
+            value={city}
+            onChange={handleCityChange}
+            label="City"
+            style={
+              matchesMD
+                ? { width: 770, marginLeft: 0, height: 38 }
+                : { width: 350, height: 38, marginTop: 10 }
+            }
+            //{...input}
+          >
+            {renderCityList()}
+          </Select>
+          <FormHelperText>City</FormHelperText>
+        </FormControl>
+      </Box>
+    );
+  };
+
+  const renderDeliveryModeField = ({
+    input,
+    label,
+    meta: { touched, error, invalid },
+    type,
+    id,
+    ...custom
+  }) => {
+    return (
+      <Box>
+        <FormControl variant="outlined">
+          {/* <InputLabel id="vendor_city">City</InputLabel> */}
+          <Select
+            labelId="deliveryMode"
+            id="deliveryMode"
+            value={deliveryMode}
+            onChange={handleDeliveryModeChange}
+            label="Delivery Mode"
+            style={
+              matchesMD
+                ? { width: 770, marginLeft: 0, height: 38 }
+                : { width: 350, height: 38, marginTop: 10 }
+            }
+            //{...input}
+          >
+            <MenuItem value={"sameday"}>
+              {allowSameDayDelivery ? "Same Day Delivery" : " "}
+            </MenuItem>
+            <MenuItem value={"standard"}>
+              {allowStandardDelivery ? "Standard" : " "}
+            </MenuItem>
+            <MenuItem value={"priority"}>
+              {allowPriorityDelivery ? "Priority" : " "}
+            </MenuItem>
+          </Select>
+          <FormHelperText>Delivery Mode/Shipping Preference</FormHelperText>
         </FormControl>
       </Box>
     );
@@ -471,22 +881,27 @@ function CheckoutDeliveryAndPayment(props) {
             label="Payment Method"
             style={{ height: 38, width: 300, marginTop: 0, marginLeft: 10 }}
           >
-            <MenuItem value={"audit"}>Audit Course(s) for Free</MenuItem>
             <MenuItem value={"card"}>Credit/Debit Card</MenuItem>
-            <MenuItem value={"foreigner"}>Foreigner</MenuItem>
+            <MenuItem value={"payOnDelivery"}>
+              {allowPayOnDelivery
+                ? totalWeight <= payOnDeliveryMaxWeightInKg
+                  ? "Pay On Delivery"
+                  : ""
+                : ""}
+            </MenuItem>
           </Select>
-          <FormHelperText>
+          {/* <FormHelperText>
             Payment Method (Choose "Credit/Debit Card" if you are paying with
             'Naira' otherwise choose 'Foreigner'")
-          </FormHelperText>
+          </FormHelperText> */}
         </FormControl>
       </Box>
     );
   };
 
-  let totalDeliveryCost = 0;
+  let totalDeliveryCost = deliveryCost ? deliveryCost : 0;
 
-  const totalProductCost = parseFloat(totalCost) + totalDeliveryCost;
+  const totalProductCost = parseFloat(totalCost);
   const totalProductCostForUk = totalProductCost / +ukRate;
   const totalProductCostForUS = totalProductCost / +usRate;
   const totalProductCostForDisplay = totalProductCost
@@ -502,24 +917,113 @@ function CheckoutDeliveryAndPayment(props) {
     .toFixed(2)
     .replace(/\d(?=(\d{3})+\.)/g, "$&,");
 
-  const amountForPayment = +totalProductCost.toFixed(2) * 100;
+  let totalOrderCost = totalProductCost + deliveryCost;
+
+  if (implementVatCollection) {
+    totalOrderCost = totalOrderCost + vat;
+  }
+
+  const totalOrderCostForDisplay = totalOrderCost
+    .toFixed(2)
+    .replace(/\d(?=(\d{3})+\.)/g, "$&,");
+
+  const vatForDispplay = vat.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
+
+  const amountForPayment = +totalOrderCost.toFixed(2) * 100;
 
   const buttonContent = () => {
-    return <React.Fragment>Make Payment</React.Fragment>;
+    return <React.Fragment>Place Order</React.Fragment>;
   };
 
-  const buttonAuditContent = () => {
-    return (
-      <React.Fragment>
-        {props.courseList.length === 1
-          ? "Audit this Course for FREE"
-          : "Audit these Courses for FREE"}
-      </React.Fragment>
-    );
+  const buttonEmptyFieldsContent = () => {
+    return <React.Fragment>Make Payment</React.Fragment>;
   };
 
   const renderThankYou = () => {
     return <ThankYou />;
+  };
+
+  //calculate the sales tax for this transaction
+  let transactionSalesTax = 0;
+  if (policy) {
+    if (policy.implementSalesTaxCollection) {
+      if (policy.allowOriginSalesTax) {
+        transactionSalesTax =
+          transactionSalesTax + (prevailingSalesTax / 100) * totalProductCost;
+      } else {
+        transactionSalesTax =
+          transactionSalesTax + (destinationSalesTax / 100) * totalProductCost;
+      }
+    }
+  }
+
+  //revenue computation
+  let totalRevenue = 0;
+  if (props.policy.allowCentralCommission) {
+    props.productList.map((cart) => {
+      if (cart.revenueMarginShouldPrevail) {
+        totalRevenue = totalRevenue + cart.revenueMargin * cart.quantity;
+      } else {
+        totalRevenue =
+          totalRevenue +
+          (policy.commissionRate / 100) * cart.price * cart.quantity;
+      }
+    });
+  } else {
+    props.productList.map((cart) => {
+      totalRevenue = totalRevenue + cart.revenueMargin * cart.quantity;
+    });
+  }
+
+  //when the delivery field are empty
+
+  const onEmptyFieldSubmit = () => {
+    setLoading(true);
+    if (!recipientName) {
+      props.handleFailedSnackbar("the recipient name field cannot be empty");
+      setLoading(false);
+      return;
+    }
+
+    if (!recipientPhoneNumber) {
+      props.handleFailedSnackbar(
+        "the recipient phone number field cannot be empty"
+      );
+      setLoading(false);
+      return;
+    }
+
+    if (!recipientAddress) {
+      props.handleFailedSnackbar("the recipient address field cannot be empty");
+      setLoading(false);
+      return;
+    }
+
+    if (!country) {
+      props.handleFailedSnackbar("the country field cannot be empty");
+      setLoading(false);
+      return;
+    }
+
+    if (!state) {
+      props.handleFailedSnackbar("the state field cannot be empty");
+      setLoading(false);
+      return;
+    }
+
+    if (!city) {
+      props.handleFailedSnackbar("the state field cannot be empty");
+      setLoading(false);
+      return;
+    }
+
+    if (!deliveryMode) {
+      props.handleFailedSnackbar(
+        "Please select your delivery mode/shipping preference"
+      );
+      setLoading(false);
+      return;
+    }
   };
 
   const onSubmit = () => {
@@ -533,21 +1037,38 @@ function CheckoutDeliveryAndPayment(props) {
 
     const transData = {
       orderNumber: orderNumber,
-      recipientName: customerName,
-      recipientPhoneNumber: customerPhoneNumber,
+      customerName: customerName,
+      customerPhoneNumber: customerPhoneNumber,
+      customerEmailAddress: customerEmail,
+      recipientName: recipientName,
+      recipientPhoneNumber: recipientPhoneNumber,
+      recipientAddress: recipientAddress,
+      nearestBusstop: nearestBusstop,
+      postalCode: postalCode,
+      recipientCountry: country,
+      recipientState: state,
+      recipientCity: city,
+      deliveryMode: deliveryMode,
+      vatRate: vatRate,
+      vat: vat,
+      currency: currency,
+      totalWeight: totalWeight,
+      payOnDeliveryMaxWeightInKg: payOnDeliveryMaxWeightInKg,
+      implementVatCollection: implementVatCollection,
       recipientEmailAddress: customerEmail,
-      totalDeliveryCost: totalDeliveryCost ? totalDeliveryCost.toFixed(2) : 0,
+      totalDeliveryCost: deliveryCost ? deliveryCost : 0,
       totalProductCost: totalProductCost,
-      totalProductCostUk: totalProductCostForUk,
-      totalProductCostUs: totalProductCostForUS,
-
       paymentMethod: paymentMethod,
-      paymentStatus: "to-be-confirmed",
-      orderedBy: props.userId,
-      productCurrency: "Pound Sterling or US Dollars",
+      paymentStatus: "collect-payment-on-delivery",
+      orderedBy: userId,
+      salesTax: transactionSalesTax,
+      origin: policy.onlineOrigin,
+      implementSalesTaxCollection: policy.implementSalesTaxCollection,
+      allowOriginSalesTax: policy.allowOriginSalesTax,
+      revenue: totalRevenue,
     };
 
-    //write to the transaction table first
+    // write to the transaction table first
     if (transData) {
       const createForm = async () => {
         api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
@@ -563,33 +1084,65 @@ function CheckoutDeliveryAndPayment(props) {
 
           setLoading(false);
 
-          props.courseList.map((cart, index) => {
+          props.productList.map((cart, index) => {
             const data = {
               orderNumber: orderNumber,
               transactionId: transId,
-              product: cart.course,
+              product: cart.product,
               orderedPrice: cart.price,
-              recipientName: customerName,
-              recipientPhoneNumber: customerPhoneNumber,
-              recipientEmailAddress: customerEmail,
-              preferredStartDate: cart.preferredStartDate,
+              customerName: customerName,
+              customerPhoneNumber: customerPhoneNumber,
+              customerEmailAddress: customerEmail,
+              recipientName: recipientName,
+              recipientPhoneNumber: recipientPhoneNumber,
+              recipientAddress: recipientAddress,
+              nearestBusstop: nearestBusstop,
+              postalCode: postalCode,
+              recipientCountry: country,
+              recipientState: state,
+              recipientCity: city,
+              deliveryMode: deliveryMode,
+              vatRate: vatRate,
 
-              totalDeliveryCost: totalDeliveryCost
-                ? totalDeliveryCost.toFixed(2)
+              vat: policy.implementVatCollection
+                ? cart.isVatable
+                  ? (vatRate / 100) * cart.price * cart.quantity
+                  : 0
                 : 0,
-              totalProductCostUk: totalProductCostForUk,
-              totalProductCostUs: totalProductCostForUS,
-
+              currency: currency,
+              totalWeight: totalWeight,
+              payOnDeliveryMaxWeightInKg: payOnDeliveryMaxWeightInKg,
+              implementVatCollection: implementVatCollection,
+              recipientEmailAddress: customerEmail,
+              totalDeliveryCost: deliveryCost ? deliveryCost : 0,
               totalProductCost: totalProductCost,
+              paymentMethod: paymentMethod,
+              paymentStatus: "collect-payment-on-delivery",
 
               cartId: cart.id,
               quantityAdddedToCart: cart.quantity,
               orderedQuantity: cart.quantity,
               dateAddedToCart: cart.dateAddedToCart,
-              productCurrency: currencyName,
+              currency: props.currency,
               paymentMethod: paymentMethod,
-              paymentStatus: "to-be-confirmed",
+
               orderedBy: cart.cartHolder,
+              salesTax: policy.implementSalesTaxCollection
+                ? policy.allowOriginSalesTax
+                  ? (cart.price * cart.quantity * prevailingSalesTax) / 100
+                  : (cart.price * cart.quantity * destinationSalesTax) / 100
+                : 0,
+              origin: policy.onlineOrigin,
+              implementSalesTaxCollection: policy.implementSalesTaxCollection,
+              allowOriginSalesTax: policy.allowOriginSalesTax,
+              isVatable: cart.isVatable,
+              revenue: policy.allowCentralCommission
+                ? cart.revenueMarginShouldPrevail
+                  ? cart.revenueMargin * cart.quantity
+                  : (policy.commissionRate / 100) * cart.price * cart.quantity
+                : cart.revenueMarginShouldPrevail
+                ? cart.revenueMargin * cart.quantity
+                : null,
             };
 
             if (data) {
@@ -637,7 +1190,7 @@ function CheckoutDeliveryAndPayment(props) {
     };
 
     //change the status of this cart items
-    props.courseList.map((cart, index) => {
+    props.productList.map((cart, index) => {
       const createForm = async () => {
         api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
         await api.delete(`/carts/${cart.id}`);
@@ -658,141 +1211,8 @@ function CheckoutDeliveryAndPayment(props) {
     history.push("/thankyou");
   };
 
-  const onAuditSubmit = () => {
-    setLoading(true);
-
-    if (!paymentMethod) {
-      props.handleFailedSnackbar("the payment method field cannot be empty");
-      setLoading(false);
-      return;
-    }
-
-    const transData = {
-      orderNumber: orderNumber,
-      recipientName: customerName,
-      recipientPhoneNumber: customerPhoneNumber,
-      recipientEmailAddress: customerEmail,
-      totalDeliveryCost: totalDeliveryCost ? totalDeliveryCost.toFixed(2) : 0,
-      totalProductCost: totalProductCost,
-      totalProductCostUk: totalProductCostForUk,
-      totalProductCostUs: totalProductCostForUS,
-
-      paymentMethod: paymentMethod,
-      paymentStatus: "to-be-confirmed",
-      orderedBy: props.userId,
-      productCurrency: "any",
-    };
-
-    //write to the transaction table first
-    if (transData) {
-      const createForm = async () => {
-        api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
-        const response = await api.post(`/transactions`, transData);
-
-        const transId = response.data.data.data.id;
-
-        if (response.data.status === "success") {
-          dispatch({
-            type: CREATE_TRANSACTION,
-            payload: response.data.data.data,
-          });
-
-          setLoading(false);
-
-          props.courseList.map((cart, index) => {
-            const data = {
-              orderNumber: orderNumber,
-              transactionId: transId,
-              product: cart.course,
-              orderedPrice: cart.price,
-              recipientName: customerName,
-              recipientPhoneNumber: customerPhoneNumber,
-              recipientEmailAddress: customerEmail,
-              //preferredStartDate: cart.preferredStartDate,
-
-              totalDeliveryCost: totalDeliveryCost
-                ? totalDeliveryCost.toFixed(2)
-                : 0,
-              totalProductCostUk: totalProductCostForUk,
-              totalProductCostUs: totalProductCostForUS,
-
-              totalProductCost: totalProductCost,
-
-              cartId: cart.id,
-              quantityAdddedToCart: cart.quantity,
-              orderedQuantity: cart.quantity,
-              dateAddedToCart: cart.dateAddedToCart,
-              productCurrency: "any",
-              paymentMethod: paymentMethod,
-              paymentStatus: "to-be-confirmed",
-              orderedBy: cart.cartHolder,
-            };
-
-            if (data) {
-              const createForm = async () => {
-                api.defaults.headers.common[
-                  "Authorization"
-                ] = `Bearer ${props.token}`;
-                const response2 = await api.post(`/orders`, data);
-
-                if (response2.data.status === "success") {
-                  dispatch({
-                    type: CREATE_ORDER,
-                    payload: response2.data.data.data,
-                  });
-
-                  setLoading(false);
-                } else {
-                  props.handleFailedSnackbar(
-                    "Something went wrong, please try again!!!"
-                  );
-                }
-              };
-              createForm().catch((err) => {
-                //props.handleFailedSnackbar();
-                console.log("err:", err.message);
-              });
-            } else {
-              //props.handleFailedSnackbar("Something went wrong, please try again!!!");
-            }
-          });
-        } else {
-          // props.handleFailedSnackbar(
-          //   "Something went wrong, please try again!!!"
-          // );
-        }
-      };
-      createForm().catch((err) => {
-        //props.handleFailedSnackbar();
-        console.log("err:", err.message);
-      });
-    }
-
-    const cartData = {
-      status: "checkedout",
-    };
-
-    //change the status of this cart items
-    props.courseList.map((cart, index) => {
-      const createForm = async () => {
-        api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
-        await api.delete(`/carts/${cart.id}`);
-
-        dispatch({
-          type: DELETE_CART,
-          //payload: response2.data.data.data,
-        });
-      };
-      createForm().catch((err) => {
-        props.handleFailedSnackbar();
-        console.log("err:", err.message);
-      });
-    });
-    props.handleSuccessfulCreateSnackbar(
-      `Thank you for your patronage, see you in class `
-    );
-    history.push("/thankyou");
-  };
+  const originSalesTaxRate = prevailingSalesTax;
+  const destSalesTaxRate = destinationSalesTax;
 
   const renderOnlinePayment = (
     email,
@@ -803,20 +1223,39 @@ function CheckoutDeliveryAndPayment(props) {
   ) => {
     const data = {
       orderNumber: orderNumber,
-
-      recipientName: name,
-      recipientPhoneNumber: phoneNumber,
-      recipientEmailAddress: email,
-
-      totalDeliveryCost: totalDeliveryCost ? totalDeliveryCost.toFixed(2) : 0,
-      totalProductCost: totalProductCost ? totalProductCost.toFixed(2) : 0,
-      totalProductCostUk: totalProductCostForUk,
-
-      totalProductCostUs: totalProductCostForUS,
-      productCurrency: currencyName,
+      customerName: customerName,
+      customerPhoneNumber: customerPhoneNumber,
+      customerEmailAddress: customerEmail,
+      recipientName: recipientName,
+      recipientPhoneNumber: recipientPhoneNumber,
+      recipientAddress: recipientAddress,
+      nearestBusstop: nearestBusstop,
+      postalCode: postalCode,
+      recipientCountry: country,
+      recipientState: state,
+      recipientCity: city,
+      deliveryMode: deliveryMode,
+      vatRate: vatRate,
+      vat: vat,
+      currency: currency,
+      totalWeight: totalWeight,
+      payOnDeliveryMaxWeightInKg: payOnDeliveryMaxWeightInKg,
+      implementVatCollection: implementVatCollection,
+      recipientEmailAddress: customerEmail,
+      totalDeliveryCost: deliveryCost ? deliveryCost : 0,
+      totalProductCost: totalProductCost,
       paymentMethod: paymentMethod,
-      paymentStatus: "to-be-confirmed",
-      orderedBy: props.userId,
+      paymentStatus: "collect-payment-on-delivery",
+      orderedBy: userId,
+      salesTax: transactionSalesTax,
+      origin: policy.onlineOrigin,
+      implementSalesTaxCollection: policy.implementSalesTaxCollection,
+      allowOriginSalesTax: policy.allowOriginSalesTax,
+      revenue: totalRevenue,
+      commissionRate: policy.commissionRate,
+      prevailingSalesTax: originSalesTaxRate,
+      destinationSalesTax: destSalesTaxRate,
+      allowCentralCommission: policy.allowCentralCommission,
     };
     return (
       <Paystack
@@ -825,7 +1264,10 @@ function CheckoutDeliveryAndPayment(props) {
         text={"Make Payment"}
         orderNumber={orderNumber}
         data={data}
-        productList={props.courseList}
+        productList={props.productList}
+        policy={props.policy}
+        prevailingSalesTax={prevailingSalesTax}
+        destinationSalesTax={destinationSalesTax}
         token={props.token}
         handleSuccessfulCreateSnackbar={props.handleSuccessfulCreateSnackbar}
         handleFailedSnackbar={props.handleFailedSnackbar}
@@ -851,79 +1293,127 @@ function CheckoutDeliveryAndPayment(props) {
               item
               container
               direction="column"
-              style={{ marginTop: 10, marginBottom: 10 }}
+              style={{ marginTop: 0, marginBottom: 10 }}
               justifyContent="center"
             >
-              <Box
-                sx={{
-                  //width: 1200,
-                  //height: 450,
-                  width: "80%",
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                <Typography variant="h5">
-                  Enrolling from the United Kingdom:
-                </Typography>
-                <Typography>
-                  <strong>Expected Amount:</strong> &nbsp; &nbsp; &#163;
-                  {totalProductCostForUkForDisplay}
-                </Typography>
-                <Typography>
-                  <strong>Pay To:</strong>
-                </Typography>
-                <Typography>
-                  <strong>Beneficiary:</strong> &nbsp; &nbsp; ControlSoft
-                  Limited
-                </Typography>
-                <Typography>
-                  <strong>Bank Name: </strong>&nbsp; &nbsp; Barclays Bank
-                </Typography>
-                <Typography>
-                  <strong>Account Number: </strong>&nbsp; &nbsp; 02313927
-                </Typography>
-                <Typography>
-                  <strong>Sort Code:</strong> &nbsp; &nbsp; 231486
-                </Typography>
-                <Typography style={{ marginTop: 15 }}>
-                  Send proof of payment to: &nbsp; &nbsp; payment@nextchamp.co
-                </Typography>
+              <form id="checkoutDeliveryAndPayment">
+                <Box
+                  sx={{
+                    //width: 1200,
+                    //height: 450,
+                    width: "100%",
+                  }}
+                  noValidate
+                  autoComplete="off"
+                >
+                  <Field
+                    label=""
+                    id="recipientName"
+                    name="recipientName"
+                    type="text"
+                    onChange={onRecipientNameChange}
+                    component={renderRecipientNameField}
+                    style={{ width: 300 }}
+                  />
+                  <Field
+                    label=""
+                    id="recipientPhoneNumber"
+                    name="recipientPhoneNumber"
+                    onChange={onRecipientPhoneNumberChange}
+                    type="text"
+                    component={renderRecipientPhoneNumberField}
+                    style={{ width: 300 }}
+                  />
+                  <Field
+                    label=""
+                    id="recipientAddress"
+                    name="recipientAddress"
+                    //defaultValue={quantity}
+                    type="text"
+                    onChange={onRecipientAddressChange}
+                    component={renderRecipientAddressField}
+                    style={{ width: 300, marginTop: 10 }}
+                  />
+                  <Grid item container direction="column">
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="recipientCountry"
+                        name="recipientCountry"
+                        //defaultValue={quantity}
+                        type="text"
+                        //onChange={onChange}
+                        component={renderCountryField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="recipientState"
+                        name="recipientState"
+                        //defaultValue={quantity}
+                        type="text"
+                        //onChange={onChange}
+                        component={renderStateField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="recipientCity"
+                        name="recipientCity"
+                        //defaultValue={quantity}
+                        type="text"
+                        //onChange={onChange}
+                        component={renderCityField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
 
-                <Typography>
-                  =======================================================================================
-                </Typography>
-
-                <Typography variant="h5">
-                  Enrolling from the United States or Other Countries outside
-                  Nigeria:
-                </Typography>
-                <Typography>
-                  <strong>Expected Amount:</strong>&nbsp; &nbsp; $
-                  {totalProductCostForUsForDisplay}
-                </Typography>
-                <Typography>
-                  <strong>Pay To:</strong>
-                </Typography>
-                <Typography>
-                  <strong>Beneficiary:</strong> &nbsp; &nbsp; ControlSoft
-                  Limited
-                </Typography>
-                <Typography>
-                  <strong>Bank Name: </strong>&nbsp; &nbsp; First Century Bank
-                </Typography>
-                <Typography>
-                  <strong>Account Number: </strong>&nbsp; &nbsp; 4010187581108
-                </Typography>
-                <Typography>
-                  <strong>Routing (ABA):</strong> &nbsp; &nbsp; 061120084
-                </Typography>
-                <Typography style={{ marginTop: 15 }}>
-                  Send proof of payment to: &nbsp; &nbsp; payment@nextchamp.co
-                </Typography>
-              </Box>
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="nearestBusstop"
+                        name="nearestBusstop"
+                        //defaultValue={quantity}
+                        type="text"
+                        onChange={onNearestBusStopChange}
+                        component={renderNearestBusstopField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="postalCode"
+                        name="postalCode"
+                        //defaultValue={quantity}
+                        type="text"
+                        onChange={onPostalCodeChange}
+                        component={renderPostalCodeField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="deliveryMode"
+                        name="deliveryMode"
+                        //defaultValue={quantity}
+                        type="text"
+                        //onChange={onChange}
+                        component={renderDeliveryModeField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+              </form>
             </Grid>
           </Grid>
+
           <Grid
             item
             container
@@ -932,27 +1422,92 @@ function CheckoutDeliveryAndPayment(props) {
               marginLeft: 15,
               border: "1px dashed grey",
               padding: 15,
+              height: 400,
             }}
           >
             <Typography
               style={{
-                width: 300,
+                //width: 250,
                 fontSize: 20,
-                marginTop: 15,
+                fontWeight: 300,
+                marginTop: 2,
+                marginLeft: 10,
+              }}
+            >
+              Total Cost of Product(s):{getCurrencyCode()}
+              {totalProductCostForDisplay}
+            </Typography>
+            <br />
+            <br />
+            {implementVatCollection && (
+              <Typography
+                style={{
+                  width: 350,
+                  fontSize: 20,
+                  fontWeight: 300,
+                  marginTop: 2,
+                  marginLeft: 10,
+                }}
+              >
+                {`VAT(${vatRate}%)`}:{getCurrencyCode()}
+                {vatForDispplay}
+              </Typography>
+            )}
+
+            {deliveryMode && (
+              <Typography
+                style={{
+                  width: 350,
+                  fontSize: 20,
+                  fontWeight: 300,
+                  marginTop: 2,
+                  marginLeft: 10,
+                }}
+              >
+                {deliveryMode === "sameday"
+                  ? "Same Day Delivery Cost"
+                  : deliveryMode === "priority"
+                  ? "Priority Delivery Cost"
+                  : deliveryMode === "standard"
+                  ? "Standard Delivery Cost"
+                  : "Delivery Cost"}
+                :{getCurrencyCode()}
+                {totalDeliveryCostForDisplay}
+              </Typography>
+            )}
+
+            <Typography
+              style={{
+                //width: 200,
+                fontSize: 23,
+                fontWeight: 700,
+                marginTop: 2,
                 marginLeft: 10,
               }}
             >
               Total Cost:{getCurrencyCode()}
-              {totalProductCostForDisplay}
+              {totalOrderCostForDisplay}
             </Typography>
 
-            {renderPaymentMethodField()}
-            {!isOnlinePayment && paymentMethod === "foreigner" && (
+            {deliveryMode === "standard" && (
               <Typography className={classes.bankDetails}>
-                Make payment to the accounts as detailed on the adjacent blocks
+                {`Your order will be delivered in ${daysToStandardDelivery} from the day it was placed`}
               </Typography>
             )}
-            {!isOnlinePayment && paymentMethod === "foreigner" && (
+            {deliveryMode === "sameday" && (
+              <Typography className={classes.bankDetails}>
+                {`Your order will be delivered same day if the order was placed before noon or  ${daysToSameDayDelivery} from the time it was placed`}
+              </Typography>
+            )}
+            {deliveryMode === "priority" && (
+              <Typography className={classes.bankDetails}>
+                {`Your order will be delivered in ${daysToPriorityDelivery} from the time it was placed`}
+              </Typography>
+            )}
+
+            {renderPaymentMethodField()}
+
+            {!isOnlinePayment && paymentMethod === "payOnDelivery" && (
               <Button
                 variant="contained"
                 className={classes.submitButton}
@@ -966,21 +1521,27 @@ function CheckoutDeliveryAndPayment(props) {
               </Button>
             )}
 
-            {!isOnlinePayment && paymentMethod === "audit" && (
+            {isOnlinePayment && !deliveryMode && (
               <Button
                 variant="contained"
-                className={classes.submitAuditButton}
-                onClick={onAuditSubmit}
+                className={classes.submitEmptyFieldButton}
+                onClick={onEmptyFieldSubmit}
               >
                 {loading ? (
                   <CircularProgress size={30} color="inherit" />
                 ) : (
-                  buttonAuditContent()
+                  buttonEmptyFieldsContent()
                 )}
               </Button>
             )}
-
             {isOnlinePayment &&
+              recipientName &&
+              recipientPhoneNumber &&
+              recipientAddress &&
+              country &&
+              state &&
+              city &&
+              deliveryMode &&
               renderOnlinePayment(
                 customerEmail,
                 amountForPayment,
@@ -989,6 +1550,7 @@ function CheckoutDeliveryAndPayment(props) {
                 customerName
               )}
           </Grid>
+          <Grid item></Grid>
         </Grid>
       ) : (
         <Grid container direction="column" className={classes.rootMobile}>
@@ -1106,7 +1668,7 @@ function CheckoutDeliveryAndPayment(props) {
                 Make payment to the accounts as detailed on the adjacent blocks
               </Typography>
             )}
-            {!isOnlinePayment && paymentMethod === "foreigner" && (
+            {!isOnlinePayment && paymentMethod === "payOnDelivery" && (
               <Button
                 variant="contained"
                 className={classes.submitButtonMobile}
@@ -1119,7 +1681,7 @@ function CheckoutDeliveryAndPayment(props) {
                 )}
               </Button>
             )}
-            {!isOnlinePayment && paymentMethod === "audit" && (
+            {/* {!isOnlinePayment && paymentMethod === "audit" && (
               <Button
                 variant="contained"
                 className={classes.submitAuditButtonMobile}
@@ -1131,7 +1693,7 @@ function CheckoutDeliveryAndPayment(props) {
                   buttonAuditContent()
                 )}
               </Button>
-            )}
+            )} */}
 
             {isOnlinePayment &&
               renderOnlinePayment(customerEmail, amountForPayment, orderNumber)}

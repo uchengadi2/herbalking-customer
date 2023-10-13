@@ -211,5 +211,5 @@ function AboutUsForm(props) {
 }
 
 export default reduxForm({
-  form: "cityForm",
+  form: "aboutUsForm",
 })(AboutUsForm);

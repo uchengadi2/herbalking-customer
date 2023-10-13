@@ -5,8 +5,8 @@ const arcOrange = "#2C3333";
 //const arcOrange = "#FD841F";
 const arcGrey = "#868686";
 const arcWhite = "#ffffff";
-//const arcPrimary = "#019a31";
-const arcPrimary = "#DC0000";
+const arcPrimary = "#1A5D1A";
+//const arcPrimary = "#DC0000";
 
 export default createTheme({
   palette: {

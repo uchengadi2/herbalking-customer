@@ -295,133 +295,119 @@ function ProductDetails(props) {
       setIsLoading(true);
       let allData = [];
       api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
-      const response = await api.get(`/courses`, {
+      const response = await api.get(`/products`, {
         params: { slug: slug },
       });
-      const course = response.data.data.data;
+      const product = response.data.data.data;
 
-      if (course.length >= 1) {
+      if (product.length >= 1) {
         allData.push({
-          id: course[0]._id,
-          title: course[0].title,
-          imageCover: course[0].imageCover,
-          shortDescription: course[0].shortDescription,
-          longDescription: course[0].longDescription,
-          features: course[0].features,
-          deliveryMethod: course[0].deliveryMethod,
-          duration: course[0].duration,
-          category: course[0].category,
-          price: course[0].price,
-          currency: course[0].currency,
-          venue: course[0].venue,
-          refNumber: course[0].refNumber,
-          sessionDuration: course[0].sessionDuration,
-          sessionPeriod: course[0].sessionPeriod,
-          studyPeriod: course[0].studyPeriod,
-          lectureDuration: course[0].lectureDuration,
-          projectDuration: course[0].projectDuration,
-          instructor: course[0].instructor,
-          image: course[0].imageCover,
-          createBy: course[0].createBy,
-          prerequisites: course[0].prerequisites,
-          tools: course[0].tools,
-          targetAudience: course[0].targetAudience,
-          whatToLearn: course[0].whatToLearn,
-          venueLink: course[0].venueLink,
-          contents: course[0].contents,
-          capstoneProject: course[0].capstoneProject,
-          passGrade: course[0].passGrade,
-          successTips: course[0].successTips,
-          track: course[0].track,
-          status: course[0].status,
-          slug: course[0].slug,
-          commencementWeekdaysDate: course[0].commencementWeekdaysDate,
-          commencementWeekendsDate: course[0].commencementWeekendsDate,
-          channel: course[0].channel,
-          programme: course[0].programme,
-          showGenericWeekdayStartDateText:
-            course[0].showGenericWeekdayStartDateText,
-          showGenericWeekendStartDateText:
-            course[0].showGenericWeekendStartDateText,
-          genericWeekdayStartDateText: course[0].genericWeekdayStartDateText,
-          genericWeekendStartDateText: course[0].genericWeekendStartDateText,
-          weekdaySessionPeriod: course[0].weekdaySessionPeriod,
-          weekendSessionPeriod: course[0].weekendSessionPeriod,
-          paymentOptions: course[0].paymentOptions,
-          isCourseAuditable: course[0].isCourseAuditable,
-          weekdayAuditDays: course[0].weekdayAuditDays,
-          weekendAuditDays: course[0].weekendAuditDays,
-          hasMentorshipCredit: course[0].hasMentorshipCredit,
-          mentorshipCredit: course[0].mentorshipCredit,
-          mentorshipDuration: course[0].mentorshipDuration,
-          hasSeries: course[0].hasSeries,
-          series: course[0].series,
-          costPerMentorshipCredit: course[0].costPerMentorshipCredit,
-          isInstallmentalPaymentAllowed:
-            course[0].isInstallmentalPaymentAllowed,
-          maximumInstallmentalPayment: course[0].maximumInstallmentalPayment,
+          id: product[0]._id,
+          name: product[0].name,
+          imageCover: product[0].imageCover,
+          mainImage: product[0].mainImage,
+          images: product[0].images,
+          shortDescription: product[0].shortDescription,
+          fullDescription: product[0].fullDescription,
+          features: product[0].features,
+          totalUnit: product[0].totalUnits,
+          remainingUnits: product[0].remainingUnits,
+          pricePerUnit: product[0].pricePerUnit,
+          category: product[0].category,
+          currency: product[0].currency,
+          minQuantity: product[0].minQuantity,
+          refNumber: product[0].refNumber,
+          unit: product[0].unit,
+          isFeaturedProduct: product[0].isFeaturedProduct,
+          configuration: product[0].configuration,
+          displayOnStore: product[0].displayOnStore,
+          expiryDate: product[0].expiryDate,
+          manufacturer: product[0].manufacturer,
+          benefits: product[0].benefits,
+          sideEffects: product[0].sideEffects,
+          model: product[0].model,
+          yearManufactured: product[0].yearManufactured,
+          brand: product[0].brand,
+          make: product[0].make,
+          source: product[0].source,
+          dosage: product[0].dosage,
+          ingredients: product[0].ingredients,
+          salesPreference: product[0].salesPreference,
+          keyword1: product[0].keyword1,
+          keyword2: product[0].keyword2,
+          keyword3: product[0].keyword3,
+          remainingUnits: product[0].remainingUnits,
+          shopsAvailable: product[0].shopsAvailable,
+          slug: product[0].slug,
+          requestQuote: product[0].requestQuote,
+          allowSubscription: product[0].allowSubscription,
+          video: product[0].video,
+          type: product[0].type,
+          createBy: product[0].createBy,
+          howToUse: product[0].howToUse,
+          pricingMechanism: product[0].pricingMechanism,
+
+          weightInKg: product[0].weightInKg,
+          presentWeightUnitIn: product[0].presentWeightUnitIn,
+          isVatable: product[0].isVatable,
+          revenueMargin: product[0].revenueMargin,
+          revenueMarginShouldPrevail: product[0].revenueMarginShouldPrevail,
+          origins: product[0].origins,
         });
 
-        setCourse({
+        setProduct({
           id: allData[0].id,
-          title: allData[0].title,
-          imageCover: allData[0].imageCover,
+          name: allData[0].name,
+          image: allData[0].imageCover,
+          mainImage: allData[0].image,
+          images: allData[0].images,
           shortDescription: allData[0].shortDescription,
-          longDescription: allData[0].longDescription,
+          fullDescription: allData[0].fullDescription,
           features: allData[0].features,
-          deliveryMethod: allData[0].deliveryMethod,
-          duration: allData[0].duration,
+          totalUnit: allData[0].totalUnit,
+          remainingUnits: allData[0].remainingUnits,
+          pricePerUnit: allData[0].pricePerUnit,
           category: allData[0].category,
-          commencementDate: allData[0].commencementDate,
-          price: allData[0].price,
+          minQuantity: allData[0].minQuantity,
           currency: allData[0].currency,
-          venue: allData[0].venue,
+          unit: allData[0].unit,
           refNumber: allData[0].refNumber,
-          sessionDuration: allData[0].sessionDuration,
-          sessionPeriod: allData[0].sessionPeriod,
-          studyPeriod: allData[0].studyPeriod,
-          lectureDuration: allData[0].lectureDuration,
-          projectDuration: allData[0].projectDuration,
-          instructor: allData[0].instructor,
-          image: allData[0].image,
-          createBy: allData[0].createBy,
-          prerequisites: allData[0].prerequisites,
-          tools: allData[0].tools,
-          targetAudience: allData[0].targetAudience,
-          whatToLearn: allData[0].whatToLearn,
-          venueLink: allData[0].venueLink,
-          contents: allData[0].contents,
-          capstoneProject: allData[0].capstoneProject,
-          passGrade: allData[0].passGrade,
-          successTips: allData[0].successTips,
-          track: allData[0].track,
-          status: allData[0].status,
-          commencementWeekdaysDate: allData[0].commencementWeekdaysDate,
-          commencementWeekendsDate: allData[0].commencementWeekendsDate,
+          isFeaturedProduct: allData[0].isFeaturedProduct,
+          configuration: allData[0].configuration,
+          displayOnStore: allData[0].displayOnStore,
+          expiryDate: allData[0].expiryDate,
+          manufacturer: allData[0].manufacturer,
+          benefits: allData[0].benefits,
+          sideEffects: allData[0].sideEffects,
+          model: allData[0].model,
+          yearManufactured: allData[0].yearManufactured,
+          brand: allData[0].brand,
+          make: allData[0].make,
+          source: allData[0].source,
+          dosage: allData[0].dosage,
+          ingredients: allData[0].ingredients,
+          salesPreference: allData[0].salesPreference,
+          keyword1: allData[0].keyword1,
+          keyword2: allData[0].keyword2,
+          keyword3: allData[0].keyword3,
+          remainingUnits: allData[0].remainingUnits,
+          shopsAvailable: allData[0].shopsAvailable,
           channel: allData[0].channel,
           slug: allData[0].slug,
-          programme: allData[0].programme,
-          showGenericWeekdayStartDateText:
-            allData[0].showGenericWeekdayStartDateText,
-          showGenericWeekendStartDateText:
-            allData[0].showGenericWeekendStartDateText,
-          genericWeekdayStartDateText: allData[0].genericWeekdayStartDateText,
-          genericWeekendStartDateText: allData[0].genericWeekendStartDateText,
-          weekdaySessionPeriod: allData[0].weekdaySessionPeriod,
-          weekendSessionPeriod: allData[0].weekendSessionPeriod,
-          paymentOptions: allData[0].paymentOptions,
-          isCourseAuditable: allData[0].isCourseAuditable,
-          weekdayAuditDays: allData[0].weekdayAuditDays,
-          weekendAuditDays: allData[0].weekendAuditDays,
-          hasMentorshipCredit: allData[0].hasMentorshipCredit,
-          mentorshipCredit: allData[0].mentorshipCredit,
-          mentorshipDuration: allData[0].mentorshipDuration,
-          hasSeries: allData[0].hasSeries,
-          series: allData[0].series,
-          costPerMentorshipCredit: allData[0].costPerMentorshipCredit,
-          isInstallmentalPaymentAllowed:
-            allData[0].isInstallmentalPaymentAllowed,
-          maximumInstallmentalPayment: allData[0].maximumInstallmentalPayment,
+          requestQuote: allData[0].requestQuote,
+          allowSubscription: allData[0].allowSubscription,
+          video: allData[0].video,
+          type: allData[0].type,
+          createBy: allData[0].createBy,
+          howToUse: allData[0].howToUse,
+          pricingMechanism: allData[0].pricingMechanism,
+
+          weightInKg: allData[0].weightInKg,
+          presentWeightUnitIn: allData[0].presentWeightUnitIn,
+          isVatable: allData[0].isVatable,
+          revenueMargin: allData[0].revenueMargin,
+          revenueMarginShouldPrevail: allData[0].revenueMarginShouldPrevail,
+          origins: allData[0].origins,
         });
 
         setIsLoading(false);
@@ -435,54 +421,41 @@ function ProductDetails(props) {
 
   const Str = require("@supercharge/strings");
 
-  const courseData = matchesMD ? (
+  const productData = matchesMD ? (
     <React.Fragment>
       {
         <Grid container direction="row">
           <ProductDetailCard
-            course={course}
+            product={product}
             // isOnPromo={isOnPromo}
             // promoPrice={promoPrice}
             // promoMinQuantity={promoMinQuantity}
-            prerequisites={course.prerequisites}
-            tools={course.tools}
-            targetAudience={course.targetAudience}
-            whatToLearn={course.whatToLearn}
-            venueLink={course.venueLink}
-            contents={course.contents}
-            capstoneProject={course.capstoneProject}
-            passGrade={course.passGrade}
-            successTips={course.successTips}
-            track={course.track}
-            status={course.status}
-            commencementWeekdaysDate={course.commencementWeekdaysDate}
-            commencementWeekendsDate={course.commencementWeekendsDate}
-            channel={course.channel}
-            programme={course.programme}
-            slug={course.slug}
-            showGenericWeekdayStartDateText={
-              course.showGenericWeekdayStartDateText
-            }
-            showGenericWeekendStartDateText={
-              course.showGenericWeekendStartDateText
-            }
-            genericWeekdayStartDateText={course.genericWeekdayStartDateText}
-            genericWeekendStartDateText={course.genericWeekendStartDateText}
-            weekdaySessionPeriod={course.weekdaySessionPeriod}
-            weekendSessionPeriod={course.weekendSessionPeriod}
-            paymentOptions={course.paymentOptions}
-            isCourseAuditable={course.isCourseAuditable}
-            weekdayAuditDays={course.weekdayAuditDays}
-            weekendAuditDays={course.weekendAuditDays}
-            hasMentorshipCredit={course.hasMentorshipCredit}
-            mentorshipCredit={course.mentorshipCredit}
-            mentorshipDuration={course.mentorshipDuration}
-            hasSeries={course.hasSeries}
-            costPerMentorshipCredit={course.costPerMentorshipCredit}
-            isInstallmentalPaymentAllowed={course.isInstallmentalPaymentAllowed}
-            maximumInstallmentalPayment={course.maximumInstallmentalPayment}
-            series={course.series}
-            key={course.id}
+            features={product.features}
+            shortDescription={product.shortDescription}
+            fullDescription={product.fullDescription}
+            totalUnits={product.totalUnits}
+            pricePerUnit={product.pricePerUnit}
+            currency={product.currency}
+            refNumber={product.refNumber}
+            category={product.category}
+            benefits={product.benefits}
+            sideEffects={product.sideEffects}
+            model={product.model}
+            yearManufactured={product.yearManufactured}
+            brand={product.brand}
+            make={product.make}
+            source={product.source}
+            dosage={product.dosage}
+            slug={product.slug}
+            ingredients={product.ingredients}
+            salesPreference={product.salesPreference}
+            remainingUnits={product.remainingUnits}
+            shopsAvailable={product.shopsAvailable}
+            type={product.type}
+            mainImage={product.mainImage}
+            image={product.image}
+            video={product.video}
+            key={product.id}
             token={props.token}
             userId={props.userId}
             setToken={props.setToken}
@@ -506,49 +479,36 @@ function ProductDetails(props) {
           alignItems="center"
         >
           <ProductDetailCard
-            course={course}
+            product={product}
             // isOnPromo={isOnPromo}
             // promoPrice={promoPrice}
             // promoMinQuantity={promoMinQuantity}
-            prerequisites={course.prerequisites}
-            tools={course.tools}
-            targetAudience={course.targetAudience}
-            whatToLearn={course.whatToLearn}
-            venueLink={course.venueLink}
-            contents={course.contents}
-            capstoneProject={course.capstoneProject}
-            passGrade={course.passGrade}
-            successTips={course.successTips}
-            track={course.track}
-            status={course.status}
-            commencementWeekdaysDate={course.commencementWeekdaysDate}
-            commencementWeekendsDate={course.commencementWeekendsDate}
-            channel={course.channel}
-            slug={course.slug}
-            programme={course.programme}
-            showGenericWeekdayStartDateText={
-              course.showGenericWeekdayStartDateText
-            }
-            showGenericWeekendStartDateText={
-              course.showGenericWeekendStartDateText
-            }
-            genericWeekdayStartDateText={course.genericWeekdayStartDateText}
-            genericWeekendStartDateText={course.genericWeekendStartDateText}
-            weekdaySessionPeriod={course.weekdaySessionPeriod}
-            weekendSessionPeriod={course.weekendSessionPeriod}
-            paymentOptions={course.paymentOptions}
-            isCourseAuditable={course.isCourseAuditable}
-            weekdayAuditDays={course.weekdayAuditDays}
-            weekendAuditDays={course.weekendAuditDays}
-            hasMentorshipCredit={course.hasMentorshipCredit}
-            mentorshipCredit={course.mentorshipCredit}
-            mentorshipDuration={course.mentorshipDuration}
-            hasSeries={course.hasSeries}
-            costPerMentorshipCredit={course.costPerMentorshipCredit}
-            isInstallmentalPaymentAllowed={course.isInstallmentalPaymentAllowed}
-            maximumInstallmentalPayment={course.maximumInstallmentalPayment}
-            series={course.series}
-            key={course.id}
+            features={product.features}
+            shortDescription={product.shortDescription}
+            fullDescription={product.fullDescription}
+            totalUnits={product.totalUnits}
+            pricePerUnit={product.pricePerUnit}
+            currency={product.currency}
+            refNumber={product.refNumber}
+            category={product.category}
+            benefits={product.benefits}
+            sideEffects={product.sideEffects}
+            model={product.model}
+            yearManufactured={product.yearManufactured}
+            brand={product.brand}
+            make={product.make}
+            source={product.source}
+            dosage={product.dosage}
+            slug={product.slug}
+            ingredients={product.ingredients}
+            salesPreference={product.salesPreference}
+            remainingUnits={product.remainingUnits}
+            shopsAvailable={product.shopsAvailable}
+            type={product.type}
+            mainImage={product.mainImage}
+            image={product.image}
+            video={product.video}
+            key={product.id}
             token={props.token}
             userId={props.userId}
             setToken={props.setToken}
@@ -575,7 +535,7 @@ function ProductDetails(props) {
           />
         )}
 
-        {!isLoading && <Grid item>{courseData}</Grid>}
+        {!isLoading && <Grid item>{productData}</Grid>}
 
         {/*....INFORMATION BLOCK....*/}
       </Grid>

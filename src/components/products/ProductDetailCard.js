@@ -40,6 +40,8 @@ const useStyles = makeStyles((theme) => ({
   root: {
     // maxWidth: 325,
     maxWidth: "100%",
+    //width: 1320,
+    width: "98%",
     //height: 440,
     //height: 500,
 
@@ -54,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
   },
   rootMobile: {
     maxWidth: "100%",
+
     //height: 440,
     //height: 800,
     width: "80%",
@@ -76,8 +79,26 @@ const useStyles = makeStyles((theme) => ({
     //marginLeft: "100px",
   },
   media: {
+    //height: 400,
+    //width: 400,
+    width: "25%",
+  },
+
+  mediaImageMobile: {
+    height: "100%",
+    width: "100%",
+    //marginLeft: "100px",
+  },
+  mediaImage: {
+    //height: 400,
+    //width: "27.5rem",
     height: 400,
-    width: 400,
+    width: "100%",
+  },
+
+  videoMedia: {
+    height: 400,
+    width: "100%",
   },
 
   learnButton: {
@@ -113,8 +134,9 @@ const useStyles = makeStyles((theme) => ({
     transform: "rotate(180deg)",
   },
   secondRow: {
-    marginLeft: "0.7",
-    width: 550,
+    marginLeft: "0.5%",
+    //width: 450,
+    width: "45%",
     border: "1px dotted",
     padding: 20,
   },
@@ -137,10 +159,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "10rem",
   },
   thirdRow: {
-    marginLeft: "0.9%",
-    width: 350,
+    marginLeft: "0.5%",
+    //width: 330,
+    width: "29%",
     border: "1px dotted",
-    padding: 20,
+    padding: 10,
   },
   thirdRowMobile: {
     marginLeft: 10,
@@ -155,7 +178,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 50,
     border: "1px dotted",
     padding: 20,
-    width: "22%",
+    width: "32%",
   },
   secondColumnMobile: {
     marginTop: 50,
@@ -169,7 +192,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 50,
     border: "1px dotted",
     padding: 20,
-    width: "98%",
+    width: "100%",
   },
   thirdColumnMobile: {
     marginTop: 15,
@@ -197,7 +220,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 50,
     border: "1px dotted",
     padding: 20,
-    width: "98%",
+    width: "100%",
   },
   fifthColumnMobile: {
     marginTop: 15,
@@ -220,6 +243,20 @@ const useStyles = makeStyles((theme) => ({
     padding: 10,
     width: "98%",
   },
+  secondColumnImage: {
+    marginTop: 50,
+    marginBottom: 50,
+    border: "1px dotted",
+    padding: 20,
+    width: "22%",
+  },
+  secondColumnImageMobile: {
+    marginTop: 50,
+    marginBottom: 50,
+    border: "1px dotted",
+    padding: 10,
+    width: "98%",
+  },
 }));
 
 export default function ProductDetailCard(props) {
@@ -228,11 +265,12 @@ export default function ProductDetailCard(props) {
   const [openLoginForm, setOpenLoginForm] = useState(false);
   const [openSignUpForm, setOpenSignUpForm] = useState(false);
   const [openForgotPasswordForm, setOpenForgotPasswordForm] = useState(false);
-  const [currencyName, setCurrencyName] = useState(props.course.currency);
+  const [currencyName, setCurrencyName] = useState("");
   const [countryName, setCountryName] = useState();
   const [stateName, setStateName] = useState();
   const [price, setPrice] = useState();
   const [minQuantity, setMinQuantity] = useState();
+  const [images, setImages] = useState([]);
 
   // const { token, setToken } = useToken();
   // const { userId, setUserId } = useUserId();
@@ -249,7 +287,7 @@ export default function ProductDetailCard(props) {
   const matchesMDUp = useMediaQuery(theme.breakpoints.up("md"));
 
   //const imageUrl = `${baseURL}/images/categories/${props.image}`;
-  const imageUrl = `${baseURL}/images/courses/${props.course.image}`;
+  const imageUrl = `${baseURL}/images/products/${props.product.image}`;
 
   const Str = require("@supercharge/strings");
 
@@ -259,8 +297,11 @@ export default function ProductDetailCard(props) {
   // );
 
   useEffect(() => {
-    setPrice(props.course.price);
-  }, [props.course]);
+    setPrice(props.product.pricePerUnit);
+  }, [props.product]);
+  useEffect(() => {
+    setImages(props.product.images);
+  }, [props]);
 
   useEffect(() => {
     // 👇️ scroll to top on page load
@@ -270,6 +311,21 @@ export default function ProductDetailCard(props) {
   useEffect(() => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/currencies/${props.product.currency}`);
+      const currency = response.data.data.data;
+      allData.push({ id: currency._id, name: currency.name });
+      setCurrencyName(allData[0].name);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
   }, []);
 
   const handleExpandClick = () => {
@@ -492,12 +548,12 @@ export default function ProductDetailCard(props) {
       {matchesMDUp ? (
         <Grid container direction="column" className={classes.root}>
           <Grid item container direction="row">
-            <Grid item>
+            <Grid item className={classes.media}>
               <Card>
                 <CardMedia
-                  className={classes.media}
+                  // className={classes.media}
                   component="img"
-                  alt={props.course.title}
+                  alt={props.product.name}
                   image={imageUrl}
                   //   title={props.name}
                   crossOrigin="anonymous"
@@ -506,25 +562,27 @@ export default function ProductDetailCard(props) {
             </Grid>
             <Grid item className={classes.secondRow}>
               <Box>
-                {props.course.hasSeries ? (
-                  <Typography variant="h4" color="textSecondary" component="p">
-                    {props.course.title}
-                    <span style={{ fontSize: 16, fontWeight: 700 }}>
-                      <em> ({props.course.series})</em>
+                <Typography variant="h4" color="textSecondary" component="p">
+                  {props.product.name}&nbsp;
+                  <span style={{ fontSize: 16, marginLeft: 0 }}>
+                    ({props.product.configuration})
+                  </span>
+                </Typography>
+                {props.product.pricingMechanism === "pricing" && (
+                  <Typography
+                    variant="h4"
+                    style={{ marginTop: 10, marginLeft: 150 }}
+                  >
+                    {getCurrencyCode()}
+                    {price
+                      ? price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
+                      : 0}
+                    &nbsp;
+                    <span style={{ fontSize: 12, marginLeft: 0 }}>
+                      {`per ${props.product.unit}`}
                     </span>
                   </Typography>
-                ) : (
-                  <Typography variant="h4" color="textSecondary" component="p">
-                    {props.course.title}
-                  </Typography>
                 )}
-                <Typography variant="h4" style={{ marginTop: 10 }}>
-                  {getCurrencyCode()}
-                  {price
-                    ? price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
-                    : 0}
-                  <span style={{ fontSize: 12, marginLeft: 0 }}></span>
-                </Typography>
                 <Typography
                   variant="h5"
                   style={{
@@ -534,9 +592,31 @@ export default function ProductDetailCard(props) {
                     justifyContent: "center",
                   }}
                 >
-                  <ReactMarkdown>{props.course.shortDescription}</ReactMarkdown>
+                  <ReactMarkdown>
+                    {props.product.shortDescription}
+                  </ReactMarkdown>
                 </Typography>
-                {props.course.refNumber !== undefined && (
+                {props.product.minQuantity !== undefined && (
+                  <Typography
+                    variant="h5"
+                    style={{ color: "black", fontSize: 15 }}
+                  >
+                    <span style={{ marginRight: 20 }}>
+                      {" "}
+                      <strong>Minimum Quantity Required:</strong>
+                    </span>
+                    <span>
+                      {props.product.minQuantity
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      &nbsp;
+                      {props.product.minQuantity <= 1
+                        ? props.product.unit
+                        : props.product.unit + "s"}
+                    </span>
+                  </Typography>
+                )}
+                {props.product.refNumber !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -545,237 +625,76 @@ export default function ProductDetailCard(props) {
                       {" "}
                       <strong>Reference Number:</strong>
                     </span>
-                    {props.course.refNumber}
+                    {props.product.refNumber}
                   </Typography>
                 )}
-                {props.course.duration !== undefined && (
+                {props.product.remainingUnits !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Duration:</strong>
+                      <strong>Quantity in Stock:</strong>
                     </span>
-                    {props.course.duration}
+                    <span>
+                      {props.product.remainingUnits
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      &nbsp;
+                      {props.product.remainingUnits <= 1
+                        ? props.product.unit
+                        : props.product.unit + "s"}
+                    </span>
                   </Typography>
                 )}
-                {props.course.commencementDate !== undefined && (
+                {props.product.type !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Start date:</strong>
+                      <strong>Product Type:</strong>
                     </span>
-                    {props.course.commencementDate
-                      ? new Date(props.course.commencementDate).toDateString()
-                      : "Coming Soon"}
+                    {props.product.type}
                   </Typography>
                 )}
-                {props.course.deliveryMethod !== undefined && (
+                {props.product.dosage !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Delivery Method:</strong>
+                      <strong>Dosage:</strong>
                     </span>
-                    {props.course.deliveryMethod}
-                  </Typography>
-                )}
-                {props.course.venue !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Venue:</strong>
-                    </span>
-                    {props.course.venue}
-                  </Typography>
-                )}
-                {props.course.track !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Track:</strong>
-                    </span>
-                    {props.course.track}
-                  </Typography>
-                )}
-                {props.course.commencementWeekdaysDate !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Weekday Start Date():</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.commencementWeekdaysDate.join("|")}
-                    </span>
-                  </Typography>
-                )}
-                {props.course.commencementWeekendsDate !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Weekend Start Date(s):</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.commencementWeekendsDate.join("|")}
-                    </span>
-                  </Typography>
-                )}
-                <Typography
-                  variant="h5"
-                  style={{ color: "black", fontSize: 15 }}
-                >
-                  <span style={{ marginRight: 20 }}>
-                    <strong>Weekday Lecture Period:</strong>
-                  </span>
-                  <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {props.course.weekdaySessionPeriod}
-                  </span>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{ color: "black", fontSize: 15 }}
-                >
-                  <span style={{ marginRight: 20 }}>
-                    <strong>Weekend Lecture Period:</strong>
-                  </span>
-                  <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {props.course.weekendSessionPeriod}
-                  </span>
-                </Typography>
-                {props.course.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Credit:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.mentorshipCredit}&nbsp; Units &nbsp; (to be
-                      used after graduation)
-                    </span>
-                  </Typography>
-                )}
-                {props.course.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Total Value of Mentorship Credit:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {getCurrencyCode()}
-                      {(
-                        props.course.mentorshipCredit *
-                        props.course.costPerMentorshipCredit
-                      )
-                        .toFixed(2)
-                        .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
-                    </span>
-                  </Typography>
-                )}
-                {props.course.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Duration:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.mentorshipDuration}&nbsp;&nbsp; ( from the
-                      day of graduation)
-                    </span>
-                  </Typography>
-                )}
-                {props.course.isInstallmentalPaymentAllowed === "yes" && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Is Installmental Payment Allowed :</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.isInstallmentalPaymentAllowed
-                        .charAt(0)
-                        .toUpperCase() +
-                        props.course.isInstallmentalPaymentAllowed.slice(1)}
-                    </span>
-                  </Typography>
-                )}
-                {props.course.isInstallmentalPaymentAllowed === "yes" && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>
-                        Maximum Number of Installmental Payment Allowed :
-                      </strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.maximumInstallmentalPayment}&nbsp;times
-                    </span>
-                  </Typography>
-                )}
-                {props.course.passGrade !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Minimum NextChamp Grade:</strong>
-                    </span>
-                    {props.course.passGrade}
-                  </Typography>
-                )}
-                <br /> <br />
-                {props.course.isCourseAuditable && (
-                  <Typography>
-                    <span
-                      style={{
-                        fontSize: 18,
-                        marginLeft: 14,
-                        //textAlign: "center",
-                      }}
-                    >
-                      You can audit this course for FREE for up to
-                      <strong>
-                        <span>{props.course.weekdayAuditDays}</span>
-                      </strong>
-                      &nbsp;. You only make payment afterwards when you are sure
-                      the course is a good fit for you
-                    </span>
+                    {props.product.dosage}
                   </Typography>
                 )}
               </Box>
             </Grid>
+
             <Grid item className={classes.thirdRow}>
               <Box>
                 <SendCourseToCheckoutForm
                   price={price}
-                  currency={props.course.currency}
-                  courseId={props.course.id}
+                  currency={props.product.currency}
+                  unit={props.product.unit}
+                  minQuantity={props.product.minQuantity}
+                  productId={props.product.id}
                   token={props.token}
+                  requestQuote={props.product.requestQuote}
+                  pricingMechanism={props.product.pricingMechanism}
+                  allowSubscription={props.product.allowSubscription}
+                  weightInKg={props.product.weightInKg}
+                  presentWeightUnitIn={props.product.presentWeightUnitIn}
+                  isVatable={props.product.isVatable}
+                  revenueMargin={props.product.revenueMargin}
+                  revenueMarginShouldPrevail={
+                    props.product.revenueMarginShouldPrevail
+                  }
+                  origins={props.product.origins}
                   userId={props.userId}
                   handleMakeOpenSignUpDialogStatus={
                     handleMakeOpenSignUpDialogStatus
@@ -808,100 +727,128 @@ export default function ProductDetailCard(props) {
             style={{ width: "100%" }}
             justifyContent="center"
           >
-            <Grid
-              item
-              className={classes.secondColumn}
-              style={{ marginLeft: "2%" }}
-            >
-              <Box>
-                <Typography>
-                  <strong>Prerequisites:</strong>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{
-                    color: "black",
-                    marginTop: 20,
-                    marginBottom: 20,
-                    justifyContent: "center",
-                  }}
-                >
-                  <ReactMarkdown>{props.course.prerequisites}</ReactMarkdown>
-                </Typography>
-              </Box>
-            </Grid>
+            {props.product.ingredients && (
+              <Grid
+                item
+                className={classes.secondColumn}
+                style={{ marginLeft: "2%" }}
+              >
+                <Box>
+                  <Typography>
+                    <strong>Ingredients:</strong>
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    style={{
+                      color: "black",
+                      marginTop: 20,
+                      marginBottom: 20,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ReactMarkdown>{props.product.ingredients}</ReactMarkdown>
+                  </Typography>
+                </Box>
+              </Grid>
+            )}
 
-            <Grid
-              item
-              className={classes.secondColumn}
-              style={{ marginLeft: "0.5%" }}
-            >
-              <Box>
-                <Typography>
-                  <strong>What you will Learn:</strong>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{
-                    color: "black",
-                    marginTop: 20,
-                    marginBottom: 20,
-                    justifyContent: "center",
-                  }}
-                >
-                  <ReactMarkdown>{props.course.whatToLearn}</ReactMarkdown>
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid
-              item
-              className={classes.secondColumn}
-              style={{ marginLeft: "0.5%" }}
-            >
-              <Box>
-                <Typography>
-                  <strong>Required Learning Tools:</strong>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{
-                    color: "black",
-                    marginTop: 20,
-                    marginBottom: 20,
-                    justifyContent: "center",
-                  }}
-                >
-                  <ReactMarkdown>{props.course.tools}</ReactMarkdown>
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid
-              item
-              className={classes.secondColumn}
-              style={{ marginLeft: "0.5%" }}
-            >
-              <Box>
-                <Typography>
-                  <strong>Who should attend:</strong>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{
-                    color: "black",
-                    marginTop: 20,
-                    marginBottom: 20,
-                    justifyContent: "center",
-                  }}
-                >
-                  <ReactMarkdown>{props.course.targetAudience}</ReactMarkdown>
-                </Typography>
-              </Box>
-            </Grid>
+            {props.product.sideEffects && (
+              <Grid
+                item
+                className={classes.secondColumn}
+                style={{ marginLeft: "0.5%" }}
+              >
+                <Box>
+                  <Typography>
+                    <strong>Side Effects:</strong>
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    style={{
+                      color: "black",
+                      marginTop: 20,
+                      marginBottom: 20,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ReactMarkdown>{props.product.sideEffects}</ReactMarkdown>
+                  </Typography>
+                </Box>
+              </Grid>
+            )}
+            {props.product.benefits && (
+              <Grid
+                item
+                className={classes.secondColumn}
+                style={{ marginLeft: "0.5%" }}
+              >
+                <Box>
+                  <Typography>
+                    <strong>Benefits:</strong>
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    style={{
+                      color: "black",
+                      marginTop: 20,
+                      marginBottom: 20,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ReactMarkdown>{props.product.benefits}</ReactMarkdown>
+                  </Typography>
+                </Box>
+              </Grid>
+            )}
+            {/* {props.product.howToUse && (
+              <Grid
+                item
+                className={classes.secondColumn}
+                style={{ marginLeft: "0.5%" }}
+              >
+                <Box>
+                  <Typography>
+                    <strong>How To Use:</strong>
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    style={{
+                      color: "black",
+                      marginTop: 20,
+                      marginBottom: 20,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ReactMarkdown>{props.product.howToUse}</ReactMarkdown>
+                  </Typography>
+                </Box>
+              </Grid>
+            )} */}
           </Grid>
+          {props.product.howToUse && (
+            <Grid item className={classes.forthColumn}>
+              <Box>
+                <Typography>
+                  <strong>How To Use:</strong>
+                </Typography>
+                <Typography
+                  variant="h5"
+                  style={{
+                    color: "black",
+                    marginTop: 20,
+                    marginBottom: 20,
+                    justifyContent: "center",
+                  }}
+                >
+                  <ReactMarkdown>{props.product.howToUse}</ReactMarkdown>
+                </Typography>
+              </Box>
+            </Grid>
+          )}
           <Grid item className={classes.thirdColumn}>
             <Box>
               <Typography>
-                <strong>Course Description:</strong>
+                <strong>Product Description:</strong>
               </Typography>
               <Typography
                 variant="h5"
@@ -912,66 +859,481 @@ export default function ProductDetailCard(props) {
                   justifyContent: "center",
                 }}
               >
-                <ReactMarkdown>{props.course.longDescription}</ReactMarkdown>
+                <ReactMarkdown>{props.product.fullDescription}</ReactMarkdown>
               </Typography>
             </Box>
           </Grid>
-          <Grid item className={classes.forthColumn}>
-            <Box>
-              <Typography>
-                <strong>Course Content:</strong>
-              </Typography>
-              <Typography
-                variant="h5"
-                style={{
-                  color: "black",
-                  marginTop: 20,
-                  marginBottom: 20,
-                  justifyContent: "center",
-                }}
+          {/**Images start here */}
+          {images[0] && (
+            <Typography
+              variant="h5"
+              style={{ color: "black", fontSize: 15, marginLeft: 30 }}
+            >
+              <strong>
+                {images.length > 1 ? "Product Images" : "Product Image"}
+              </strong>
+            </Typography>
+          )}
+          <Grid
+            item
+            container
+            direction="row"
+            style={{ width: "100%" }}
+            justifyContent="center"
+          >
+            {images[0] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
               >
-                <ReactMarkdown>{props.course.contents}</ReactMarkdown>
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item className={classes.fifthColumn}>
-            <Box>
-              <Typography>
-                <strong>Capstone Project:</strong>
-              </Typography>
-              <Typography
-                variant="h5"
-                style={{
-                  color: "black",
-                  marginTop: 20,
-                  marginBottom: 20,
-                  justifyContent: "center",
-                }}
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[0]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[1] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
               >
-                <ReactMarkdown>{props.course.capstoneProject}</ReactMarkdown>
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item className={classes.sixthColumn}>
-            <Box>
-              <Typography>
-                <strong>
-                  What you need to become the NextChamp in this Course:
-                </strong>
-              </Typography>
-              <Typography
-                variant="h5"
-                style={{
-                  color: "black",
-                  marginTop: 20,
-                  marginBottom: 20,
-                  justifyContent: "center",
-                }}
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[1]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[2] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
               >
-                <ReactMarkdown>{props.course.successTips}</ReactMarkdown>
-              </Typography>
-            </Box>
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[2]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[3] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[3]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
           </Grid>
+          <Grid
+            item
+            container
+            direction="row"
+            style={{ width: "100%" }}
+            justifyContent="center"
+          >
+            {images[4] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[4]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[5] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[5]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[6] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[6]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[7] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[7]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+          </Grid>
+          <Grid
+            item
+            container
+            direction="row"
+            style={{ width: "100%" }}
+            justifyContent="center"
+          >
+            {images[8] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[8]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[9] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[9]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[10] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[10]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[11] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[11]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+          </Grid>
+          <Grid
+            item
+            container
+            direction="row"
+            style={{ width: "100%" }}
+            justifyContent="center"
+          >
+            {images[12] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[12]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[13] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[13]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[14] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[14]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[15] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[15]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+          </Grid>
+          <Grid
+            item
+            container
+            direction="row"
+            style={{ width: "100%" }}
+            justifyContent="center"
+          >
+            {images[16] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[16]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[17] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[17]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[18] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[18]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[19] && (
+              <Grid
+                item
+                className={classes.secondColumnImage}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImage}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[19]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+          </Grid>{" "}
+          {/**images ends here**/}
+          {props.product.video && (
+            <Typography
+              variant="h5"
+              style={{ color: "black", fontSize: 15, marginLeft: 30 }}
+            >
+              <strong>Product Video</strong>
+            </Typography>
+          )}
+          {props.product.video && (
+            <Grid item className={classes.thirdColumn}>
+              <Card>
+                <CardMedia
+                  className={classes.videoMedia}
+                  component="iframe"
+                  alt={props.product.name}
+                  height="140"
+                  src={`https://www.youtube.com/embed/${props.product.video}`}
+                  //allow="autoPlay"
+                  allowfullscreen="allowfullscreen"
+                  controls
+                />
+              </Card>
+            </Grid>
+          )}
+          {props.product.shopsAvailable && (
+            <Grid item className={classes.fifthColumn}>
+              <Box>
+                <Typography>
+                  <strong>Available in these Stores:</strong>
+                </Typography>
+                <Typography
+                  variant="h5"
+                  style={{
+                    color: "black",
+                    marginTop: 20,
+                    marginBottom: 20,
+                    justifyContent: "center",
+                  }}
+                >
+                  <ReactMarkdown>{props.product.shopsAvailable}</ReactMarkdown>
+                </Typography>
+              </Box>
+            </Grid>
+          )}
         </Grid>
       ) : (
         <Grid container direction="column" className={classes.rootMobile}>
@@ -981,7 +1343,7 @@ export default function ProductDetailCard(props) {
                 <CardMedia
                   className={classes.mediaMobile}
                   component="img"
-                  alt={props.course.title}
+                  alt={props.product.name}
                   image={imageUrl}
                   //   title={props.name}
                   crossOrigin="anonymous"
@@ -990,16 +1352,16 @@ export default function ProductDetailCard(props) {
             </Grid>
             <Grid item className={classes.secondRowMobile}>
               <Box>
-                {props.course.hasSeries ? (
+                {props.product.hasSeries ? (
                   <Typography variant="h4" color="textSecondary" component="p">
-                    {props.course.title}
+                    {props.product.name}
                     <span style={{ fontSize: 16, fontWeight: 700 }}>
-                      <em> ({props.course.series})</em>
+                      <em> ({props.product.series})</em>
                     </span>
                   </Typography>
                 ) : (
                   <Typography variant="h4" color="textSecondary" component="p">
-                    {props.course.title}
+                    {props.product.name}
                   </Typography>
                 )}
                 <Typography variant="h5">
@@ -1018,9 +1380,9 @@ export default function ProductDetailCard(props) {
                     justifyContent: "center",
                   }}
                 >
-                  {props.course.shortDescription}
+                  {props.product.shortDescription}
                 </Typography>
-                {props.course.refNumber !== "undefined" && (
+                {props.product.refNumber !== "undefined" && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1029,10 +1391,10 @@ export default function ProductDetailCard(props) {
                       {" "}
                       <strong>Reference Number:</strong>
                     </span>
-                    {props.course.refNumber}
+                    {props.product.refNumber}
                   </Typography>
                 )}
-                {props.course.duration !== undefined && (
+                {props.product.duration !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1041,10 +1403,10 @@ export default function ProductDetailCard(props) {
                       {" "}
                       <strong>Duration:</strong>
                     </span>
-                    {props.course.duration}
+                    {props.product.duration}
                   </Typography>
                 )}
-                {props.course.deliveryMethod !== undefined && (
+                {props.product.deliveryMethod !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1053,10 +1415,10 @@ export default function ProductDetailCard(props) {
                       {" "}
                       <strong>Delivery Method:</strong>
                     </span>
-                    {props.course.deliveryMethod}
+                    {props.product.deliveryMethod}
                   </Typography>
                 )}
-                {props.course.venue !== undefined && (
+                {props.product.venue !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1065,10 +1427,10 @@ export default function ProductDetailCard(props) {
                       {" "}
                       <strong>Venue:</strong>
                     </span>
-                    {props.course.venue}
+                    {props.product.venue}
                   </Typography>
                 )}
-                {props.course.commencementWeekdaysDate !== undefined && (
+                {props.product.commencementWeekdaysDate !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1078,11 +1440,11 @@ export default function ProductDetailCard(props) {
                       <strong>Weekday Start Date(s):</strong>
                     </span>
                     <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.commencementWeekdaysDate.join("|")}
+                      {props.product.commencementWeekdaysDate.join("|")}
                     </span>
                   </Typography>
                 )}
-                {props.course.commencementWeekendsDate !== undefined && (
+                {props.product.commencementWeekendsDate !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1092,7 +1454,7 @@ export default function ProductDetailCard(props) {
                       <strong>Weekend Start Date(s):</strong>
                     </span>
                     <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.commencementWeekendsDate.join("|")}
+                      {props.product.commencementWeekendsDate.join("|")}
                     </span>
                   </Typography>
                 )}
@@ -1104,7 +1466,7 @@ export default function ProductDetailCard(props) {
                     <strong>Weekday Lecture Period:</strong>
                   </span>
                   <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {props.course.weekdaySessionPeriod}
+                    {props.product.weekdaySessionPeriod}
                   </span>
                 </Typography>
                 <Typography
@@ -1115,10 +1477,10 @@ export default function ProductDetailCard(props) {
                     <strong>Weekend Lecture Period:</strong>
                   </span>
                   <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {props.course.weekendSessionPeriod}
+                    {props.product.weekendSessionPeriod}
                   </span>
                 </Typography>
-                {props.course.hasMentorshipCredit && (
+                {props.product.hasMentorshipCredit && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1127,12 +1489,12 @@ export default function ProductDetailCard(props) {
                       <strong>Mentorship Credit:</strong>
                     </span>
                     <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.mentorshipCredit}&nbsp; Units &nbsp; (to be
+                      {props.product.mentorshipCredit}&nbsp; Units &nbsp; (to be
                       used after graduation)
                     </span>
                   </Typography>
                 )}
-                {props.course.hasMentorshipCredit && (
+                {props.product.hasMentorshipCredit && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1143,15 +1505,15 @@ export default function ProductDetailCard(props) {
                     <span style={{ marginLeft: 3, textAlign: "center" }}>
                       {getCurrencyCode()}
                       {(
-                        props.course.mentorshipCredit *
-                        props.course.costPerMentorshipCredit
+                        props.product.mentorshipCredit *
+                        props.product.costPerMentorshipCredit
                       )
                         .toFixed(2)
                         .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
                     </span>
                   </Typography>
                 )}
-                {props.course.hasMentorshipCredit && (
+                {props.product.hasMentorshipCredit && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1160,12 +1522,12 @@ export default function ProductDetailCard(props) {
                       <strong>Mentorship Duration:</strong>
                     </span>
                     <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.mentorshipDuration}&nbsp;&nbsp; ( from the
+                      {props.product.mentorshipDuration}&nbsp;&nbsp; ( from the
                       day of graduation)
                     </span>
                   </Typography>
                 )}
-                {props.course.isInstallmentalPaymentAllowed === "yes" && (
+                {props.product.isInstallmentalPaymentAllowed === "yes" && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1174,14 +1536,14 @@ export default function ProductDetailCard(props) {
                       <strong>Is Installmental Payment Allowed :</strong>
                     </span>
                     <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.isInstallmentalPaymentAllowed
+                      {props.product.isInstallmentalPaymentAllowed
                         .charAt(0)
                         .toUpperCase() +
-                        props.course.isInstallmentalPaymentAllowed.slice(1)}
+                        props.product.isInstallmentalPaymentAllowed.slice(1)}
                     </span>
                   </Typography>
                 )}
-                {props.course.isInstallmentalPaymentAllowed === "yes" && (
+                {props.product.isInstallmentalPaymentAllowed === "yes" && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1192,11 +1554,11 @@ export default function ProductDetailCard(props) {
                       </strong>
                     </span>
                     <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.course.maximumInstallmentalPayment}&nbsp;times
+                      {props.product.maximumInstallmentalPayment}&nbsp;times
                     </span>
                   </Typography>
                 )}
-                {props.course.passGrade !== undefined && (
+                {props.product.passGrade !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -1205,11 +1567,11 @@ export default function ProductDetailCard(props) {
                       {" "}
                       <strong>Minimum NextChamp Grade:</strong>
                     </span>
-                    {props.course.passGrade}
+                    {props.product.passGrade}
                   </Typography>
                 )}
                 <br /> <br />
-                {props.course.isCourseAuditable && (
+                {props.product.isCourseAuditable && (
                   <Typography>
                     <span
                       style={{
@@ -1220,7 +1582,7 @@ export default function ProductDetailCard(props) {
                     >
                       You can audit this course for FREE for up to
                       <strong>
-                        <span>{props.course.weekdayAuditDays}</span>
+                        <span>{props.product.weekdayAuditDays}</span>
                       </strong>
                       &nbsp;. You only make payment afterwards when you are sure
                       the course is a good fit for you
@@ -1233,8 +1595,13 @@ export default function ProductDetailCard(props) {
               <Box>
                 <SendCourseToCheckoutForm
                   price={price}
-                  currency={props.course.currency}
-                  courseId={props.course.id}
+                  currency={props.product.currency}
+                  unit={props.product.unit}
+                  minQuantity={props.product.minQuantity}
+                  courseId={props.product.id}
+                  productId={props.product.id}
+                  requestQuote={props.product.requestQuote}
+                  allowSubscription={props.product.allowSubscription}
                   token={props.token}
                   userId={props.userId}
                   handleMakeOpenSignUpDialogStatus={
@@ -1286,7 +1653,7 @@ export default function ProductDetailCard(props) {
                     justifyContent: "center",
                   }}
                 >
-                  <ReactMarkdown>{props.course.prerequisites}</ReactMarkdown>
+                  <ReactMarkdown>{props.product.prerequisites}</ReactMarkdown>
                 </Typography>
               </Box>
             </Grid>
@@ -1309,7 +1676,7 @@ export default function ProductDetailCard(props) {
                     justifyContent: "center",
                   }}
                 >
-                  <ReactMarkdown>{props.course.whatToLearn}</ReactMarkdown>
+                  <ReactMarkdown>{props.product.whatToLearn}</ReactMarkdown>
                 </Typography>
               </Box>
             </Grid>
@@ -1331,7 +1698,7 @@ export default function ProductDetailCard(props) {
                     justifyContent: "center",
                   }}
                 >
-                  <ReactMarkdown>{props.course.tools}</ReactMarkdown>
+                  <ReactMarkdown>{props.product.tools}</ReactMarkdown>
                 </Typography>
               </Box>
             </Grid>
@@ -1353,7 +1720,7 @@ export default function ProductDetailCard(props) {
                     justifyContent: "center",
                   }}
                 >
-                  <ReactMarkdown>{props.course.targetAudience}</ReactMarkdown>
+                  <ReactMarkdown>{props.product.targetAudience}</ReactMarkdown>
                 </Typography>
               </Box>
             </Grid>
@@ -1372,7 +1739,7 @@ export default function ProductDetailCard(props) {
                   justifyContent: "center",
                 }}
               >
-                <ReactMarkdown>{props.course.longDescription}</ReactMarkdown>
+                <ReactMarkdown>{props.product.longDescription}</ReactMarkdown>
               </Typography>
             </Box>
           </Grid>
@@ -1390,7 +1757,7 @@ export default function ProductDetailCard(props) {
                   justifyContent: "center",
                 }}
               >
-                <ReactMarkdown>{props.course.contents}</ReactMarkdown>
+                <ReactMarkdown>{props.product.contents}</ReactMarkdown>
               </Typography>
             </Box>
           </Grid>
@@ -1408,7 +1775,7 @@ export default function ProductDetailCard(props) {
                   justifyContent: "center",
                 }}
               >
-                <ReactMarkdown>{props.course.capstoneProject}</ReactMarkdown>
+                <ReactMarkdown>{props.product.capstoneProject}</ReactMarkdown>
               </Typography>
             </Box>
           </Grid>
@@ -1428,7 +1795,7 @@ export default function ProductDetailCard(props) {
                   justifyContent: "center",
                 }}
               >
-                <ReactMarkdown>{props.course.successTips}</ReactMarkdown>
+                <ReactMarkdown>{props.product.successTips}</ReactMarkdown>
               </Typography>
             </Box>
           </Grid>

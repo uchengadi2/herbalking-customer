@@ -45,7 +45,60 @@ const useStyles = makeStyles((theme) => ({
     color: "white",
     backgroundColor: theme.palette.common.grey,
     "&:hover": {
-      backgroundColor: theme.palette.common.grey,
+      backgroundColor: theme.palette.common.green,
+    },
+  },
+
+  submitForSubscriptionButton: {
+    borderRadius: 10,
+    height: 40,
+    width: 120,
+    marginLeft: 125,
+    marginTop: 30,
+    // color: "white",
+    // backgroundColor: "#A8A196",
+    // "&:hover": {
+    //   backgroundColor: theme.palette.common.green,
+    // },
+  },
+
+  removeItem: {
+    borderRadius: 10,
+    height: 40,
+    width: 190,
+    marginLeft: 80,
+    marginTop: 30,
+    marginBottom: 20,
+    // color: "white",
+    // backgroundColor: theme.palette.common.green,
+    // "&:hover": {
+    //   backgroundColor: theme.palette.common.green,
+    // },
+  },
+
+  submitQuoteButton: {
+    borderRadius: 10,
+    height: 40,
+    width: 200,
+    marginLeft: 80,
+    marginTop: 20,
+    color: "white",
+    backgroundColor: theme.palette.common.green,
+    "&:hover": {
+      backgroundColor: theme.palette.common.green,
+    },
+  },
+
+  submitBidButton: {
+    borderRadius: 10,
+    height: 40,
+    width: 200,
+    marginLeft: 80,
+    marginTop: 30,
+    color: "white",
+    backgroundColor: theme.palette.common.green,
+    "&:hover": {
+      backgroundColor: theme.palette.common.green,
     },
   },
 }));
@@ -61,7 +114,7 @@ const renderRequestedQuantityField = ({
   return (
     <TextField
       //error={touched && invalid}
-      helperText="How many learners slot do you need?"
+      helperText="How many quantities do you need?"
       variant="outlined"
       label={label}
       id={input.name}
@@ -79,7 +132,7 @@ const renderRequestedQuantityField = ({
             height: 1,
           },
         },
-        readOnly: true,
+        //readOnly: true,
       }}
     />
   );
@@ -121,15 +174,15 @@ const renderPreferredStartDateField = ({
 };
 
 function SendCourseToCheckoutForm(props) {
-  const { courseId, token, userId } = props;
-  const [quantity, setQuantity] = useState(1);
-  const [newQuantity, setNewQuantity] = useState(1);
+  const { productId, token, userId } = props;
+  const [quantity, setQuantity] = useState(props.minQuantity);
+  const [newQuantity, setNewQuantity] = useState(props.minQuantity);
   const [price, setPrice] = useState();
   const [productQuantityInCart, setProductQuantityInCart] = useState();
   const [productLocation, setProductLocation] = useState();
   const [productLocationCountry, setProductLocationCountry] = useState();
   const [cartHolder, setCartHolder] = useState();
-  const [minimumQuantity, setMinimumQuantity] = useState(1);
+  const [minimumQuantity, setMinimumQuantity] = useState(props.minQuantity);
   const [cartId, setCartId] = useState();
   const [total, setTotal] = useState();
   const [sameProductAlreadyInCart, setSameProductAlreadyInCart] =
@@ -175,7 +228,7 @@ function SendCourseToCheckoutForm(props) {
         params: {
           cartHolder: userId,
           //productLocation: location,
-          product: courseId,
+          product: productId,
         },
       });
 
@@ -257,15 +310,64 @@ function SendCourseToCheckoutForm(props) {
     );
   };
 
+  const renderMinimumQuantityField = ({
+    input,
+    label,
+    meta: { touched, error, invalid },
+    type,
+    id,
+    ...custom
+  }) => {
+    return (
+      <TextField
+        //error={touched && invalid}
+        helperText="Minimum Quantity Required(MQR)"
+        variant="outlined"
+        label={label}
+        id={input.name}
+        //value={input.value}
+        fullWidth
+        //required
+        type={type}
+        {...custom}
+        disabled
+        defaultValue={`${minimumQuantity} ${
+          minimumQuantity <= 1 ? props.unit : props.unit + "s"
+        }`}
+        onChange={input.onChange}
+        InputProps={{
+          inputProps: {
+            min: 1,
+            style: {
+              height: 1,
+            },
+          },
+        }}
+      />
+    );
+  };
+
   const buttonContent = () => {
-    return <React.Fragment> Enrol</React.Fragment>;
+    return <React.Fragment> Buy Now</React.Fragment>;
   };
 
   const cartButtonContent = () => {
     return <React.Fragment>Add to Cart</React.Fragment>;
   };
 
-  console.log("props.token:", props.token);
+  const subscriptionButtonContent = () => {
+    return <React.Fragment>Subscribe</React.Fragment>;
+  };
+
+  const requestQuoteButtonContent = () => {
+    return <React.Fragment>Request a Quote</React.Fragment>;
+  };
+
+  const biddingButtonContent = () => {
+    return <React.Fragment>Submit a Bid</React.Fragment>;
+  };
+
+  //this is the function that adds to checkout
 
   const onSubmit = (formValues) => {
     setLoading(true);
@@ -280,7 +382,7 @@ function SendCourseToCheckoutForm(props) {
     }
 
     if (!newQuantity) {
-      props.handleFailedSnackbar("The order quantity cannot be empty");
+      props.handleFailedSnackbar("The order quantity cannot be empty or 0");
       setLoading(false);
 
       return;
@@ -305,7 +407,7 @@ function SendCourseToCheckoutForm(props) {
     }
 
     const data = {
-      course: props.courseId,
+      product: productId,
       refNumber: formValues.refNumber
         ? formValues.refNumber
         : "PRO-" + Math.floor(Math.random() * 1000000000) + "-CT",
@@ -316,40 +418,104 @@ function SendCourseToCheckoutForm(props) {
       price: price,
       currency: props.currency,
       status: "marked-for-checkout",
-      //preferredStartDate: formValues.preferredStartDate,
+      weightInKg: props.weightInKg,
+      isVatable: props.isVatable,
+      revenueMargin: props.revenueMargin,
+      revenueMarginShouldPrevail: props.revenueMarginShouldPrevail,
     };
 
-    //create a new cart and add the product
-    if (data) {
-      const createForm = async () => {
-        api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
-        const response = await api.post(`/carts`, data);
+    if (sameProductAlreadyInCart === false) {
+      //create a new cart and add the product
+      if (data) {
+        const createForm = async () => {
+          api.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${props.token}`;
+          const response = await api.post(`/carts`, data);
 
-        if (response.data.status === "success") {
-          dispatch({
-            type: CREATE_CART,
-            payload: response.data.data.data,
-          });
+          if (response.data.status === "success") {
+            dispatch({
+              type: CREATE_CART,
+              payload: response.data.data.data,
+            });
 
-          // props.handleSuccessfulCreateSnackbar(
-          //   `item(s) successfully added to cart. Please visit the cart to continue to checkout and payment`
-          // );
-          history.push(`/checkouts`);
-          setLoading(false);
-        } else {
-          props.handleFailedSnackbar(
-            "Something went wrong, please try again!!!"
-          );
-        }
-      };
-      createForm().catch((err) => {
-        props.handleFailedSnackbar();
-        console.log("err:", err.message);
-      });
+            // props.handleSuccessfulCreateSnackbar(
+            //   `item(s) successfully added to cart. Please visit the cart to continue to checkout and payment`
+            // );
+            history.push(`/checkouts`);
+            setLoading(false);
+          } else {
+            props.handleFailedSnackbar(
+              "Something went wrong, please try again!!!"
+            );
+          }
+        };
+        createForm().catch((err) => {
+          props.handleFailedSnackbar();
+          console.log("err:", err.message);
+        });
+      } else {
+        props.handleFailedSnackbar("Something went wrong, please try again!!!");
+      }
     } else {
-      props.handleFailedSnackbar("Something went wrong, please try again!!!");
+      //update existing cart
+      let totalProductQuantity = 0;
+      if (!productQuantityInCart) {
+        totalProductQuantity = quantity;
+      } else {
+        totalProductQuantity =
+          parseFloat(productQuantityInCart) + parseFloat(quantity);
+      }
+
+      const data = {
+        quantity: totalProductQuantity,
+        price: price,
+        currency: props.currency,
+        isDeleted: false,
+        weightInKg: props.weightInKg,
+        isVatable: props.isVatable,
+        revenueMargin: props.revenueMargin,
+        revenueMarginShouldPrevail: props.revenueMarginShouldPrevail,
+      };
+
+      //update the exist
+
+      if (data) {
+        const createForm = async () => {
+          api.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${props.token}`;
+          const response = await api.patch(`/carts/${cartId}`, data);
+
+          if (response.data.status === "success") {
+            dispatch({
+              type: EDIT_CART,
+              payload: response.data.data.data,
+            });
+
+            // props.handleSuccessfulCreateSnackbar(
+            //   `item(s) successfully added to cart!!!`
+            // );
+            history.push(`/checkouts`);
+            setLoading(false);
+          } else {
+            props.handleFailedSnackbar(
+              "Something went wrong, please try again!!!"
+            );
+          }
+        };
+        createForm().catch((err) => {
+          props.handleFailedSnackbar();
+          console.log("err:", err.message);
+        });
+      } else {
+        props.handleFailedSnackbar("Something went wrong, please try again!!!");
+      }
+      // } //end of the no cartholder
     }
   };
+
+  //this is the script to add to cart
 
   const onSubmitToCart = (formValues) => {
     setIsLoading(true);
@@ -361,7 +527,7 @@ function SendCourseToCheckoutForm(props) {
     }
 
     if (!newQuantity) {
-      props.handleFailedSnackbar("The order quantity cannot be empty");
+      props.handleFailedSnackbar("The order quantity cannot be empty or 0");
       setIsLoading(false);
       return;
     }
@@ -383,7 +549,7 @@ function SendCourseToCheckoutForm(props) {
     }
 
     const data = {
-      course: props.courseId,
+      product: productId,
       refNumber: formValues.refNumber
         ? formValues.refNumber
         : "PRO-" + Math.floor(Math.random() * 1000000000) + "-CT",
@@ -394,42 +560,140 @@ function SendCourseToCheckoutForm(props) {
       price: price,
       currency: props.currency,
       status: "unmarked-for-checkout",
-      //preferredStartDate: formValues.preferredStartDate,
+      weightInKg: props.weightInKg,
+      isVatable: props.isVatable,
+      revenueMargin: props.revenueMargin,
+      revenueMarginShouldPrevail: props.revenueMarginShouldPrevail,
     };
 
     //create a new cart and add the product
-    if (data) {
-      const createForm = async () => {
-        api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
-        const response = await api.post(`/carts`, data);
+    // if (data) {
+    //   const createForm = async () => {
+    //     api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+    //     const response = await api.post(`/carts`, data);
 
-        if (response.data.status === "success") {
-          dispatch({
-            type: CREATE_CART,
-            payload: response.data.data.data,
-          });
+    //     if (response.data.status === "success") {
+    //       dispatch({
+    //         type: CREATE_CART,
+    //         payload: response.data.data.data,
+    //       });
 
-          props.handleSuccessfulCreateSnackbar(
-            `item(s) successfully added to cart. Please visit the cart to continue to checkout and payment`
-          );
-          props.cartCounterHandler(1);
+    //       props.handleSuccessfulCreateSnackbar(
+    //         `item(s) successfully added to cart. Please visit the cart to continue to checkout and payment`
+    //       );
+    //       props.cartCounterHandler(1);
 
-          history.push(`/`);
-          setIsLoading(false);
-        } else {
-          props.handleFailedSnackbar(
-            "Something went wrong, please try again!!!"
-          );
-        }
-      };
-      createForm().catch((err) => {
-        props.handleFailedSnackbar();
-        console.log("err:", err.message);
-      });
+    //       history.push(`/`);
+    //       setIsLoading(false);
+    //     } else {
+    //       props.handleFailedSnackbar(
+    //         "Something went wrong, please try again!!!"
+    //       );
+    //     }
+    //   };
+    //   createForm().catch((err) => {
+    //     props.handleFailedSnackbar();
+    //     console.log("err:", err.message);
+    //   });
+    // } else {
+    //   props.handleFailedSnackbar("Something went wrong, please try again!!!");
+    // }
+    if (sameProductAlreadyInCart === false) {
+      //create a new cart and add the product
+      if (data) {
+        const createForm = async () => {
+          api.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${props.token}`;
+          const response = await api.post(`/carts`, data);
+
+          if (response.data.status === "success") {
+            dispatch({
+              type: CREATE_CART,
+              payload: response.data.data.data,
+            });
+
+            props.handleSuccessfulCreateSnackbar(
+              `item(s) successfully added to cart. Please visit the cart to continue to checkout and payment`
+            );
+            props.cartCounterHandler(1);
+            history.push("/");
+            setLoading(false);
+          } else {
+            props.handleFailedSnackbar(
+              "Something went wrong, please try again!!!"
+            );
+          }
+        };
+        createForm().catch((err) => {
+          props.handleFailedSnackbar();
+          console.log("err:", err.message);
+        });
+      } else {
+        props.handleFailedSnackbar("Something went wrong, please try again!!!");
+      }
     } else {
-      props.handleFailedSnackbar("Something went wrong, please try again!!!");
-    }
+      //update existing cart
+      let totalProductQuantity = 0;
+      if (!productQuantityInCart) {
+        totalProductQuantity = quantity;
+      } else {
+        totalProductQuantity =
+          parseFloat(productQuantityInCart) + parseFloat(quantity);
+      }
+
+      const data = {
+        quantity: totalProductQuantity,
+        price: price,
+        currency: props.currency,
+        isDeleted: false,
+        weightInKg: props.weightInKg,
+        isVatable: props.isVatable,
+        revenueMargin: props.revenueMargin,
+        revenueMarginShouldPrevail: props.revenueMarginShouldPrevail,
+      };
+
+      //update the exist
+
+      if (data) {
+        const createForm = async () => {
+          api.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${props.token}`;
+          const response = await api.patch(`/carts/${cartId}`, data);
+
+          if (response.data.status === "success") {
+            dispatch({
+              type: EDIT_CART,
+              payload: response.data.data.data,
+            });
+
+            props.handleSuccessfulCreateSnackbar(
+              `item(s) successfully added to cart!!!`
+            );
+            history.push("/");
+            setLoading(false);
+          } else {
+            props.handleFailedSnackbar(
+              "Something went wrong, please try again!!!"
+            );
+          }
+        };
+        createForm().catch((err) => {
+          props.handleFailedSnackbar();
+          console.log("err:", err.message);
+        });
+      } else {
+        props.handleFailedSnackbar("Something went wrong, please try again!!!");
+      }
+    } //end of the no cartholder
   };
+
+  const onSubmitForSubscription = (formValues) => {};
+
+  const onSubmitForQuoteRequest = (formValues) => {};
+
+  const onSubmitABidRequest = (formValues) => {};
 
   return (
     <form id="sendCourseToCheckoutForm">
@@ -447,22 +711,44 @@ function SendCourseToCheckoutForm(props) {
           style={{ marginTop: 10, marginBottom: 10 }}
           justifyContent="center"
         ></Grid>
+        <Field
+          label=""
+          id="minimumQuantity"
+          name="minimumQuantity"
+          type="text"
+          component={renderMinimumQuantityField}
+          style={{ width: 300 }}
+        />
+        <Field
+          label=""
+          id="quantity"
+          name="quantity"
+          type="number"
+          defaultValue={quantity}
+          onChange={onQuantityChange}
+          component={renderRequestedQuantityField}
+          style={{ width: 300, marginTop: 10 }}
+        />
 
         <Grid container direction="row">
-          <Grid item style={{ width: 50, marginTop: 45, fontSize: 45 }}>
-            <span style={{ color: "grey" }}>&#8358;</span>
-          </Grid>
-          <Grid item style={{ marginLeft: 10, width: 100 }}>
-            <Field
-              label=""
-              id="total"
-              name="total"
-              defaultValue={total}
-              type="text"
-              component={renderTotalField}
-              style={{ width: 100 }}
-            />
-          </Grid>
+          {props.pricingMechanism === "pricing" && (
+            <Grid item style={{ width: 50, marginTop: 45, fontSize: 45 }}>
+              <span style={{ color: "grey" }}>&#8358;</span>
+            </Grid>
+          )}
+          {props.pricingMechanism === "pricing" && (
+            <Grid item style={{ marginLeft: 10, width: 100 }}>
+              <Field
+                label=""
+                id="total"
+                name="total"
+                defaultValue={total}
+                type="text"
+                component={renderTotalField}
+                style={{ width: 100 }}
+              />
+            </Grid>
+          )}
           {/* <Grid
             item
             style={{ marginTop: 10, marginBottom: 10 }}
@@ -479,29 +765,74 @@ function SendCourseToCheckoutForm(props) {
           </Grid> */}
         </Grid>
 
-        <Button
-          variant="contained"
-          className={classes.submitButton}
-          onClick={props.handleSubmit(onSubmit)}
-        >
-          {loading ? (
-            <CircularProgress size={30} color="inherit" />
-          ) : (
-            buttonContent()
-          )}
-        </Button>
+        {props.pricingMechanism === "pricing" && (
+          <Button
+            variant="contained"
+            className={classes.submitButton}
+            onClick={props.handleSubmit(onSubmit)}
+          >
+            {loading ? (
+              <CircularProgress size={30} color="inherit" />
+            ) : (
+              buttonContent()
+            )}
+          </Button>
+        )}
 
-        <Button
-          variant="text"
-          className={classes.submitToCartButton}
-          onClick={props.handleSubmit(onSubmitToCart)}
-        >
-          {isLoading ? (
-            <CircularProgress size={30} color="inherit" />
-          ) : (
-            cartButtonContent()
-          )}
-        </Button>
+        {props.pricingMechanism === "pricing" && (
+          <Button
+            variant="text"
+            className={classes.submitToCartButton}
+            onClick={props.handleSubmit(onSubmitToCart)}
+          >
+            {isLoading ? (
+              <CircularProgress size={30} color="inherit" />
+            ) : (
+              cartButtonContent()
+            )}
+          </Button>
+        )}
+
+        {props.pricingMechanism === "pricing" && props.allowSubscription && (
+          <Button
+            variant="outlined"
+            className={classes.submitForSubscriptionButton}
+            onClick={props.handleSubmit(onSubmitForSubscription)}
+          >
+            {isLoading ? (
+              <CircularProgress size={30} color="inherit" />
+            ) : (
+              subscriptionButtonContent()
+            )}
+          </Button>
+        )}
+
+        {props.pricingMechanism === "request-quote" && (
+          <Button
+            variant="text"
+            className={classes.submitQuoteButton}
+            onClick={props.handleSubmit(onSubmitForQuoteRequest)}
+          >
+            {isLoading ? (
+              <CircularProgress size={30} color="inherit" />
+            ) : (
+              requestQuoteButtonContent()
+            )}
+          </Button>
+        )}
+        {props.pricingMechanism === "bidding" && (
+          <Button
+            variant="text"
+            className={classes.submitBidButton}
+            onClick={props.handleSubmit(onSubmitABidRequest)}
+          >
+            {isLoading ? (
+              <CircularProgress size={30} color="inherit" />
+            ) : (
+              biddingButtonContent()
+            )}
+          </Button>
+        )}
       </Box>
     </form>
   );

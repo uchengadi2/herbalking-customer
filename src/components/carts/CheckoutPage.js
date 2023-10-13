@@ -218,6 +218,11 @@ function CheckoutPage(props) {
   const [totalCost, setTotalCost] = useState();
   const [currency, setCurrency] = useState();
   const [isLoading, setIsLoading] = useState(null);
+  const [vat, setVat] = useState();
+  const [implementVatCollection, setImplementVatCollection] = useState(false);
+  const [policy, setPolicy] = useState([]);
+  const [implementSalesTaxCollection, setImplementSalesTaxCollection] =
+    useState();
 
   const [alert, setAlert] = useState({
     open: false,
@@ -280,15 +285,19 @@ function CheckoutPage(props) {
       items.map((cart) => {
         allData.push({
           id: cart._id,
-          course: cart.course,
+          product: cart.product,
           cartHolder: cart.cartHolder,
           dateAddedToCart: cart.dateAddedToCart,
           refNumber: cart.refNumber,
           quantity: cart.quantity,
           price: cart.price,
+          isVatable: cart.isVatable,
+          revenueMargin: cart.revenueMargin,
+          revenueMarginShouldPrevail: cart.revenueMarginShouldPrevail,
           currency: cart.currency,
           status: cart.status,
           preferredStartDate: cart.preferredStartDate,
+          weightInKg: cart.weightInKg,
         });
       });
 
@@ -309,6 +318,47 @@ function CheckoutPage(props) {
     fetchData().catch(console.error);
   }, [updateCheckout]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/policies`, {
+        params: { status: "active" },
+      });
+      const policies = response.data.data.data;
+
+      policies.map((policy) => {
+        allData.push({
+          id: policy._id,
+          country: policy.country,
+          currency: policy.currency,
+          vat: policy.vat,
+          implementVatCollection: policy.implementVatCollection,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+          salesTaxDirection: policy.salesTaxDirection,
+          status: policy.status,
+          shoppingMode: policy.shoppingMode,
+          onlineOrigin: policy.onlineOrigin,
+          allowCentralCommission: policy.allowCentralCommission,
+          commissionRate: policy.commissionRate,
+          allowOriginSalesTax: policy.allowOriginSalesTax,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+        });
+      });
+
+      setVat(allData[0].vat);
+      setCurrency(allData[0].currency);
+      setImplementVatCollection(allData[0].implementVatCollection);
+      setPolicy(allData[0]);
+      setImplementSalesTaxCollection(allData[0].implementSalesTaxCollection);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [updateCheckout]);
+
   const Str = require("@supercharge/strings");
 
   const cartList = matchesMD ? (
@@ -317,7 +367,7 @@ function CheckoutPage(props) {
         <Grid container direction="row">
           {cartProductList.map((cart, index) => (
             <CheckoutCard
-              course={cart.course}
+              product={cart.product}
               key={`${cart.id}${index}`}
               cartHolder={cart.cartHolder}
               cartId={cart.id}
@@ -325,6 +375,10 @@ function CheckoutPage(props) {
               refNumber={cart.refNumber}
               quantity={cart.quantity}
               price={cart.price}
+              isVatable={cart.isVatable}
+              revenueMargin={cart.revenueMargin}
+              revenueMarginShouldPrevail={cart.revenueMarginShouldPrevail}
+              weightInKg={cart.weightInKg}
               preferredStartDate={cart.preferredStartDate}
               currency={cart.currency}
               status={cart.status}
@@ -354,7 +408,7 @@ function CheckoutPage(props) {
         >
           {cartProductList.map((cart, index) => (
             <CheckoutCard
-              course={cart.course}
+              product={cart.product}
               key={`${cart.id}${index}`}
               cartHolder={cart.cartHolder}
               cartId={cart.id}
@@ -362,8 +416,12 @@ function CheckoutPage(props) {
               refNumber={cart.refNumber}
               quantity={cart.quantity}
               price={cart.price}
+              isVatable={cart.isVatable}
+              weightInKg={cart.weightInKg}
               preferredStartDate={cart.preferredStartDate}
               currency={cart.currency}
+              revenueMargin={cart.revenueMargin}
+              revenueMarginShouldPrevail={cart.revenueMarginShouldPrevail}
               status={cart.status}
               token={props.token}
               userId={props.userId}
@@ -389,6 +447,23 @@ function CheckoutPage(props) {
     //setCurrency(cart.currency);
   });
 
+  //calculate the total weight of all products here
+  let totalWeightInKg = 0;
+
+  cartProductList.map((cart, index) => {
+    totalWeightInKg =
+      totalWeightInKg + parseFloat(cart.weightInKg) * cart.quantity;
+    //setCurrency(cart.currency);
+  });
+
+  //calculating the vat for the order
+  let prevailingVat = 0;
+  cartProductList.map((cart, index) => {
+    if (cart.isVatable) {
+      prevailingVat = prevailingVat + (vat / 100) * cart.price * cart.quantity;
+    }
+  });
+
   return (
     <Grid container direction="row" className={classes.root}>
       <Grid item style={{ width: "100%", marginTop: "20px" }}>
@@ -402,7 +477,7 @@ function CheckoutPage(props) {
         {!isLoading && cartProductList.length === 0 ? (
           <p style={{ marginTop: 50, marginLeft: 10 }}>
             {" "}
-            There are no course in your checkout
+            There are no product in your checkout
           </p>
         ) : (
           <Grid item>{cartList}</Grid>
@@ -415,9 +490,15 @@ function CheckoutPage(props) {
             ""
           ) : (
             <CheckoutDeliveryAndPayment
-              courseList={cartProductList}
+              productList={cartProductList}
               totalCost={total}
-              currency="naira"
+              totalWeight={totalWeightInKg}
+              vat={prevailingVat}
+              vatRate={vat}
+              policy={policy}
+              implementSalesTaxCollection={implementSalesTaxCollection}
+              implementVatCollection={implementVatCollection}
+              currency={currency}
               token={props.token}
               userId={props.userId}
               setToken={props.setToken}

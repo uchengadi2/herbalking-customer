@@ -73,8 +73,8 @@ function Paystack(props) {
     className: classes.checkout,
     email: props.email,
     amount: props.amount,
-    //publicKey: "pk_test_9181f2dcbb5a6bf2cf56c8f2632eaa5e2fd182cb", //wholeroof test
-    publicKey: "pk_live_5700e72ac96f8aafda7af34e76b1dcfd1b6ec8b2", //wholeroof live
+    publicKey: "pk_test_9181f2dcbb5a6bf2cf56c8f2632eaa5e2fd182cb", //wholeroof test
+    //publicKey: "pk_live_5700e72ac96f8aafda7af34e76b1dcfd1b6ec8b2", //wholeroof live
   };
 
   // you can call this function anything
@@ -106,18 +106,35 @@ function Paystack(props) {
   const commitDataToDatabase = () => {
     const transData = {
       orderNumber: props.data.orderNumber,
+      customerName: props.data.customerName,
+      customerPhoneNumber: props.data.customerPhoneNumber,
+      customerEmailAddress: props.data.customerEmailAddress,
       recipientName: props.data.recipientName,
       recipientPhoneNumber: props.data.recipientPhoneNumber,
+      recipientAddress: props.data.recipientAddress,
+      nearestBusstop: props.data.nearestBusstop,
+      postalCode: props.data.postalCode,
+      recipientCountry: props.data.recipientCountry,
+      recipientState: props.data.recipientState,
+      recipientCity: props.data.recipientCity,
+      deliveryMode: props.data.deliveryMode,
+      vatRate: props.data.vatRate,
+      vat: props.data.vat,
+      currency: props.data.currency,
+      totalWeight: props.data.totalWeight,
+      payOnDeliveryMaxWeightInKg: props.data.payOnDeliveryMaxWeightInKg,
+      implementVatCollection: props.data.implementVatCollection,
       recipientEmailAddress: props.data.recipientEmailAddress,
-
       totalDeliveryCost: props.data.totalDeliveryCost,
       totalProductCost: props.data.totalProductCost,
-      totalProductCostUs: props.data.totalProductCostUs,
-      totalProductCostUk: props.data.totalProductCostUk,
       paymentMethod: props.data.paymentMethod,
-      paymentStatus: "to-be-confirmed",
+      paymentStatus: "collect-payment-on-delivery",
       orderedBy: props.data.orderedBy,
-      productCurrency: props.data.productCurrency,
+      salesTax: props.data.salesTax,
+      origin: props.data.origin,
+      implementSalesTaxCollection: props.data.implementSalesTaxCollection,
+      allowOriginSalesTax: props.data.allowOriginSalesTax,
+      revenue: props.data.revenue,
     };
 
     if (transData) {
@@ -134,25 +151,95 @@ function Paystack(props) {
           });
 
           props.productList.map((cart, index) => {
+            // const data = {
+            //   orderNumber: props.data.orderNumber,
+            //   transactionId: transId,
+            //   product: cart.course,
+            //   orderedPrice: cart.price,
+            //   recipientName: props.data.recipientName,
+            //   recipientPhoneNumber: props.data.recipientPhoneNumber,
+            //   recipientEmailAddress: props.data.recipientEmailAddress,
+            //   totalDeliveryCost: props.data.totalDeliveryCost.toFixed(2),
+            //   preferredStartDate: cart.preferredStartDate,
+            //   cartId: cart.id,
+            //   quantityAdddedToCart: cart.quantity,
+            //   orderedQuantity: cart.quantity,
+            //   dateAddedToCart: cart.dateAddedToCart,
+            //   productCurrency: cart.currency,
+            //   paymentMethod: props.data.paymentMethod,
+            //   paymentStatus: "to-be-confirmed",
+            //   orderedBy: cart.cartHolder,
+            // };
+
             const data = {
               orderNumber: props.data.orderNumber,
               transactionId: transId,
-              product: cart.course,
+              product: cart.product,
               orderedPrice: cart.price,
+              customerName: props.data.customerName,
+              customerPhoneNumber: props.data.customerPhoneNumber,
+              customerEmailAddress: props.data.customerEmailAddress,
               recipientName: props.data.recipientName,
               recipientPhoneNumber: props.data.recipientPhoneNumber,
+              recipientAddress: props.data.recipientAddress,
+              nearestBusstop: props.data.nearestBusstop,
+              postalCode: props.data.postalCode,
+              recipientCountry: props.data.recipientCountry,
+              recipientState: props.data.recipientState,
+              recipientCity: props.data.recipientCity,
+              deliveryMode: props.data.deliveryMode,
+              vatRate: props.data.vatRate,
+
+              vat: props.data.implementVatCollection
+                ? cart.isVatable
+                  ? (props.data.vatRate / 100) * cart.price * cart.quantity
+                  : 0
+                : 0,
+              currency: props.data.currency,
+              totalWeight: props.data.totalWeight,
+              payOnDeliveryMaxWeightInKg: props.data.payOnDeliveryMaxWeightInKg,
+              implementVatCollection: props.data.implementVatCollection,
               recipientEmailAddress: props.data.recipientEmailAddress,
-              totalDeliveryCost: props.data.totalDeliveryCost.toFixed(2),
-              preferredStartDate: cart.preferredStartDate,
+              totalDeliveryCost: props.data.totalDeliveryCost,
+              totalProductCost: props.data.totalProductCost,
+              paymentMethod: props.data.paymentMethod,
+              paymentStatus: "collect-payment-on-delivery",
+
               cartId: cart.id,
               quantityAdddedToCart: cart.quantity,
               orderedQuantity: cart.quantity,
               dateAddedToCart: cart.dateAddedToCart,
-              productCurrency: cart.currency,
+              currency: props.data.currency,
               paymentMethod: props.data.paymentMethod,
-              paymentStatus: "to-be-confirmed",
+
               orderedBy: cart.cartHolder,
+              salesTax: props.data.implementSalesTaxCollection
+                ? props.data.allowOriginSalesTax
+                  ? (cart.price *
+                      cart.quantity *
+                      props.data.prevailingSalesTax) /
+                    100
+                  : (cart.price *
+                      cart.quantity *
+                      props.data.destinationSalesTax) /
+                    100
+                : 0,
+              origin: props.data.origin,
+              implementSalesTaxCollection:
+                props.data.implementSalesTaxCollection,
+              allowOriginSalesTax: props.data.allowOriginSalesTax,
+              isVatable: cart.isVatable,
+              revenue: props.data.allowCentralCommission
+                ? cart.revenueMarginShouldPrevail
+                  ? cart.revenueMargin * cart.quantity
+                  : (props.data.commissionRate / 100) *
+                    cart.price *
+                    cart.quantity
+                : cart.revenueMarginShouldPrevail
+                ? cart.revenueMargin * cart.quantity
+                : null,
             };
+
             if (data) {
               const createForm = async () => {
                 api.defaults.headers.common[

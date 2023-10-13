@@ -128,7 +128,7 @@ export default function LearningPath(props) {
   const [stateName, setStateName] = useState();
   const [product, setProduct] = useState({});
 
-  const [learningPath, setLearningPath] = useState("crash-course");
+  const [learningPath, setLearningPath] = useState("retail");
 
   // const { token, setToken } = useToken();
   // const { userId, setUserId } = useUserId();
@@ -146,7 +146,7 @@ export default function LearningPath(props) {
 
   let imageUrl = "";
   if (product) {
-    imageUrl = `${baseURL}/images/courses/${product.imageCover}`;
+    imageUrl = `${baseURL}/images/products/${product.imageCover}`;
   }
 
   const Str = require("@supercharge/strings");
@@ -176,19 +176,10 @@ export default function LearningPath(props) {
               marginLeft: 10,
             }}
           >
-            <MenuItem value={"crash-course"}>Crash Courses</MenuItem>
-            <MenuItem value={"regular-course"}>Regular Courses</MenuItem>
-            <MenuItem value={"programmes"}>Programmes</MenuItem>
-            <MenuItem value={"channels"}>Channels</MenuItem>
-            <MenuItem value={"assessments"}>Assessments</MenuItem>
-            <MenuItem value={"mentoring"}>Mentoring</MenuItem>
-            <MenuItem value={"mocks"}>Mocks</MenuItem>
-            <MenuItem value={"live-interviews-preps"}>
-              Live Interview Preps
-            </MenuItem>
-            <MenuItem value={"talk-to-expert"}>Talk To An Expert</MenuItem>
+            <MenuItem value={"retail"}>Retail</MenuItem>
+            <MenuItem value={"wholesale"}>Wholesale(Bulk Purchase)</MenuItem>
           </Select>
-          <FormHelperText>Choose Path</FormHelperText>
+          <FormHelperText>Choose Shopping Preference</FormHelperText>
         </FormControl>
       </Box>
     );

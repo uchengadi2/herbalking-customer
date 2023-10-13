@@ -22,6 +22,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import api from "./../../apis/local";
 import { CREATE_ORDER } from "../../actions/types";
+import { EDIT_CART, DELETE_CART } from "../../actions/types";
 import CheckoutPage from "./CheckoutPage";
 import Paystack from "../../Paystack";
 import history from "../../history";
@@ -40,6 +41,32 @@ const useStyles = makeStyles((theme) => ({
     height: 40,
     width: 100,
     marginLeft: 230,
+    marginTop: 30,
+    marginBottom: 20,
+    // color: "white",
+    // backgroundColor: theme.palette.common.green,
+    // "&:hover": {
+    //   backgroundColor: theme.palette.common.green,
+    // },
+  },
+
+  submitUpdateButton: {
+    borderRadius: 10,
+    height: 40,
+    width: 200,
+    marginLeft: 70,
+    marginTop: 30,
+    color: "white",
+    backgroundColor: theme.palette.common.green,
+    "&:hover": {
+      backgroundColor: theme.palette.common.green,
+    },
+  },
+  removeItem: {
+    borderRadius: 10,
+    height: 40,
+    width: 190,
+    marginLeft: 80,
     marginTop: 30,
     marginBottom: 20,
     // color: "white",
@@ -174,6 +201,47 @@ const renderRecipientPhoneNumberField = ({
   );
 };
 
+const renderRequestedQuantityField = ({
+  input,
+  label,
+  meta: { touched, error, invalid },
+  type,
+  id,
+  ...custom
+}) => {
+  return (
+    <TextField
+      //error={touched && invalid}
+      helperText="Quantity"
+      variant="outlined"
+      label={label}
+      id={input.name}
+      //value={input.value}
+      fullWidth
+      //required
+      type={type}
+      {...custom}
+      //defaultValue={quantity}
+      onChange={input.onChange}
+      //   inputProps={{
+      //     style: {
+      //       height: 1,
+      //     },
+
+      //   }}
+      InputProps={{
+        inputProps: {
+          min: 1,
+          style: {
+            height: 1,
+          },
+          //readOnly: true,
+        },
+      }}
+    />
+  );
+};
+
 function CheckoutActionPage(props) {
   const { price, productId, token, userId } = props;
   const [quantity, setQuantity] = useState(+props.quantity);
@@ -214,6 +282,7 @@ function CheckoutActionPage(props) {
   //     : 0
   // );
   const [loading, setLoading] = useState();
+  const [loadingRemoval, setLoadingRemoval] = useState();
 
   useEffect(() => {
     if (!price) {
@@ -407,48 +476,8 @@ function CheckoutActionPage(props) {
         //required
         type={type}
         {...custom}
-        defaultValue={`${props.minimumQuantity} unit(s)`}
+        defaultValue={`${props.minimumQuantity} ${props.unit}`}
         disabled
-        onChange={input.onChange}
-        //   inputProps={{
-        //     style: {
-        //       height: 1,
-        //     },
-
-        //   }}
-        InputProps={{
-          inputProps: {
-            min: 1,
-            style: {
-              height: 1,
-            },
-          },
-        }}
-      />
-    );
-  };
-
-  const renderRequestedQuantityField = ({
-    input,
-    label,
-    meta: { touched, error, invalid },
-    type,
-    id,
-    ...custom
-  }) => {
-    return (
-      <TextField
-        //error={touched && invalid}
-        helperText="Quantity Ordered"
-        variant="outlined"
-        label={label}
-        id={input.name}
-        //value={input.value}
-        fullWidth
-        //required
-        type={type}
-        {...custom}
-        defaultValue={quantity}
         onChange={input.onChange}
         //   inputProps={{
         //     style: {
@@ -597,12 +626,57 @@ function CheckoutActionPage(props) {
 
   const amountForPayment = +totalProductCost.toFixed(2) * 100;
 
-  const buttonContent = () => {
+  const removeButtonContent = () => {
     return <React.Fragment>Remove</React.Fragment>;
   };
 
-  const onSubmit = () => {
-    setLoading(true);
+  const buttonContent = () => {
+    return <React.Fragment>Update</React.Fragment>;
+  };
+
+  //function to remove product from cart
+
+  // const onItemRemovalSubmit = () => {
+  //   setLoadingRemoval(true);
+
+  //   let data = {};
+
+  //   data = {
+  //     isDeleted: true,
+  //   };
+
+  //   if (data) {
+  //     const createForm = async () => {
+  //       api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+  //       await api.delete(`/carts/${props.cartId}`);
+
+  //       //if (response.data.status === "success") {
+  //       dispatch({
+  //         type: DELETE_CART,
+  //         //payload: response.data.data.data,
+  //       });
+
+  //       props.handleSuccessfulCreateSnackbar(
+  //         `This item is removed successfully!!!`
+  //       );
+
+  //       setLoadingRemoval(false);
+  //       props.cartCounterHandler(-1);
+  //       props.renderCartUpdate(props.cartId);
+  //     };
+  //     createForm().catch((err) => {
+  //       props.handleFailedSnackbar();
+  //       console.log("err:", err.message);
+  //     });
+  //   } else {
+  //     props.handleFailedSnackbar("Something went wrong, please try again!!!");
+  //   }
+  // };
+
+  //function to update product in cart
+
+  const onItemRemovalSubmit = () => {
+    setLoadingRemoval(true);
     const createForm = async () => {
       api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
       await api.delete(`/carts/${props.cartId}`);
@@ -614,12 +688,87 @@ function CheckoutActionPage(props) {
       //history.push("/");
       props.renderCheckoutUpdate(props.cartId);
 
-      setLoading(false);
+      setLoadingRemoval(false);
     };
     createForm().catch((err) => {
       props.handleFailedSnackbar();
       console.log("err:", err.message);
     });
+  };
+
+  const onSubmit = (formValues) => {
+    setLoading(true);
+
+    if (props.token === undefined) {
+      props.handleMakeOpenLoginFormDialogStatus();
+      setLoading(false);
+      return;
+    }
+
+    if (!quantity) {
+      props.handleFailedSnackbar("The order quantity cannot be empty");
+      setLoading(false);
+      return;
+    }
+
+    if (quantity <= 0) {
+      props.handleFailedSnackbar(
+        "The order quantity cannot be lower than the Minimum Quantity Required(MQR)"
+      );
+      setLoading(false);
+      return;
+    }
+
+    if (+quantity < +props.minimumQuantity) {
+      props.handleFailedSnackbar(
+        "The order quantity cannot be lower than the Minimum Quantity Required(MQR)"
+      );
+      setLoading(false);
+      return;
+    }
+
+    let data = {};
+
+    data = {
+      quantity: quantity,
+      // price: props.price,
+      // currency: props.currency,
+      // // totalDeliveryCost: totalDeliveryCost,
+      // contactMeForTheDeliveryCost: false,
+    };
+
+    if (data) {
+      const createForm = async () => {
+        api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+        const response = await api.patch(`/carts/${props.cartId}`, data);
+
+        if (response.data.status === "success") {
+          dispatch({
+            type: EDIT_CART,
+            payload: response.data.data.data,
+          });
+          //history.push("/");
+          props.handleSuccessfulCreateSnackbar(
+            `This item is updated successfully!!!`
+          );
+
+          setLoading(false);
+          //props.renderCartUpdate(props.cartId);
+          props.renderCheckoutUpdate(props.cartId);
+          //setIsCheckoutVisible(true);
+        } else {
+          props.handleFailedSnackbar(
+            "Something went wrong, please try again!!!"
+          );
+        }
+      };
+      createForm().catch((err) => {
+        props.handleFailedSnackbar();
+        console.log("err:", err.message);
+      });
+    } else {
+      props.handleFailedSnackbar("Something went wrong, please try again!!!");
+    }
   };
 
   const renderOnlinePayment = (email, amount, orderNumber) => {
@@ -668,13 +817,14 @@ function CheckoutActionPage(props) {
         Total Delivery Cost:{props.getCurrencyCode()}
         {totalDeliveryCostForDisplay}
       </Typography> */}
-      <Typography style={{ width: "100%", marginTop: 5, marginLeft: 10 }}>
-        Number of Learner(s) Slot:&nbsp;&nbsp;{quantity}
+      {/* <Typography style={{ width: "100%", marginTop: 5, marginLeft: 10 }}>
+        Quantity Requested:&nbsp;&nbsp;{quantity} &nbsp;{" "}
+        {quantity <= 1 ? props.unit : props.unit + "s"}
       </Typography>
       <Typography style={{ width: "100%", marginTop: 15, marginLeft: 10 }}>
         Total Cost:{props.getCurrencyCode()}
         {total}
-      </Typography>
+      </Typography> */}
       {/* <Typography
         style={{ width: 300, fontSize: 20, marginTop: 15, marginLeft: 10 }}
       >
@@ -690,7 +840,7 @@ function CheckoutActionPage(props) {
         </Typography>
       )}
 
-      <Button
+      {/* <Button
         variant="outlined"
         className={classes.submitButton}
         onClick={onSubmit}
@@ -702,6 +852,92 @@ function CheckoutActionPage(props) {
         )}
       </Button>
 
+      {isOnlinePayment &&
+        renderOnlinePayment(customerEmail, amountForPayment, orderNumber)} */}
+
+      <form id="cartUpdateAndDeliveryForm">
+        <Box
+          sx={{
+            width: 200,
+            //height: 450,
+          }}
+          noValidate
+          autoComplete="off"
+          className={classes.root}
+        >
+          <Grid
+            item
+            container
+            style={{ marginTop: 10, marginBottom: 10 }}
+            justifyContent="center"
+          ></Grid>
+          <Field
+            label=""
+            id="minimumQuantity"
+            name="minimumQuantity"
+            defaultValue={`${props.minimumQuantity}`}
+            type="text"
+            component={renderMinimumQuantityField}
+            style={{ width: 300 }}
+          />
+          <Field
+            label=""
+            id="quantity"
+            name="quantity"
+            defaultValue={quantity}
+            type="number"
+            onChange={onChange}
+            component={renderRequestedQuantityField}
+            style={{ width: 300, marginTop: 10 }}
+          />
+          <Grid container direction="row">
+            <Grid item style={{ width: 50, marginTop: 10, fontSize: 25 }}>
+              <span style={{ color: "grey" }}>&#8358;</span>
+            </Grid>
+            <Grid item style={{ marginLeft: 0, width: 150 }}>
+              <Field
+                label=""
+                id="total"
+                name="total"
+                defaultValue={total}
+                type="text"
+                component={renderTotalField}
+                style={{ width: 150 }}
+              />
+            </Grid>
+          </Grid>
+
+          <Button
+            variant="Contained"
+            //component={Link}
+            // to="/mobileapps"
+            // to={`/checkouts/${userId}`}
+            className={classes.submitUpdateButton}
+            onClick={onSubmit}
+          >
+            {loading ? (
+              <CircularProgress size={30} color="inherit" />
+            ) : (
+              buttonContent()
+            )}
+          </Button>
+
+          <Button
+            variant="outlined"
+            //component={Link}
+            // to="/mobileapps"
+            // to={`/checkouts/${userId}`}
+            className={classes.removeItem}
+            onClick={onItemRemovalSubmit}
+          >
+            {loadingRemoval ? (
+              <CircularProgress size={30} color="inherit" />
+            ) : (
+              removeButtonContent()
+            )}
+          </Button>
+        </Box>
+      </form>
       {isOnlinePayment &&
         renderOnlinePayment(customerEmail, amountForPayment, orderNumber)}
     </>

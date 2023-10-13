@@ -151,8 +151,8 @@ export default function CartProductCard(props) {
   const matchesMDUp = useMediaQuery(theme.breakpoints.up("md"));
 
   useEffect(() => {
-    setPrice(props.course.price);
-    setMinQuantity(props.course.minimumQuantity);
+    setPrice(props.product.pricePerUnit);
+    setMinQuantity(props.product.minQuantity);
   }, [props]);
 
   useEffect(() => {
@@ -164,114 +164,103 @@ export default function CartProductCard(props) {
     const fetchData = async () => {
       let allData = [];
       api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
-      const response = await api.get(`/courses/${props.course}`);
-      const course = response.data.data.data;
+      const response = await api.get(`/products/${props.product}`);
+      const product = response.data.data.data;
 
       allData.push({
-        id: course._id,
-        title: course.title,
-        imageCover: course.imageCover,
-        shortDescription: course.shortDescription,
-        longDescription: course.longDescription,
-        features: course.features,
-        deliveryMethod: course.deliveryMethod,
-        duration: course.duration,
-        category: course.category,
-        commencementDate: course.commencementDate,
-        price: course.price,
-        currency: course.currency,
-        venue: course.venue,
-        refNumber: course.refNumber,
-        sessionDuration: course.sessionDuration,
-        sessionPeriod: course.sessionPeriod,
-        studyPeriod: course.studyPeriod,
-        lectureDuration: course.lectureDuration,
-        projectDuration: course.projectDuration,
-        instructor: course.instructor,
-        image: course.imageCover,
-        createBy: course.createBy,
-        prerequisites: course.prerequisites,
-        tools: course.tools,
-        targetAudience: course.targetAudience,
-        whatToLearn: course.whatToLearn,
-        venueLink: course.venueLink,
-        commencementWeekdaysDate: course.commencementWeekdaysDate,
-        commencementWeekendsDate: course.commencementWeekendsDate,
-        genericWeekdayStartDateText: course.genericWeekdayStartDateText,
-        genericWeekendStartDateText: course.genericWeekendStartDateText,
-        showGenericWeekdayStartDateText: course.showGenericWeekdayStartDateText,
-        showGenericWeekendStartDateText: course.showGenericWeekendStartDateText,
-        weekdaySessionPeriod: course.weekdaySessionPeriod,
-        weekendSessionPeriod: course.weekendSessionPeriod,
-        paymentOptions: course.paymentOptions,
-        track: course.track,
-        isCourseAuditable: course.isCourseAuditable,
-        weekdayAuditDays: course.weekdayAuditDays,
-        weekendAuditDays: course.weekendAuditDays,
-        hasMentorshipCredit: course.hasMentorshipCredit,
-        mentorshipCredit: course.mentorshipCredit,
-        mentorshipDuration: course.mentorshipDuration,
-        hasSeries: course.hasSeries,
-        series: course.series,
-        costPerMentorshipCredit: course.costPerMentorshipCredit,
-        isInstallmentalPaymentAllowed: course.isInstallmentalPaymentAllowed,
-        maximumInstallmentalPayment: course.maximumInstallmentalPayment,
+        id: product._id,
+        name: product.name,
+        imageCover: product.imageCover,
+        mainImage: product.mainImage,
+        images: product.images,
+        shortDescription: product.shortDescription,
+        fullDescription: product.fullDescription,
+        features: product.features,
+        totalUnit: product.totalUnits,
+        pricePerUnit: product.pricePerUnit,
+        category: product.category,
+        currency: product.currency,
+        minQuantity: product.minQuantity,
+        refNumber: product.refNumber,
+        unit: product.unit,
+        isFeaturedProduct: product.isFeaturedProduct,
+        configuration: product.configuration,
+        displayOnStore: product.displayOnStore,
+        expiryDate: product.expiryDate,
+        manufacturer: product.manufacturer,
+        benefits: product.benefits,
+        sideEffects: product.sideEffects,
+        model: product.model,
+        yearManufactured: product.yearManufactured,
+        brand: product.brand,
+        make: product.make,
+        source: product.source,
+        dosage: product.dosage,
+        ingredients: product.ingredients,
+        salesPreference: product.salesPreference,
+        keyword1: product.keyword1,
+        keyword2: product.keyword2,
+        keyword3: product.keyword3,
+        remainingUnits: product.remainingUnits,
+        shopsAvailable: product.shopsAvailable,
+        slug: product.slug,
+        requestQuote: product.requestQuote,
+        allowSubscription: product.allowSubscription,
+        video: product.video,
+        type: product.type,
+        createBy: product.createBy,
+        howToUse: product.howToUse,
+        pricingMechanism: product.pricingMechanism,
       });
 
       if (!allData) {
         return;
       }
-      setCourse({
+      setProduct({
         id: allData[0].id,
-        title: allData[0].title,
-        imageCover: allData[0].imageCover,
+        name: allData[0].name,
+        image: allData[0].imageCover,
+        mainImage: allData[0].image,
+        images: allData[0].images,
         shortDescription: allData[0].shortDescription,
-        longDescription: allData[0].longDescription,
+        fullDescription: allData[0].fullDescription,
         features: allData[0].features,
-        deliveryMethod: allData[0].deliveryMethod,
-        duration: allData[0].duration,
+        totalUnit: allData[0].totalUnit,
+        pricePerUnit: allData[0].pricePerUnit,
         category: allData[0].category,
-        commencementDate: allData[0].commencementDate,
-        price: allData[0].price,
+        minQuantity: allData[0].minQuantity,
         currency: allData[0].currency,
-        venue: allData[0].venue,
+        unit: allData[0].unit,
         refNumber: allData[0].refNumber,
-        sessionDuration: allData[0].sessionDuration,
-        sessionPeriod: allData[0].sessionPeriod,
-        studyPeriod: allData[0].studyPeriod,
-        lectureDuration: allData[0].lectureDuration,
-        projectDuration: allData[0].projectDuration,
-        instructor: allData[0].instructor,
-        image: allData[0].image,
+        isFeaturedProduct: allData[0].isFeaturedProduct,
+        configuration: allData[0].configuration,
+        displayOnStore: allData[0].displayOnStore,
+        expiryDate: allData[0].expiryDate,
+        manufacturer: allData[0].manufacturer,
+        benefits: allData[0].benefits,
+        sideEffects: allData[0].sideEffects,
+        model: allData[0].model,
+        yearManufactured: allData[0].yearManufactured,
+        brand: allData[0].brand,
+        make: allData[0].make,
+        source: allData[0].source,
+        dosage: allData[0].dosage,
+        ingredients: allData[0].ingredients,
+        salesPreference: allData[0].salesPreference,
+        keyword1: allData[0].keyword1,
+        keyword2: allData[0].keyword2,
+        keyword3: allData[0].keyword3,
+        remainingUnits: allData[0].remainingUnits,
+        shopsAvailable: allData[0].shopsAvailable,
+        channel: allData[0].channel,
+        slug: allData[0].slug,
+        requestQuote: allData[0].requestQuote,
+        allowSubscription: allData[0].allowSubscription,
+        video: allData[0].video,
+        type: allData[0].type,
         createBy: allData[0].createBy,
-        prerequisites: allData[0].prerequisites,
-        tools: allData[0].tools,
-        targetAudience: allData[0].targetAudience,
-        whatToLearn: allData[0].whatToLearn,
-        venueLink: allData[0].venueLink,
-        commencementWeekdaysDate: allData[0].commencementWeekdaysDate,
-        commencementWeekendsDate: allData[0].commencementWeekendsDate,
-        genericWeekdayStartDateText: allData[0].genericWeekdayStartDateText,
-        genericWeekendStartDateText: allData[0].genericWeekendStartDateText,
-        showGenericWeekdayStartDateText:
-          allData[0].showGenericWeekdayStartDateText,
-        showGenericWeekendStartDateText:
-          allData[0].showGenericWeekendStartDateText,
-        weekdaySessionPeriod: allData[0].weekdaySessionPeriod,
-        weekendSessionPeriod: allData[0].weekendSessionPeriod,
-        paymentOptions: allData[0].paymentOptions,
-        track: allData[0].track,
-        isCourseAuditable: allData[0].isCourseAuditable,
-        weekdayAuditDays: allData[0].weekdayAuditDays,
-        weekendAuditDays: allData[0].weekendAuditDays,
-        hasMentorshipCredit: allData[0].hasMentorshipCredit,
-        mentorshipCredit: allData[0].mentorshipCredit,
-        mentorshipDuration: allData[0].mentorshipDuration,
-        hasSeries: allData[0].hasSeries,
-        series: allData[0].series,
-        costPerMentorshipCredit: allData[0].costPerMentorshipCredit,
-        isInstallmentalPaymentAllowed: allData[0].isInstallmentalPaymentAllowed,
-        maximumInstallmentalPayment: allData[0].maximumInstallmentalPayment,
+        howToUse: allData[0].howToUse,
+        pricingMechanism: allData[0].pricingMechanism,
       });
     };
 
@@ -281,8 +270,8 @@ export default function CartProductCard(props) {
   }, []);
 
   let imageUrl = "";
-  if (course) {
-    imageUrl = `${baseURL}/images/courses/${course.imageCover}`;
+  if (product) {
+    imageUrl = `${baseURL}/images/products/${product.image}`;
   }
 
   const Str = require("@supercharge/strings");
@@ -496,7 +485,7 @@ export default function CartProductCard(props) {
     }
   };
 
-  if (!course) {
+  if (!product) {
     return <></>;
   }
 
@@ -510,7 +499,7 @@ export default function CartProductCard(props) {
               <CardMedia
                 className={classes.media}
                 component="img"
-                alt={course.title}
+                alt={product.name}
                 image={imageUrl}
                 //title={product.name}
                 crossOrigin="anonymous"
@@ -518,16 +507,16 @@ export default function CartProductCard(props) {
             </Grid>
             <Grid item style={{ width: "46.19%", border: "1px dotted grey" }}>
               <CardContent disableRipple>
-                {course.hasSeries ? (
+                {product.configuration ? (
                   <Typography variant="h4" color="textSecondary" component="p">
-                    {course.title}
+                    {product.name}
                     <span style={{ fontSize: 16, fontWeight: 700 }}>
-                      <em> ({course.series})</em>
+                      <em> ({product.configuration})</em>
                     </span>
                   </Typography>
                 ) : (
                   <Typography variant="h4" color="textSecondary" component="p">
-                    {course.title}
+                    {product.name}
                   </Typography>
                 )}
                 <Typography
@@ -536,7 +525,7 @@ export default function CartProductCard(props) {
                   component="p"
                   style={{ marginTop: 20 }}
                 >
-                  {Str(course.shortDescription).limit(200, "...").get()}
+                  {Str(product.shortDescription).limit(200, "...").get()}
                 </Typography>
                 <Typography
                   variant="h5"
@@ -547,15 +536,20 @@ export default function CartProductCard(props) {
                   <span style={{ marginLeft: 130 }}>
                     <strong>
                       {getCurrencyCode()}
-                      {course.price
-                        ? course.price
+                      {product.pricePerUnit
+                        ? product.pricePerUnit
                             .toFixed(2)
                             .replace(/\d(?=(\d{3})+\.)/g, "$&,")
                         : ""}
+                      <span
+                        style={{ fontSize: 10 }}
+                      >{`per ${product.unit}`}</span>
                     </strong>
                   </span>
+                  <br />
+                  <br />
                 </Typography>
-                {course.refNumber !== undefined && (
+                {product.refNumber !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
@@ -564,237 +558,64 @@ export default function CartProductCard(props) {
                       {" "}
                       <strong>Reference Number:</strong>
                     </span>
-                    {course.refNumber}
+                    {product.refNumber}
                   </Typography>
                 )}
-                {course.duration !== undefined && (
+                {product.remainingUnits !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Duration:</strong>
+                      <strong>Quantity in Stock:</strong>
                     </span>
-                    {course.duration}
+                    <span>
+                      {product.remainingUnits
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      &nbsp;
+                      {product.remainingUnits <= 1
+                        ? product.unit
+                        : product.unit + "s"}
+                    </span>
                   </Typography>
                 )}
-                {course.commencementDate !== undefined && (
+                {product.type !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Start date:</strong>
+                      <strong>Product Type:</strong>
                     </span>
-                    {course.commencementDate
-                      ? new Date(course.commencementDate).toDateString()
-                      : "Coming Soon"}
+                    {product.type ? product.type : ""}
                   </Typography>
                 )}
-                {course.deliveryMethod !== undefined && (
+                {product.dosage !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Delivery Method:</strong>
+                      <strong>Dosage:</strong>
                     </span>
-                    {course.deliveryMethod}
-                  </Typography>
-                )}
-                {course.venue !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Venue:</strong>
-                    </span>
-                    {course.venue}
-                  </Typography>
-                )}
-                {course.track !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Track:</strong>
-                    </span>
-                    {course.track}
-                  </Typography>
-                )}
-                {course.commencementWeekdaysDate !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Weekday Start Date(s):</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.commencementWeekdaysDate.join("|")}
-                    </span>
-                  </Typography>
-                )}
-                {course.commencementWeekendsDate !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Weekend Start Date(s):</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.commencementWeekendsDate.join("|")}
-                    </span>
-                  </Typography>
-                )}
-                <Typography
-                  variant="h5"
-                  style={{ color: "black", fontSize: 15 }}
-                >
-                  <span style={{ marginRight: 20 }}>
-                    <strong>Weekday Lecture Period:</strong>
-                  </span>
-                  <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {course.weekdaySessionPeriod}
-                  </span>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{ color: "black", fontSize: 15 }}
-                >
-                  <span style={{ marginRight: 20 }}>
-                    <strong>Weekend Lecture Period:</strong>
-                  </span>
-                  <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {course.weekendSessionPeriod}
-                  </span>
-                </Typography>
-                {course.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Credit:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.mentorshipCredit}&nbsp; Units &nbsp; (to be used
-                      after graduation)
-                    </span>
-                  </Typography>
-                )}
-                {course.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Total Value of Mentorship Credit:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {getCurrencyCode()}
-                      {(
-                        course.mentorshipCredit * course.costPerMentorshipCredit
-                      )
-                        .toFixed(2)
-                        .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
-                    </span>
-                  </Typography>
-                )}
-                {course.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Duration:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.mentorshipDuration}&nbsp;&nbsp; ( from the day of
-                      graduation)
-                    </span>
-                  </Typography>
-                )}
-                {course.isInstallmentalPaymentAllowed === "yes" && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Is Installmental Payment Allowed :</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.isInstallmentalPaymentAllowed
-                        .charAt(0)
-                        .toUpperCase() +
-                        course.isInstallmentalPaymentAllowed.slice(1)}
-                    </span>
-                  </Typography>
-                )}
-                {course.isInstallmentalPaymentAllowed === "yes" && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>
-                        Maximum Number of Installmental Payment Allowed :
-                      </strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.maximumInstallmentalPayment}&nbsp;times
-                    </span>
-                  </Typography>
-                )}
-                {course.passGrade !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Minimum NextChamp Grade:</strong>
-                    </span>
-                    {course.passGrade}
-                  </Typography>
-                )}
-                <br /> <br />
-                {course.isCourseAuditable && (
-                  <Typography>
-                    <span
-                      style={{
-                        fontSize: 18,
-                        marginLeft: 14,
-                        //textAlign: "center",
-                      }}
-                    >
-                      You can audit this course for FREE for up to
-                      <strong>
-                        <span>{course.weekdayAuditDays}</span>
-                      </strong>
-                      &nbsp;. You only make payment afterwards when you are sure
-                      the course is a good fit for you
-                    </span>
+                    {product.dosage}
                   </Typography>
                 )}
               </CardContent>
             </Grid>
 
             <Grid item style={{ width: "26.50%", border: "1px dotted grey" }}>
-              {course.price && (
+              {product.pricePerUnit && (
                 <CartUpdateAndDeliveryForm
-                  price={course.price}
-                  minimumQuantity={course.minimumQuantity}
-                  courseId={course.id}
-                  currency={course.currency}
+                  price={product.pricePerUnit}
+                  minimumQuantity={product.minQuantity}
+                  unit={product.unit}
+                  productId={product.id}
+                  currency={product.currency}
                   preferredStartDate={props.preferredStartDate}
                   cartCounterHandler={props.cartCounterHandler}
                   token={props.token}
@@ -1103,12 +924,13 @@ export default function CartProductCard(props) {
             </Grid>
 
             <Grid item style={{ width: "100%", border: "1px dotted grey" }}>
-              {course.price && (
+              {product.price && (
                 <CartUpdateAndDeliveryForm
-                  price={course.price}
-                  minimumQuantity={course.minimumQuantity}
-                  courseId={course.id}
-                  currency={course.currency}
+                  price={product.pricePerUnit}
+                  minimumQuantity={product.minQuantity}
+                  unit={product.unit}
+                  productId={product.id}
+                  currency={product.currency}
                   preferredStartDate={props.preferredStartDate}
                   cartCounterHandler={props.cartCounterHandler}
                   token={props.token}

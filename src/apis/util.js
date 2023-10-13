@@ -1,2 +1,2 @@
-//export const baseURL = "http://localhost:9005/";
-export const baseURL = "https://api.nextchamp.co/";
+export const baseURL = "http://localhost:9050/";
+//export const baseURL = "https://api.nextchamp.co/";

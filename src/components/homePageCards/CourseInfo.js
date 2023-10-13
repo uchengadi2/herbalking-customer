@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
 
 function CourseInfo(props) {
   const {
-    prerequisites,
+    benefits,
     tools,
     targetAudience,
     whatToLearn,
@@ -146,17 +146,19 @@ function CourseInfo(props) {
           justifyContent="center"
         ></Grid>
 
-        <Typography style={{ width: 300, marginTop: 15 }}>
-          <strong>Prerequisites:</strong>&nbsp;
-          <ReactMarkdown>{prerequisites}</ReactMarkdown>
-        </Typography>
+        {benefits && (
+          <Typography style={{ width: 300, marginTop: 15 }}>
+            <strong>Benefits:</strong>&nbsp;
+            <ReactMarkdown>{benefits}</ReactMarkdown>
+          </Typography>
+        )}
         <br />
-        <Typography style={{ width: 300, marginTop: 10 }}>
+        {/* <Typography style={{ width: 300, marginTop: 10 }}>
           <strong>Who should attend:</strong>&nbsp;
           <ReactMarkdown>{targetAudience}</ReactMarkdown>
-        </Typography>
+        </Typography> */}
 
-        {categorySlug && (
+        {
           <Button
             component={Link}
             // to="/mobileapps"
@@ -178,7 +180,7 @@ function CourseInfo(props) {
             fill={theme.palette.common.blue}
           /> */}
           </Button>
-        )}
+        }
       </Box>
     </form>
   );

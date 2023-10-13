@@ -30,7 +30,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import InputLabel from "@material-ui/core/InputLabel";
 
-import logo from "./../../assets/logo/logo.png";
+import logo from "./../../assets/logo/logo.jpg";
 import { RouterRounded, Search } from "@material-ui/icons";
 import Select from "@material-ui/core/Select";
 import history from "../../history";
@@ -154,7 +154,7 @@ const useStyles = makeStyles((theme) => ({
     height: "45px",
     fontSize: "13px",
     fontWeight: "500px",
-    width: "140px",
+    width: "70px",
     "&:hover": {
       backgroundColor: theme.palette.secondary.light,
       color: "white",
@@ -546,18 +546,6 @@ const Header = (props) => {
     } else {
       return (
         <Fragment>
-          {/* <Button
-            variant="contained"
-            disableRipple
-            component={Link}
-            to="/career"
-            //color="secondary"
-            className={classes.checkout}
-            //onClick={() => [setOpenLoginForm(true), history.push("/")]}
-            //onClick={() => [setOpenLoginForm(true)]}
-          >
-            Career
-          </Button> */}
           <Button
             onClick={() => <OrderPage />}
             disableRipple
@@ -567,7 +555,18 @@ const Header = (props) => {
             className={classes.cart}
           >
             {/* <img alt="company logo" src={logo} className={classes.logo} /> */}
-            Learning Center
+            Dashboard
+          </Button>
+          <Button
+            onClick={() => <OrderPage />}
+            disableRipple
+            component={Link}
+            // to={`/carts/${props.userId}`}
+            to={`/orders`}
+            className={classes.cart}
+          >
+            {/* <img alt="company logo" src={logo} className={classes.logo} /> */}
+            Orders
           </Button>
 
           <Button
@@ -958,7 +957,7 @@ const Header = (props) => {
                 selected={props.value === 5}
               >
                 <ListItemText className={classes.drawerItem} disableTypography>
-                  Learning Center
+                  Orders
                 </ListItemText>
               </ListItem>
               <ListItem
