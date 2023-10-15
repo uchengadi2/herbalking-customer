@@ -229,6 +229,7 @@ function SearchPage(props) {
   const [keyword2NumberOfPages, setKeyword2NumberOfPages] = useState();
   const [keyword3NumberOfPages, setKeyword3NumberOfPages] = useState();
   const [isLoading, setIsLoading] = useState(null);
+  const [policy, setPolicy] = useState();
 
   const [alert, setAlert] = useState({
     open: false,
@@ -270,6 +271,43 @@ function SearchPage(props) {
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/policies`, {
+        params: { status: "active" },
+      });
+      const policies = response.data.data.data;
+
+      policies.map((policy) => {
+        allData.push({
+          id: policy._id,
+          country: policy.country,
+          currency: policy.currency,
+          vat: policy.vat,
+          implementVatCollection: policy.implementVatCollection,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+          salesTaxDirection: policy.salesTaxDirection,
+          status: policy.status,
+          shoppingMode: policy.shoppingMode,
+          onlineOrigin: policy.onlineOrigin,
+          allowCentralCommission: policy.allowCentralCommission,
+          commissionRate: policy.commissionRate,
+          allowOriginSalesTax: policy.allowOriginSalesTax,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+        });
+      });
+
+      setPolicy(allData[0]);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [props]);
+
+  useEffect(() => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
@@ -294,7 +332,7 @@ function SearchPage(props) {
       if (searchCategory && searchStringText) {
         if (searchCategory !== "all") {
           response = await api.get(
-            `/courses?page=${page}&limit=${limit}&keyword1=` +
+            `/products?page=${page}&limit=${limit}&keyword1=` +
               searchStringText.toLowerCase(),
             {
               params: { category: searchCategory },
@@ -302,7 +340,7 @@ function SearchPage(props) {
           );
         } else {
           response = await api.get(
-            `/courses?page=${page}&limit=${limit}&keyword1=` +
+            `/products?page=${page}&limit=${limit}&keyword1=` +
               searchStringText.toLowerCase(),
             {
               // params: { category: searchCategory },
@@ -317,20 +355,20 @@ function SearchPage(props) {
       )
         if (searchCategory !== "all") {
           {
-            response = await api.get(`/courses?page=${page}&limit=${limit}`, {
+            response = await api.get(`/products?page=${page}&limit=${limit}`, {
               params: { category: searchCategory },
             });
           }
         } else {
           {
-            response = await api.get(`/courses?page=${page}&limit=${limit}`, {
+            response = await api.get(`/products?page=${page}&limit=${limit}`, {
               // params: { category: searchCategory },
             });
           }
         }
 
       if (searchCategory === "undefined" && !searchStringText === "undefined") {
-        response = await api.get(`/courses?page=${page}&limit=${limit}`);
+        response = await api.get(`/products?page=${page}&limit=${limit}`);
       }
 
       const items = response.data.data.data;
@@ -362,7 +400,7 @@ function SearchPage(props) {
       if (searchCategory && searchStringText) {
         if (searchCategory !== "all") {
           response = await api.get(
-            `/courses?page=${page}&limit=${limit}&keyword2=` +
+            `/products?page=${page}&limit=${limit}&keyword2=` +
               searchStringText.toLowerCase(),
             {
               params: { category: searchCategory },
@@ -370,7 +408,7 @@ function SearchPage(props) {
           );
         } else {
           response = await api.get(
-            `/courses?page=${page}&limit=${limit}&keyword2=` +
+            `/products?page=${page}&limit=${limit}&keyword2=` +
               searchStringText.toLowerCase(),
             {
               // params: { category: searchCategory },
@@ -435,7 +473,7 @@ function SearchPage(props) {
       if (searchCategory && searchStringText) {
         if (searchCategory !== "all") {
           response = await api.get(
-            `/courses?page=${page}&limit=${limit}&keyword3=` +
+            `/products?page=${page}&limit=${limit}&keyword3=` +
               searchStringText.toLowerCase(),
             {
               params: { category: searchCategory },
@@ -443,7 +481,7 @@ function SearchPage(props) {
           );
         } else {
           response = await api.get(
-            `/courses?page=${page}&limit=${limit}&keyword3=` +
+            `/products?page=${page}&limit=${limit}&keyword3=` +
               searchStringText.toLowerCase(),
             {
               // params: { category: searchCategory },
@@ -554,6 +592,7 @@ function SearchPage(props) {
             <SearchProductCard
               product={item.productId}
               key={`${item.productId}${index}`}
+              policy={policy}
               token={props.token}
               userId={props.userId}
               setToken={props.setToken}
@@ -575,6 +614,7 @@ function SearchPage(props) {
           {productList.map((item, index) => (
             <SearchProductCard
               product={item.productId}
+              policy={policy}
               key={`${item.productId}${index}`}
               token={props.token}
               userId={props.userId}

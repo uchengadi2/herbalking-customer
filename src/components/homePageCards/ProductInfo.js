@@ -118,6 +118,7 @@ function ProductInfo(props) {
     categoryId,
     productId,
     pricingMechanism,
+    policy,
 
     slug,
   } = props;

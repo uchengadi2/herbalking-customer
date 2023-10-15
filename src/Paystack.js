@@ -128,13 +128,20 @@ function Paystack(props) {
       totalDeliveryCost: props.data.totalDeliveryCost,
       totalProductCost: props.data.totalProductCost,
       paymentMethod: props.data.paymentMethod,
-      paymentStatus: "collect-payment-on-delivery",
+      paymentStatus: props.data.paymentStatus,
       orderedBy: props.data.orderedBy,
       salesTax: props.data.salesTax,
       origin: props.data.origin,
       implementSalesTaxCollection: props.data.implementSalesTaxCollection,
       allowOriginSalesTax: props.data.allowOriginSalesTax,
       revenue: props.data.revenue,
+
+      recipientCountryName: props.data.recipientCountryName,
+      recipientStateName: props.data.recipientStateName,
+      recipientCityName: props.data.recipientCityName,
+      deliveryStatus: props.data.deliveryStatus,
+      deliveryMode: props.data.deliveryMode,
+      daysToDelivery: props.data.daysToDelivery,
     };
 
     if (transData) {
@@ -151,26 +158,6 @@ function Paystack(props) {
           });
 
           props.productList.map((cart, index) => {
-            // const data = {
-            //   orderNumber: props.data.orderNumber,
-            //   transactionId: transId,
-            //   product: cart.course,
-            //   orderedPrice: cart.price,
-            //   recipientName: props.data.recipientName,
-            //   recipientPhoneNumber: props.data.recipientPhoneNumber,
-            //   recipientEmailAddress: props.data.recipientEmailAddress,
-            //   totalDeliveryCost: props.data.totalDeliveryCost.toFixed(2),
-            //   preferredStartDate: cart.preferredStartDate,
-            //   cartId: cart.id,
-            //   quantityAdddedToCart: cart.quantity,
-            //   orderedQuantity: cart.quantity,
-            //   dateAddedToCart: cart.dateAddedToCart,
-            //   productCurrency: cart.currency,
-            //   paymentMethod: props.data.paymentMethod,
-            //   paymentStatus: "to-be-confirmed",
-            //   orderedBy: cart.cartHolder,
-            // };
-
             const data = {
               orderNumber: props.data.orderNumber,
               transactionId: transId,
@@ -203,7 +190,7 @@ function Paystack(props) {
               totalDeliveryCost: props.data.totalDeliveryCost,
               totalProductCost: props.data.totalProductCost,
               paymentMethod: props.data.paymentMethod,
-              paymentStatus: "collect-payment-on-delivery",
+              paymentStatus: props.data.paymentStatus,
 
               cartId: cart.id,
               quantityAdddedToCart: cart.quantity,
@@ -238,6 +225,13 @@ function Paystack(props) {
                 : cart.revenueMarginShouldPrevail
                 ? cart.revenueMargin * cart.quantity
                 : null,
+
+              recipientCountryName: props.data.recipientCountryName,
+              recipientStateName: props.data.recipientStateName,
+              recipientCityName: props.data.recipientCityName,
+              deliveryStatus: props.data.deliveryStatus,
+              deliveryMode: props.data.deliveryMode,
+              daysToDelivery: props.data.daysToDelivery,
             };
 
             if (data) {

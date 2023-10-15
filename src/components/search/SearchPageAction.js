@@ -158,6 +158,7 @@ function SearchPageAction(props) {
     token,
     userId,
     prerequisites,
+    benefits,
     targetAudience,
   } = props;
   const [quantity, setQuantity] = useState(+props.quantity);
@@ -625,14 +626,10 @@ function SearchPageAction(props) {
         ></Grid>
 
         <Typography style={{ width: 300, marginTop: 15 }}>
-          <strong>Prerequisites:</strong>&nbsp;
-          <ReactMarkdown>{prerequisites}</ReactMarkdown>
+          <strong>Benefits:</strong>&nbsp;
+          <ReactMarkdown>{benefits}</ReactMarkdown>
         </Typography>
         <br />
-        <Typography style={{ width: 300, marginTop: 10 }}>
-          <strong>Who should attend:</strong>&nbsp;
-          <ReactMarkdown>{targetAudience}</ReactMarkdown>
-        </Typography>
 
         {categorySlug && (
           <Button

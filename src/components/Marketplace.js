@@ -16,7 +16,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import ReactPlayer from "react-player";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-import data from "./../apis/local";
+import api from "./../apis/local";
 import CallToAction from "./ui/CallToAction";
 import animationData from "./../animations/landinganimation/data";
 
@@ -267,6 +267,8 @@ const Marketplace = (props) => {
   const [updateLearningPath, setUpdateLearningPath] = useState(false);
   const [updateBuyingPath, setUpdateBuyingPath] = useState(false);
   const [path, setPath] = useState("retail");
+  const [policy, setPolicy] = useState();
+  const [currency, setCurrency] = useState();
 
   const [alert, setAlert] = useState({
     open: false,
@@ -323,7 +325,7 @@ const Marketplace = (props) => {
 
       if (path === "retail") {
         //data.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        const response = await data.get("/products?sort=desc", {
+        const response = await api.get("/products?sort=desc", {
           params: { displayOnStore: "yes", salesPreference: "retail" },
         });
         const workingData = response.data.data.data;
@@ -377,7 +379,7 @@ const Marketplace = (props) => {
 
       if (path === "wholesale") {
         //data.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        const response = await data.get("/products?sort=desc", {
+        const response = await api.get("/products?sort=desc", {
           params: { displayOnStore: "yes", salesPreference: "wholesale" },
         });
         const workingData = response.data.data.data;
@@ -432,7 +434,45 @@ const Marketplace = (props) => {
     //call the function
 
     fetchData().catch(console.error);
-  }, [path, updateLearningPath]);
+  }, [path, updateBuyingPath]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/policies`, {
+        params: { status: "active" },
+      });
+      const policies = response.data.data.data;
+
+      policies.map((policy) => {
+        allData.push({
+          id: policy._id,
+          country: policy.country,
+          currency: policy.currency,
+          vat: policy.vat,
+          implementVatCollection: policy.implementVatCollection,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+          salesTaxDirection: policy.salesTaxDirection,
+          status: policy.status,
+          shoppingMode: policy.shoppingMode,
+          onlineOrigin: policy.onlineOrigin,
+          allowCentralCommission: policy.allowCentralCommission,
+          commissionRate: policy.commissionRate,
+          allowOriginSalesTax: policy.allowOriginSalesTax,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+        });
+      });
+
+      setPolicy(allData[0]);
+      setCurrency(allData[0].currency);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [updateBuyingPath]);
 
   useEffect(() => {
     // 👇️ scroll to top on page load
@@ -448,6 +488,7 @@ const Marketplace = (props) => {
           {productsList.map((product, index) => (
             <AllProducts
               name={product.name}
+              //policy={policy}
               key={`${product.id}${index}`}
               shortDescription={Str(product.shortDescription)
                 .limit(500, "...")
@@ -460,7 +501,8 @@ const Marketplace = (props) => {
               price={product.price}
               category={product.category}
               minQuantity={product.minQuantity}
-              currency={product.currency}
+              //currency={product.currency}
+              currency={currency}
               unit={product.unit}
               isFeaturedProduct={product.isFeaturedProduct}
               configuration={product.configuration}
@@ -514,6 +556,7 @@ const Marketplace = (props) => {
           {productsList.map((product, index) => (
             <AllProducts
               name={product.name}
+              //policy={policy}
               key={`${product.id}${index}`}
               shortDescription={Str(product.shortDescription)
                 .limit(500, "...")
@@ -526,7 +569,8 @@ const Marketplace = (props) => {
               price={product.price}
               category={product.category}
               minQuantity={product.minQuantity}
-              currency={product.currency}
+              //currency={product.currency}
+              currency={currency}
               unit={product.unit}
               isFeaturedProduct={product.isFeaturedProduct}
               configuration={product.configuration}

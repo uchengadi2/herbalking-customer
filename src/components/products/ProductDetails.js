@@ -217,6 +217,7 @@ function ProductDetails(props) {
   const [promoMinQuantity, setPromoMinQuantity] = useState();
   const [course, setCourse] = useState({});
   const [isLoading, setIsLoading] = useState(null);
+  const [policy, setPolicy] = useState();
 
   const [alert, setAlert] = useState({
     open: false,
@@ -430,6 +431,7 @@ function ProductDetails(props) {
             // isOnPromo={isOnPromo}
             // promoPrice={promoPrice}
             // promoMinQuantity={promoMinQuantity}
+
             features={product.features}
             shortDescription={product.shortDescription}
             fullDescription={product.fullDescription}

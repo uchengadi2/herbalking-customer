@@ -201,7 +201,7 @@ export default function AllProducts(props) {
   const [openSignUpForm, setOpenSignUpForm] = useState(false);
   const [openForgotPasswordForm, setOpenForgotPasswordForm] = useState(false);
 
-  const [currencyName, setCurrencyName] = useState("naira");
+  const [currencyName, setCurrencyName] = useState();
   const [countryName, setCountryName] = useState();
   const [stateName, setStateName] = useState();
   const [product, setProduct] = useState({});
@@ -220,6 +220,27 @@ export default function AllProducts(props) {
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
   const matchesXS = useMediaQuery(theme.breakpoints.down("xs"));
   const matchesMDUp = useMediaQuery(theme.breakpoints.up("md"));
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/currencies/${props.currency}`);
+      const currency = response.data.data.data;
+
+      allData.push({
+        id: currency._id,
+        name: currency.name,
+      });
+      setCurrencyName(allData[0].name);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [props]);
+
+  console.log("props.currency:", props.currency);
 
   let imageUrl = "";
   if (product) {
@@ -579,6 +600,8 @@ export default function AllProducts(props) {
                 benefits={props.benefits}
                 pricingMechanism={props.pricingMechanism}
                 tools={props.tools}
+                policy={props.policy}
+                currency={props.currency}
                 targetAudience={props.targetAudience}
                 whatToLearn={props.whatToLearn}
                 venueLink={props.venueLink}
@@ -813,6 +836,8 @@ export default function AllProducts(props) {
                   benefits={props.benefits}
                   requestQuote={props.requestQuote}
                   tools={props.tools}
+                  policy={props.policy}
+                  currency={props.currency}
                   targetAudience={props.targetAudience}
                   whatToLearn={props.whatToLearn}
                   venueLink={props.venueLink}

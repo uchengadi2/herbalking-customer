@@ -1243,7 +1243,7 @@ const Header = (props) => {
                   onClick={() => [<SearchPage />, handleCurrentClick]}
                   disableRipple
                   component={Link}
-                  to={`/${category}/courses/${searchText}`}
+                  to={`/${category}/products/${searchText}`}
                   className={classes.search}
                   onKeyDown={(e) => (e.key === 13 ? <SearchPage /> : null)}
                 >
@@ -1296,7 +1296,7 @@ const Header = (props) => {
                     onClick={() => <SearchPage />}
                     disableRipple
                     component={Link}
-                    to={`/${category}/courses/${searchText}`}
+                    to={`/${category}/products/${searchText}`}
                     className={classes.searchMobile}
                     style={{ width: "15%" }}
                   >

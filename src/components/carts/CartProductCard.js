@@ -124,7 +124,7 @@ export default function CartProductCard(props) {
   const [openSignUpForm, setOpenSignUpForm] = useState(false);
   const [openForgotPasswordForm, setOpenForgotPasswordForm] = useState(false);
 
-  const [currencyName, setCurrencyName] = useState("naira");
+  const [currencyName, setCurrencyName] = useState();
   const [countryName, setCountryName] = useState();
   const [stateName, setStateName] = useState();
   const [product, setProduct] = useState({});
@@ -268,6 +268,25 @@ export default function CartProductCard(props) {
 
     fetchData().catch(console.error);
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/currencies/${props.currency}`);
+      const currency = response.data.data.data;
+
+      allData.push({
+        id: currency._id,
+        name: currency.name,
+      });
+      setCurrencyName(allData[0].name);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [props.currency]);
 
   let imageUrl = "";
   if (product) {
@@ -615,7 +634,7 @@ export default function CartProductCard(props) {
                   minimumQuantity={product.minQuantity}
                   unit={product.unit}
                   productId={product.id}
-                  currency={product.currency}
+                  currency={props.currency}
                   preferredStartDate={props.preferredStartDate}
                   cartCounterHandler={props.cartCounterHandler}
                   token={props.token}
@@ -930,7 +949,7 @@ export default function CartProductCard(props) {
                   minimumQuantity={product.minQuantity}
                   unit={product.unit}
                   productId={product.id}
-                  currency={product.currency}
+                  currency={props.currency}
                   preferredStartDate={props.preferredStartDate}
                   cartCounterHandler={props.cartCounterHandler}
                   token={props.token}

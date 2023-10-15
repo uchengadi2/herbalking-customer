@@ -546,7 +546,7 @@ function OrderPageAction(props) {
     .replace(/\d(?=(\d{3})+\.)/g, "$&,");
 
   const buttonContent = () => {
-    return <React.Fragment>Rate this Product</React.Fragment>;
+    return <React.Fragment>Review this Product</React.Fragment>;
   };
 
   const onSubmit = (formValues) => {
@@ -675,7 +675,8 @@ function OrderPageAction(props) {
             ></Grid>
 
             <Typography style={{ width: 300, marginTop: 15 }}>
-              Number of Learners' slot:&nbsp;{quantity}
+              Quantity Ordered:&nbsp;{quantity}&nbsp;
+              {quantity > 1 ? props.unit + "s" : props.unit}
             </Typography>
 
             <Typography style={{ width: 300, fontSize: 20, marginTop: 15 }}>
@@ -692,6 +693,20 @@ function OrderPageAction(props) {
             <Typography style={{ width: 300, marginTop: 15 }}>
               Payment Status:&nbsp;{props.paymentStatus}
             </Typography>
+
+            {
+              <Button
+                variant="contained"
+                className={classes.submitButton}
+                onClick={onSubmit}
+              >
+                {loading ? (
+                  <CircularProgress size={30} color="inherit" />
+                ) : (
+                  buttonContent()
+                )}
+              </Button>
+            }
           </Box>
         </form>
       ) : (
@@ -712,7 +727,10 @@ function OrderPageAction(props) {
               justifyContent="center"
             >
               <Typography style={{ width: "100%", marginTop: 15 }}>
-                Number of Learners' slot:&nbsp;{quantity}
+                Quantity Ordered:&nbsp;
+                {quantity.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                &nbsp;
+                {quantity > 1 ? props.unit + "s" : props.unit}
               </Typography>
 
               <Typography

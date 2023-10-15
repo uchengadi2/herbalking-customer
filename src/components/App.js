@@ -40,6 +40,7 @@ function App() {
   const [resetCookie, setResetCookie] = useState(false);
   const [cartCounter, setCartCounter] = useState(0);
   const [cartItemForCheckout, setCartItemForCheckout] = useState(false);
+  const [policy, setPolicy] = useState();
   const [cartIsUpdatedAfterRemoval, setCartIsUpdatedAfterRemoval] =
     useState(false);
   const [alert, setAlert] = useState({
@@ -212,7 +213,7 @@ function App() {
               />
             </Route>
 
-            <Route path="/:categoryId/courses/:searchText">
+            <Route path="/:categoryId/products/:searchText">
               <SearchPage
                 token={token}
                 userId={userId}

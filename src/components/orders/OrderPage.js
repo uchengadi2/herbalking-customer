@@ -221,6 +221,7 @@ function OrderPage(props) {
   const [totalData, setTotalData] = useState();
   const [isPaginationVisible, setIsPaginationVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(null);
+  const [policy, setPolicy] = useState();
 
   const [alert, setAlert] = useState({
     open: false,
@@ -270,6 +271,43 @@ function OrderPage(props) {
       setIsLoading(true);
       let allData = [];
       api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/policies`, {
+        params: { status: "active" },
+      });
+      const policies = response.data.data.data;
+
+      policies.map((policy) => {
+        allData.push({
+          id: policy._id,
+          country: policy.country,
+          currency: policy.currency,
+          vat: policy.vat,
+          implementVatCollection: policy.implementVatCollection,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+          salesTaxDirection: policy.salesTaxDirection,
+          status: policy.status,
+          shoppingMode: policy.shoppingMode,
+          onlineOrigin: policy.onlineOrigin,
+          allowCentralCommission: policy.allowCentralCommission,
+          commissionRate: policy.commissionRate,
+          allowOriginSalesTax: policy.allowOriginSalesTax,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+        });
+      });
+
+      setPolicy(allData[0]);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [props]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
       const response = await api.get(
         `/orders?page=${page}&limit=${limit}&sort=asc`,
         {
@@ -302,6 +340,13 @@ function OrderPage(props) {
           orderedBy: order.orderedBy,
           paymentStatus: order.paymentStatus,
           paymentMethod: order.paymentMethod,
+          deliveryStatus: order.deliveryStatus,
+          deliveryMode: order.deliveryMode,
+          daysToDelivery: order.daysToDelivery,
+          recipientCountryName: order.recipientCountryName,
+          recipientStateName: order.recipientStateName,
+          recipientCityName: order.recipientCityName,
+          shopType: order.shopType,
         });
       });
 
@@ -350,6 +395,7 @@ function OrderPage(props) {
               product={order.product}
               key={`${order.id}${index}`}
               cartId={order.id}
+              policy={policy}
               dateAddedToCart={order.dateAddedToCart}
               locationCountry={order.locationCountry}
               productLocation={order.productLocation}
@@ -366,6 +412,13 @@ function OrderPage(props) {
               recipientCountry={order.recipientCountry}
               recipientState={order.recipientState}
               totalDeliveryCost={order.totalDeliveryCost}
+              deliveryStatus={order.deliveryStatus}
+              deliveryMode={order.deliveryMode}
+              daysToDelivery={order.daysToDelivery}
+              recipientCountryName={order.recipientCountryName}
+              recipientStateName={order.recipientStateName}
+              recipientCityName={order.recipientCityName}
+              shopType={order.shopType}
               token={props.token}
               userId={props.userId}
               setToken={props.setToken}
@@ -390,6 +443,7 @@ function OrderPage(props) {
               product={order.product}
               key={`${order.id}${index}`}
               cartId={order.id}
+              policy={policy}
               dateAddedToCart={order.dateAddedToCart}
               locationCountry={order.locationCountry}
               productLocation={order.productLocation}
@@ -406,6 +460,13 @@ function OrderPage(props) {
               recipientCountry={order.recipientCountry}
               recipientState={order.recipientState}
               totalDeliveryCost={order.totalDeliveryCost}
+              deliveryStatus={order.deliveryStatus}
+              deliveryMode={order.deliveryMode}
+              daysToDelivery={order.daysToDelivery}
+              recipientCountryName={order.recipientCountryName}
+              recipientStateName={order.recipientStateName}
+              recipientCityName={order.recipientCityName}
+              shopType={order.shopType}
               token={props.token}
               userId={props.userId}
               setToken={props.setToken}
@@ -430,7 +491,7 @@ function OrderPage(props) {
         )}
         {!isLoading && orderList.length === 0 ? (
           <p style={{ marginTop: 30, marginLeft: 10 }}>
-            You have not enrolled in any course yet
+            You have not purchased any product so far.
           </p>
         ) : (
           <Grid item>{customerOrderList}</Grid>

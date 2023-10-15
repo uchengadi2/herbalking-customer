@@ -380,7 +380,7 @@ function CheckoutPage(props) {
               revenueMarginShouldPrevail={cart.revenueMarginShouldPrevail}
               weightInKg={cart.weightInKg}
               preferredStartDate={cart.preferredStartDate}
-              currency={cart.currency}
+              currency={currency}
               status={cart.status}
               token={props.token}
               userId={props.userId}
@@ -419,7 +419,7 @@ function CheckoutPage(props) {
               isVatable={cart.isVatable}
               weightInKg={cart.weightInKg}
               preferredStartDate={cart.preferredStartDate}
-              currency={cart.currency}
+              currency={currency}
               revenueMargin={cart.revenueMargin}
               revenueMarginShouldPrevail={cart.revenueMarginShouldPrevail}
               status={cart.status}

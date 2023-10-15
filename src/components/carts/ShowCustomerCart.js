@@ -244,6 +244,8 @@ function ShowCustomerCart(props) {
   const [count, setCount] = useState(0);
   const [isProcessed, setIsProcessed] = useState(false);
   const [isLoading, setIsLoading] = useState(null);
+  const [currency, setCurrency] = useState();
+  const [policy, setPolicy] = useState();
 
   const dispatch = useDispatch();
 
@@ -333,6 +335,44 @@ function ShowCustomerCart(props) {
   }, [updateCart]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/policies`, {
+        params: { status: "active" },
+      });
+      const policies = response.data.data.data;
+
+      policies.map((policy) => {
+        allData.push({
+          id: policy._id,
+          country: policy.country,
+          currency: policy.currency,
+          vat: policy.vat,
+          implementVatCollection: policy.implementVatCollection,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+          salesTaxDirection: policy.salesTaxDirection,
+          status: policy.status,
+          shoppingMode: policy.shoppingMode,
+          onlineOrigin: policy.onlineOrigin,
+          allowCentralCommission: policy.allowCentralCommission,
+          commissionRate: policy.commissionRate,
+          allowOriginSalesTax: policy.allowOriginSalesTax,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+        });
+      });
+
+      setCurrency(allData[0].currency);
+      setPolicy(allData[0]);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [updateCart]);
+
+  useEffect(() => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
@@ -349,6 +389,7 @@ function ShowCustomerCart(props) {
               key={`${cart.id}${index}`}
               cartHolder={cart.cartHolder}
               cartId={cart.id}
+              currency={currency}
               dateAddedToCart={cart.dateAddedToCart}
               preferredStartDate={cart.preferredStartDate}
               cartCounterHandler={props.cartCounterHandler}
@@ -390,6 +431,7 @@ function ShowCustomerCart(props) {
               cartCounterHandler={props.cartCounterHandler}
               refNumber={cart.refNumber}
               quantity={cart.quantity}
+              currency={currency}
               token={props.token}
               userId={props.userId}
               setToken={props.setToken}

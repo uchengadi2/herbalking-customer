@@ -271,6 +271,8 @@ export default function ProductDetailCard(props) {
   const [price, setPrice] = useState();
   const [minQuantity, setMinQuantity] = useState();
   const [images, setImages] = useState([]);
+  const [policy, setPolicy] = useState();
+  const [currency, setCurrency] = useState();
 
   // const { token, setToken } = useToken();
   // const { userId, setUserId } = useUserId();
@@ -315,9 +317,47 @@ export default function ProductDetailCard(props) {
 
   useEffect(() => {
     const fetchData = async () => {
+      //setIsLoading(true);
       let allData = [];
       api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
-      const response = await api.get(`/currencies/${props.product.currency}`);
+      const response = await api.get(`/policies`, {
+        params: { status: "active" },
+      });
+      const policies = response.data.data.data;
+
+      policies.map((policy) => {
+        allData.push({
+          id: policy._id,
+          country: policy.country,
+          currency: policy.currency,
+          vat: policy.vat,
+          implementVatCollection: policy.implementVatCollection,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+          salesTaxDirection: policy.salesTaxDirection,
+          status: policy.status,
+          shoppingMode: policy.shoppingMode,
+          onlineOrigin: policy.onlineOrigin,
+          allowCentralCommission: policy.allowCentralCommission,
+          commissionRate: policy.commissionRate,
+          allowOriginSalesTax: policy.allowOriginSalesTax,
+          implementSalesTaxCollection: policy.implementSalesTaxCollection,
+        });
+      });
+
+      setPolicy(allData[0]);
+      setCurrency(allData[0].currency);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [props]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/currencies/${policy.currency}`);
       const currency = response.data.data.data;
       allData.push({ id: currency._id, name: currency.name });
       setCurrencyName(allData[0].name);
@@ -326,7 +366,7 @@ export default function ProductDetailCard(props) {
     //call the function
 
     fetchData().catch(console.error);
-  }, []);
+  }, [policy]);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -679,7 +719,7 @@ export default function ProductDetailCard(props) {
               <Box>
                 <SendCourseToCheckoutForm
                   price={price}
-                  currency={props.product.currency}
+                  currency={currency}
                   unit={props.product.unit}
                   minQuantity={props.product.minQuantity}
                   productId={props.product.id}
@@ -1595,7 +1635,7 @@ export default function ProductDetailCard(props) {
               <Box>
                 <SendCourseToCheckoutForm
                   price={price}
-                  currency={props.product.currency}
+                  currency={currency}
                   unit={props.product.unit}
                   minQuantity={props.product.minQuantity}
                   courseId={props.product.id}

@@ -388,6 +388,9 @@ function CheckoutDeliveryAndPayment(props) {
     useState();
   const [prevailingSalesTax, setPrevailingSalesTax] = useState();
   const [destinationSalesTax, setDestinationSalesTax] = useState();
+  const [countryName, setCountryName] = useState();
+  const [stateName, setStateName] = useState();
+  const [cityName, setCityName] = useState();
 
   const dispatch = useDispatch();
 
@@ -469,6 +472,26 @@ function CheckoutDeliveryAndPayment(props) {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
 
+  //get the country name
+  useEffect(() => {
+    const fetchData = async () => {
+      let allData = [];
+      api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
+      const response = await api.get(`/countries/${country}`);
+      const items = response.data.data.data;
+      allData.push({
+        id: items._id,
+
+        name: items.name,
+      });
+      setCountryName(allData[0].name);
+    };
+
+    //call the function
+
+    fetchData().catch(console.error);
+  }, [country]);
+
   useEffect(() => {
     const fetchData = async () => {
       let allData = [];
@@ -531,6 +554,7 @@ function CheckoutDeliveryAndPayment(props) {
         extraKgDeliveryPriorityRate: items.extraKgDeliveryPriorityRate,
         extraKgDeliverySameDayRate: items.extraKgDeliverySameDayRate,
         payOnDeliveryMaxWeightInKg: items.payOnDeliveryMaxWeightInKg,
+        name: items.name,
       });
       // workingData.map((city) => {
       //   allData.push({ id: city._id, name: city.deliveryMode });
@@ -553,6 +577,8 @@ function CheckoutDeliveryAndPayment(props) {
       setExtraKgDeliveryPriorityRate(allData[0].extraKgDeliveryPriorityRate);
       setExtraKgDeliverySameDayRate(allData[0].extraKgDeliverySameDayRate);
       setPayOnDeliveryMaxWeightInKg(allData[0].payOnDeliveryMaxWeightInKg);
+
+      setCityName(allData[0].name);
     };
 
     //call the function
@@ -572,6 +598,7 @@ function CheckoutDeliveryAndPayment(props) {
       allData.push({
         id: state._id,
         salesTaxRate: state.salesTaxRate,
+        name: state.name,
       });
       setPrevailingSalesTax(allData[0].salesTaxRate);
     };
@@ -593,8 +620,10 @@ function CheckoutDeliveryAndPayment(props) {
       allData.push({
         id: items._id,
         salesTaxRate: items.salesTaxRate,
+        name: items.name,
       });
       setDestinationSalesTax(allData[0].salesTaxRate);
+      setStateName(allData[0].name);
     };
 
     //call the function
@@ -975,6 +1004,16 @@ function CheckoutDeliveryAndPayment(props) {
     });
   }
 
+  //get the days to delivery period
+  let daysToDelivery = " ";
+  if (deliveryMode === "standard") {
+    daysToDelivery = daysToStandardDelivery;
+  } else if (deliveryMode === "priority") {
+    daysToDelivery = daysToPriorityDelivery;
+  } else if (deliveryMode === "sameday") {
+    daysToDelivery = daysToSameDayDelivery;
+  }
+
   //when the delivery field are empty
 
   const onEmptyFieldSubmit = () => {
@@ -1066,6 +1105,15 @@ function CheckoutDeliveryAndPayment(props) {
       implementSalesTaxCollection: policy.implementSalesTaxCollection,
       allowOriginSalesTax: policy.allowOriginSalesTax,
       revenue: totalRevenue,
+
+      recipientCountryName: countryName,
+      recipientStateName: stateName,
+      recipientCityName: cityName,
+      deliveryStatus: "pending",
+      deliveryMode: deliveryMode,
+      daysToDelivery: daysToDelivery,
+
+      shopType: "online",
     };
 
     // write to the transaction table first
@@ -1143,6 +1191,15 @@ function CheckoutDeliveryAndPayment(props) {
                 : cart.revenueMarginShouldPrevail
                 ? cart.revenueMargin * cart.quantity
                 : null,
+
+              recipientCountryName: countryName,
+              recipientStateName: stateName,
+              recipientCityName: cityName,
+              deliveryStatus: "pending",
+              deliveryMode: deliveryMode,
+              daysToDelivery: daysToDelivery,
+
+              shopType: "online",
             };
 
             if (data) {
@@ -1245,7 +1302,7 @@ function CheckoutDeliveryAndPayment(props) {
       totalDeliveryCost: deliveryCost ? deliveryCost : 0,
       totalProductCost: totalProductCost,
       paymentMethod: paymentMethod,
-      paymentStatus: "collect-payment-on-delivery",
+      paymentStatus: "to-be-confirmed",
       orderedBy: userId,
       salesTax: transactionSalesTax,
       origin: policy.onlineOrigin,
@@ -1256,6 +1313,13 @@ function CheckoutDeliveryAndPayment(props) {
       prevailingSalesTax: originSalesTaxRate,
       destinationSalesTax: destSalesTaxRate,
       allowCentralCommission: policy.allowCentralCommission,
+
+      recipientCountryName: countryName,
+      recipientStateName: stateName,
+      recipientCityName: cityName,
+      deliveryStatus: "pending",
+      deliveryMode: deliveryMode,
+      daysToDelivery: daysToDelivery,
     };
     return (
       <Paystack
