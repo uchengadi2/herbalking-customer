@@ -59,13 +59,13 @@ const useStyles = makeStyles((theme) => ({
 
     //height: 440,
     //height: 800,
-    width: "80%",
+    width: "73%",
 
     marginLeft: "0px",
     //borderRadius: 30,
-    marginTop: "3.5em",
+    marginTop: "2em",
     marginBottom: "3em",
-    padding: 0,
+    padding: 2,
     backgroundColor: "#FFFFFF",
 
     "&:hover": {
@@ -149,8 +149,9 @@ const useStyles = makeStyles((theme) => ({
   },
   secondRowMobile: {
     marginLeft: 0,
-    marginTop: 50,
-    width: 380,
+    marginTop: "7.5em",
+    // width: 380,
+    width: "100%",
     border: "1px dotted",
     padding: 10,
   },
@@ -166,11 +167,12 @@ const useStyles = makeStyles((theme) => ({
     padding: 10,
   },
   thirdRowMobile: {
-    marginLeft: 10,
-    marginTop: 30,
-    width: 380,
+    marginLeft: 0,
+    marginTop: 10,
+    // width: 380,
+    width: "100%",
     border: "1px dotted",
-    padding: 20,
+    padding: 5,
   },
 
   secondColumn: {
@@ -663,7 +665,7 @@ export default function ProductDetailCard(props) {
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Reference Number:</strong>
+                      <strong>Reference Number/Sku:</strong>
                     </span>
                     {props.product.refNumber}
                   </Typography>
@@ -1392,11 +1394,11 @@ export default function ProductDetailCard(props) {
             </Grid>
             <Grid item className={classes.secondRowMobile}>
               <Box>
-                {props.product.hasSeries ? (
+                {props.product.configuration ? (
                   <Typography variant="h4" color="textSecondary" component="p">
                     {props.product.name}
                     <span style={{ fontSize: 16, fontWeight: 700 }}>
-                      <em> ({props.product.series})</em>
+                      <em> ({props.product.configuration})</em>
                     </span>
                   </Typography>
                 ) : (
@@ -1404,13 +1406,22 @@ export default function ProductDetailCard(props) {
                     {props.product.name}
                   </Typography>
                 )}
-                <Typography variant="h5">
-                  {getCurrencyCode()}
-                  {price
-                    ? price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
-                    : 0}
-                  <span style={{ fontSize: 12, marginLeft: 0 }}></span>
-                </Typography>
+
+                {props.product.pricingMechanism === "pricing" && (
+                  <Typography
+                    variant="h5"
+                    // style={{ marginTop: 10, marginLeft: 150 }}
+                  >
+                    {getCurrencyCode()}
+                    {price
+                      ? price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
+                      : 0}
+                    &nbsp;
+                    <span style={{ fontSize: 12, marginLeft: 0 }}>
+                      {`per ${props.product.unit}`}
+                    </span>
+                  </Typography>
+                )}
                 <Typography
                   variant="h5"
                   style={{
@@ -1429,204 +1440,53 @@ export default function ProductDetailCard(props) {
                   >
                     <span style={{ marginRight: 10 }}>
                       {" "}
-                      <strong>Reference Number:</strong>
+                      <strong>Sku:</strong>
                     </span>
                     {props.product.refNumber}
                   </Typography>
                 )}
-                {props.product.duration !== undefined && (
+                {props.product.remainingUnits !== undefined && (
+                  <Typography
+                    variant="h5"
+                    style={{ color: "black", fontSize: 15 }}
+                  >
+                    <span style={{ marginRight: 10 }}>
+                      {" "}
+                      <strong>Stock:</strong>
+                    </span>
+                    <span>
+                      {props.product.remainingUnits
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      &nbsp;
+                      {props.product.remainingUnits <= 1
+                        ? props.product.unit
+                        : props.product.unit + "s"}
+                    </span>
+                  </Typography>
+                )}
+                {props.product.type !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Duration:</strong>
+                      <strong>Type:</strong>
                     </span>
-                    {props.product.duration}
+                    {props.product.type}
                   </Typography>
                 )}
-                {props.product.deliveryMethod !== undefined && (
+                {props.product.dosage !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Delivery Method:</strong>
+                      <strong>Dosage:</strong>
                     </span>
-                    {props.product.deliveryMethod}
-                  </Typography>
-                )}
-                {props.product.venue !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Venue:</strong>
-                    </span>
-                    {props.product.venue}
-                  </Typography>
-                )}
-                {props.product.commencementWeekdaysDate !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Weekday Start Date(s):</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.product.commencementWeekdaysDate.join("|")}
-                    </span>
-                  </Typography>
-                )}
-                {props.product.commencementWeekendsDate !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Weekend Start Date(s):</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.product.commencementWeekendsDate.join("|")}
-                    </span>
-                  </Typography>
-                )}
-                <Typography
-                  variant="h5"
-                  style={{ color: "black", fontSize: 15 }}
-                >
-                  <span style={{ marginRight: 20 }}>
-                    <strong>Weekday Lecture Period:</strong>
-                  </span>
-                  <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {props.product.weekdaySessionPeriod}
-                  </span>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{ color: "black", fontSize: 15 }}
-                >
-                  <span style={{ marginRight: 20 }}>
-                    <strong>Weekend Lecture Period:</strong>
-                  </span>
-                  <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {props.product.weekendSessionPeriod}
-                  </span>
-                </Typography>
-                {props.product.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Credit:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.product.mentorshipCredit}&nbsp; Units &nbsp; (to be
-                      used after graduation)
-                    </span>
-                  </Typography>
-                )}
-                {props.product.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Total Value of Mentorship Credit:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {getCurrencyCode()}
-                      {(
-                        props.product.mentorshipCredit *
-                        props.product.costPerMentorshipCredit
-                      )
-                        .toFixed(2)
-                        .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
-                    </span>
-                  </Typography>
-                )}
-                {props.product.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Duration:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.product.mentorshipDuration}&nbsp;&nbsp; ( from the
-                      day of graduation)
-                    </span>
-                  </Typography>
-                )}
-                {props.product.isInstallmentalPaymentAllowed === "yes" && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Is Installmental Payment Allowed :</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.product.isInstallmentalPaymentAllowed
-                        .charAt(0)
-                        .toUpperCase() +
-                        props.product.isInstallmentalPaymentAllowed.slice(1)}
-                    </span>
-                  </Typography>
-                )}
-                {props.product.isInstallmentalPaymentAllowed === "yes" && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>
-                        Maximum Number of Installmental Payment Allowed :
-                      </strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {props.product.maximumInstallmentalPayment}&nbsp;times
-                    </span>
-                  </Typography>
-                )}
-                {props.product.passGrade !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Minimum NextChamp Grade:</strong>
-                    </span>
-                    {props.product.passGrade}
-                  </Typography>
-                )}
-                <br /> <br />
-                {props.product.isCourseAuditable && (
-                  <Typography>
-                    <span
-                      style={{
-                        fontSize: 18,
-                        marginLeft: 14,
-                        //textAlign: "center",
-                      }}
-                    >
-                      You can audit this course for FREE for up to
-                      <strong>
-                        <span>{props.product.weekdayAuditDays}</span>
-                      </strong>
-                      &nbsp;. You only make payment afterwards when you are sure
-                      the course is a good fit for you
-                    </span>
+                    {props.product.dosage}
                   </Typography>
                 )}
               </Box>
@@ -1638,11 +1498,19 @@ export default function ProductDetailCard(props) {
                   currency={currency}
                   unit={props.product.unit}
                   minQuantity={props.product.minQuantity}
-                  courseId={props.product.id}
                   productId={props.product.id}
-                  requestQuote={props.product.requestQuote}
-                  allowSubscription={props.product.allowSubscription}
                   token={props.token}
+                  requestQuote={props.product.requestQuote}
+                  pricingMechanism={props.product.pricingMechanism}
+                  allowSubscription={props.product.allowSubscription}
+                  weightInKg={props.product.weightInKg}
+                  presentWeightUnitIn={props.product.presentWeightUnitIn}
+                  isVatable={props.product.isVatable}
+                  revenueMargin={props.product.revenueMargin}
+                  revenueMarginShouldPrevail={
+                    props.product.revenueMarginShouldPrevail
+                  }
+                  origins={props.product.origins}
                   userId={props.userId}
                   handleMakeOpenSignUpDialogStatus={
                     handleMakeOpenSignUpDialogStatus
@@ -1675,100 +1543,105 @@ export default function ProductDetailCard(props) {
             style={{ width: "100%" }}
             justifyContent="center"
           >
-            <Grid
-              item
-              className={classes.secondColumnMobile}
-              style={{ marginLeft: "2%" }}
-            >
-              <Box>
-                <Typography>
-                  <strong>Prerequisites:</strong>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{
-                    color: "black",
-                    marginTop: 20,
-                    marginBottom: 20,
-                    justifyContent: "center",
-                  }}
-                >
-                  <ReactMarkdown>{props.product.prerequisites}</ReactMarkdown>
-                </Typography>
-              </Box>
-            </Grid>
+            {props.product.ingredients && (
+              <Grid
+                item
+                className={classes.secondColumnMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Box>
+                  <Typography>
+                    <strong>Ingredients:</strong>
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    style={{
+                      color: "black",
+                      marginTop: 20,
+                      marginBottom: 20,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ReactMarkdown>{props.product.ingredients}</ReactMarkdown>
+                  </Typography>
+                </Box>
+              </Grid>
+            )}
 
-            <Grid
-              item
-              className={classes.secondColumnMobile}
-              style={{ marginLeft: "0.5%" }}
-            >
-              <Box>
-                <Typography>
-                  <strong>What you will Learn:</strong>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{
-                    color: "black",
-                    marginTop: 20,
-                    marginBottom: 20,
-                    justifyContent: "center",
-                  }}
-                >
-                  <ReactMarkdown>{props.product.whatToLearn}</ReactMarkdown>
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid
-              item
-              className={classes.secondColumnMobile}
-              style={{ marginLeft: "0.5%" }}
-            >
-              <Box>
-                <Typography>
-                  <strong>Required Learning Tools:</strong>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{
-                    color: "black",
-                    marginTop: 20,
-                    marginBottom: 20,
-                    justifyContent: "center",
-                  }}
-                >
-                  <ReactMarkdown>{props.product.tools}</ReactMarkdown>
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid
-              item
-              className={classes.secondColumnMobile}
-              style={{ marginLeft: "0.5%" }}
-            >
-              <Box>
-                <Typography>
-                  <strong>Who should attend:</strong>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{
-                    color: "black",
-                    marginTop: 20,
-                    marginBottom: 20,
-                    justifyContent: "center",
-                  }}
-                >
-                  <ReactMarkdown>{props.product.targetAudience}</ReactMarkdown>
-                </Typography>
-              </Box>
-            </Grid>
+            {props.product.sideEffects && (
+              <Grid
+                item
+                className={classes.secondColumnMobile}
+                style={{ marginLeft: "0.5%" }}
+              >
+                <Box>
+                  <Typography>
+                    <strong>Side Effects:</strong>
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    style={{
+                      color: "black",
+                      marginTop: 20,
+                      marginBottom: 20,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ReactMarkdown>{props.product.sideEffects}</ReactMarkdown>
+                  </Typography>
+                </Box>
+              </Grid>
+            )}
+
+            {props.product.benefits && (
+              <Grid
+                item
+                className={classes.secondColumnMobile}
+                style={{ marginLeft: "0.5%" }}
+              >
+                <Box>
+                  <Typography>
+                    <strong>Benefits:</strong>
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    style={{
+                      color: "black",
+                      marginTop: 20,
+                      marginBottom: 20,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ReactMarkdown>{props.product.benefits}</ReactMarkdown>
+                  </Typography>
+                </Box>
+              </Grid>
+            )}
+            {props.product.howToUse && (
+              <Grid item className={classes.secondColumnMobile}>
+                <Box>
+                  <Typography>
+                    <strong>How To Use:</strong>
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    style={{
+                      color: "black",
+                      marginTop: 20,
+                      marginBottom: 20,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ReactMarkdown>{props.product.howToUse}</ReactMarkdown>
+                  </Typography>
+                </Box>
+              </Grid>
+            )}
           </Grid>
           <Grid item className={classes.thirdColumnMobile}>
             <Box>
               <Typography>
-                <strong>Course Description:</strong>
+                <strong>Product Description:</strong>
               </Typography>
               <Typography
                 variant="h5"
@@ -1779,11 +1652,438 @@ export default function ProductDetailCard(props) {
                   justifyContent: "center",
                 }}
               >
-                <ReactMarkdown>{props.product.longDescription}</ReactMarkdown>
+                <ReactMarkdown>{props.product.fullDescription}</ReactMarkdown>
               </Typography>
             </Box>
           </Grid>
-          <Grid item className={classes.forthColumnMobile}>
+          {/**Images start here */}
+          {images[0] && (
+            <Typography
+              variant="h5"
+              style={{ color: "black", fontSize: 15, marginLeft: 30 }}
+            >
+              <strong>
+                {images.length > 1 ? "Product Images" : "Product Image"}
+              </strong>
+            </Typography>
+          )}
+          <Grid
+            item
+            container
+            direction="column"
+            style={{ width: "100%" }}
+            justifyContent="center"
+          >
+            {images[0] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[0]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[1] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[1]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[2] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[2]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[3] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[3]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+          </Grid>
+          <Grid
+            item
+            container
+            direction="row"
+            style={{ width: "100%" }}
+            justifyContent="center"
+          >
+            {images[4] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[4]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[5] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[5]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[6] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[6]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[7] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[7]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+          </Grid>
+          <Grid
+            item
+            container
+            direction="row"
+            style={{ width: "100%" }}
+            justifyContent="center"
+          >
+            {images[8] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[8]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[9] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[9]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[10] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[10]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[11] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[11]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+          </Grid>
+          <Grid
+            item
+            container
+            direction="row"
+            style={{ width: "100%" }}
+            justifyContent="center"
+          >
+            {images[12] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[12]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[13] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[13]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[14] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[14]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[15] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[15]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+          </Grid>
+          <Grid
+            item
+            container
+            direction="row"
+            style={{ width: "100%" }}
+            justifyContent="center"
+          >
+            {images[16] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[16]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[17] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[17]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[18] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[18]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+
+            {images[19] && (
+              <Grid
+                item
+                className={classes.secondColumnImageMobile}
+                style={{ marginLeft: "2%" }}
+              >
+                <Card>
+                  <CardMedia
+                    className={classes.mediaImageMobile}
+                    component="img"
+                    alt={props.product.name}
+                    image={`${baseURL}/images/products/${images[19]}`}
+                    //   title={props.name}
+                    crossOrigin="anonymous"
+                  />
+                </Card>
+              </Grid>
+            )}
+          </Grid>{" "}
+          {/**images ends here**/}
+          {/* <Grid item className={classes.forthColumnMobile}>
             <Box>
               <Typography>
                 <strong>Course Content:</strong>
@@ -1800,46 +2100,43 @@ export default function ProductDetailCard(props) {
                 <ReactMarkdown>{props.product.contents}</ReactMarkdown>
               </Typography>
             </Box>
-          </Grid>
-          <Grid item className={classes.fifthColumnMobile}>
-            <Box>
-              <Typography>
-                <strong>Capstone Project:</strong>
-              </Typography>
-              <Typography
-                variant="h5"
-                style={{
-                  color: "black",
-                  marginTop: 20,
-                  marginBottom: 20,
-                  justifyContent: "center",
-                }}
-              >
-                <ReactMarkdown>{props.product.capstoneProject}</ReactMarkdown>
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item className={classes.sixthColumnMobile}>
-            <Box>
-              <Typography>
-                <strong>
-                  What you need to become the NextChamp in this Course:
-                </strong>
-              </Typography>
-              <Typography
-                variant="h5"
-                style={{
-                  color: "black",
-                  marginTop: 20,
-                  marginBottom: 20,
-                  justifyContent: "center",
-                }}
-              >
-                <ReactMarkdown>{props.product.successTips}</ReactMarkdown>
-              </Typography>
-            </Box>
-          </Grid>
-          {/* </Grid> */}
+          </Grid> */}
+          {props.product.video && (
+            <Grid item className={classes.fifthColumnMobile}>
+              <Card>
+                <CardMedia
+                  className={classes.videoMedia}
+                  component="iframe"
+                  alt={props.product.name}
+                  height="140"
+                  src={`https://www.youtube.com/embed/${props.product.video}`}
+                  //allow="autoPlay"
+                  allowfullscreen="allowfullscreen"
+                  controls
+                />
+              </Card>
+            </Grid>
+          )}
+          {props.product.shopsAvailable && (
+            <Grid item className={classes.fifthColumnMobile}>
+              <Box>
+                <Typography>
+                  <strong>Available in these Stores:</strong>
+                </Typography>
+                <Typography
+                  variant="h5"
+                  style={{
+                    color: "black",
+                    marginTop: 20,
+                    marginBottom: 20,
+                    justifyContent: "center",
+                  }}
+                >
+                  <ReactMarkdown>{props.product.shopsAvailable}</ReactMarkdown>
+                </Typography>
+              </Box>
+            </Grid>
+          )}
         </Grid>
       )}
       {renderLoginForm()}

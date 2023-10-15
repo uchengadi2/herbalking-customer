@@ -551,7 +551,7 @@ export default function CheckoutCard(props) {
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Reference Number:</strong>
+                      <strong>Reference Number/Sku:</strong>
                     </span>
                     {product.refNumber}
                   </Typography>
@@ -663,7 +663,7 @@ export default function CheckoutCard(props) {
               <CardMedia
                 className={classes.mediaMobile}
                 component="img"
-                alt={course.title}
+                alt={product.name}
                 image={imageUrl}
                 //title={product.name}
                 crossOrigin="anonymous"
@@ -678,16 +678,16 @@ export default function CheckoutCard(props) {
               }}
             >
               <CardContent disableRipple>
-                {course.hasSeries ? (
+                {product.configuration ? (
                   <Typography variant="h4" color="textSecondary" component="p">
-                    {course.title}
+                    {product.name}
                     <span style={{ fontSize: 16, fontWeight: 700 }}>
-                      <em> ({course.series})</em>
+                      <em> ({product.configuration})</em>
                     </span>
                   </Typography>
                 ) : (
                   <Typography variant="h4" color="textSecondary" component="p">
-                    {course.title}
+                    {product.name}
                   </Typography>
                 )}
                 <Typography
@@ -695,7 +695,7 @@ export default function CheckoutCard(props) {
                   color="textSecondary"
                   component="p"
                 >
-                  {Str(course.shortDescription).limit(200, "...").get()}
+                  {Str(product.shortDescription).limit(200, "...").get()}
                 </Typography>
                 <Typography
                   variant="h5"
@@ -706,8 +706,8 @@ export default function CheckoutCard(props) {
                   <span style={{ marginLeft: 130 }}>
                     <strong>
                       {getCurrencyCode()}
-                      {course.price
-                        ? course.price
+                      {product.pricePerUnit
+                        ? product.pricePerUnit
                             .toFixed(2)
                             .replace(/\d(?=(\d{3})+\.)/g, "$&,")
                         : ""}
@@ -715,230 +715,80 @@ export default function CheckoutCard(props) {
                     </strong>
                   </span>
                 </Typography>
-                {course.refNumber !== undefined && (
+                {product.refNumber !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Reference Number:</strong>
+                      <strong>Sku:</strong>
                     </span>
-                    {course.refNumber}
+                    {product.refNumber}
                   </Typography>
                 )}
-                {course.duration !== undefined && (
+                {product.minQuantity !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Duration:</strong>
+                      <strong>Minimum Quantity Required:</strong>
                     </span>
-                    {course.duration}
+                    <span>
+                      {product.minQuantity
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      &nbsp;
+                      {product.minQuantity <= 1
+                        ? product.unit
+                        : product.unit + "s"}
+                    </span>
                   </Typography>
                 )}
-                {course.commencementDate !== undefined && (
+                {product.remainingUnits !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Start date:</strong>
+                      <strong>Stock:</strong>
                     </span>
-                    {course.commencementDate
-                      ? new Date(course.commencementDate).toDateString()
-                      : "Coming Soon"}
+                    <span>
+                      {product.remainingUnits
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      &nbsp;
+                      {product.remainingUnits <= 1
+                        ? product.unit
+                        : product.unit + "s"}
+                    </span>
                   </Typography>
                 )}
-                {course.deliveryMethod !== undefined && (
+                {product.type !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Delivery Method:</strong>
+                      <strong>Type:</strong>
                     </span>
-                    {course.deliveryMethod}
+                    {product.type ? product.type : ""}
                   </Typography>
                 )}
-                {course.venue !== undefined && (
+                {product.dosage !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Venue:</strong>
+                      <strong>Dosage:</strong>
                     </span>
-                    {course.venue}
-                  </Typography>
-                )}
-                {course.track !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Track:</strong>
-                    </span>
-                    {course.track}
-                  </Typography>
-                )}
-                {course.commencementWeekdaysDate !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Weekday Start Date(s):</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.commencementWeekdaysDate.join("|")}
-                    </span>
-                  </Typography>
-                )}
-                {course.commencementWeekendsDate !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Weekend Start Date(s):</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.commencementWeekendsDate.join("|")}
-                    </span>
-                  </Typography>
-                )}
-                <Typography
-                  variant="h5"
-                  style={{ color: "black", fontSize: 15 }}
-                >
-                  <span style={{ marginRight: 20 }}>
-                    <strong>Weekday Lecture Period:</strong>
-                  </span>
-                  <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {course.weekdaySessionPeriod}
-                  </span>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{ color: "black", fontSize: 15 }}
-                >
-                  <span style={{ marginRight: 20 }}>
-                    <strong>Weekend Lecture Period:</strong>
-                  </span>
-                  <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {course.weekendSessionPeriod}
-                  </span>
-                </Typography>
-                {course.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Credit:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.mentorshipCredit}&nbsp; Units &nbsp;
-                    </span>
-                  </Typography>
-                )}
-                {course.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Credit Value:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {getCurrencyCode()}
-                      {(
-                        course.mentorshipCredit * course.costPerMentorshipCredit
-                      )
-                        .toFixed(2)
-                        .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
-                    </span>
-                  </Typography>
-                )}
-                {course.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Duration:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.mentorshipDuration}&nbsp;&nbsp;
-                    </span>
-                  </Typography>
-                )}
-                {course.isInstallmentalPaymentAllowed === "yes" && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Installmental Payment Allowed?:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.isInstallmentalPaymentAllowed
-                        .charAt(0)
-                        .toUpperCase() +
-                        course.isInstallmentalPaymentAllowed.slice(1)}
-                    </span>
-                  </Typography>
-                )}
-                {course.isInstallmentalPaymentAllowed === "yes" && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>No. of Installmental Payment:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {course.maximumInstallmentalPayment}&nbsp;times
-                    </span>
-                  </Typography>
-                )}
-                {course.passGrade !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      {" "}
-                      <strong>Minimum NextChamp Grade:</strong>
-                    </span>
-                    {course.passGrade}
-                  </Typography>
-                )}
-                <br /> <br />
-                {course.isCourseAuditable && (
-                  <Typography>
-                    <span
-                      style={{
-                        fontSize: 18,
-                        marginLeft: 14,
-                        //textAlign: "center",
-                      }}
-                    >
-                      You can audit this course for FREE for up to
-                      <strong>
-                        <span>{course.weekdayAuditDays}</span>
-                      </strong>
-                      &nbsp;. You only make payment afterwards when you are sure
-                      the course is a good fit for you
-                    </span>
+                    {product.dosage}
                   </Typography>
                 )}
               </CardContent>
@@ -953,16 +803,16 @@ export default function CheckoutCard(props) {
                 border: "1px dotted grey",
               }}
             >
-              {course.price && (
+              {product.pricePerUnit && (
                 <CheckoutActionPage
                   price={product.pricePerUnit}
                   minimumQuantity={product.minQuantity}
                   productId={product.id}
                   unit={product.unit}
-                  preferredStartDate={props.preferredStartDate}
                   token={props.token}
                   userId={props.userId}
                   quantity={props.quantity}
+                  preferredStartDate={props.preferredStartDate}
                   cartId={props.cartId}
                   currency={product.currency}
                   dateAddedToCart={props.dateAddedToCart}
@@ -977,6 +827,7 @@ export default function CheckoutCard(props) {
                     props.handleSuccessfulCreateSnackbar
                   }
                   handleFailedSnackbar={props.handleFailedSnack}
+                  renderCheckoutUpdate={props.renderCheckoutUpdate}
                 />
               )}
             </Grid>

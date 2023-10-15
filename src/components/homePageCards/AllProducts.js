@@ -624,7 +624,7 @@ export default function AllProducts(props) {
                 <CardMedia
                   className={classes.mediaMobile}
                   component="img"
-                  alt={props.title}
+                  alt={props.name}
                   image={imageUrl}
                   //title={product.name}
                   crossOrigin="anonymous"
@@ -632,15 +632,15 @@ export default function AllProducts(props) {
               </Grid>
               <Grid item style={{ width: "100%", border: "1px dotted grey" }}>
                 <CardContent disableRipple>
-                  {props.hasSeries ? (
+                  {props.configuration ? (
                     <Typography
                       variant="h4"
                       color="textSecondary"
                       component="p"
                     >
-                      {props.title}
+                      {props.name}
                       <span style={{ fontSize: 16, fontWeight: 700 }}>
-                        <em> ({props.series})</em>
+                        <em> ({props.configuration})</em>
                       </span>
                     </Typography>
                   ) : (
@@ -649,7 +649,7 @@ export default function AllProducts(props) {
                       color="textSecondary"
                       component="p"
                     >
-                      {props.title}
+                      {props.name}
                     </Typography>
                   )}
                   <Typography
@@ -668,8 +668,8 @@ export default function AllProducts(props) {
                     <span style={{ marginLeft: 130 }}>
                       <strong>
                         {getCurrencyCode()}
-                        {props.price
-                          ? props.price
+                        {props.pricePerUnit
+                          ? props.pricePerUnit
                               .toFixed(2)
                               .replace(/\d(?=(\d{3})+\.)/g, "$&,")
                           : 0}
@@ -680,151 +680,61 @@ export default function AllProducts(props) {
                     <span
                       style={{ fontSize: 14, marginLeft: 10, marginTop: 20 }}
                     >
-                      <strong>Delivery Method:</strong> &nbsp;
-                      <span>{props.deliveryMethod}</span>
+                      <strong>Minimum Quantity Required:</strong> &nbsp;
+                      <span>
+                        {props.minQuantity
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        &nbsp;
+                        {props.minQuantity <= 1 ? props.unit : props.unit + "s"}
+                      </span>
                     </span>
                   </Typography>
 
-                  <Typography>
-                    <span style={{ fontSize: 14, marginLeft: 10 }}>
-                      <strong> Venue:</strong>
-                      <span>{props.venue}</span>
-                    </span>
-                  </Typography>
-                  <Typography>
-                    <span style={{ fontSize: 14, marginLeft: 10 }}>
-                      <strong> Total Course Duration:</strong>
-                      <span>{props.duration} </span>
-                    </span>
-                  </Typography>
-                  <Typography>
-                    <span style={{ fontSize: 14, marginLeft: 10 }}>
-                      <strong> Weekday Lecture Period:</strong>
-                      <span>{props.weekdaySessionPeriod} </span>
-                    </span>
-                  </Typography>
-                  <Typography>
-                    <span style={{ fontSize: 14, marginLeft: 10 }}>
-                      <strong> Weekend Lecture Period:</strong>
-                      <span>{props.weekendSessionPeriod} </span>
-                    </span>
-                  </Typography>
-
-                  <Typography>
-                    <span style={{ fontSize: 14, marginLeft: 10 }}>
-                      <strong>Course Track:</strong>
-                      <span>{props.track}</span>
-                    </span>
-                  </Typography>
-                  {(props.track === "weekdays" ||
-                    props.track === "weekdays/weekends") && (
+                  {props.remainingUnits && (
                     <Typography>
                       <span style={{ fontSize: 14, marginLeft: 10 }}>
-                        <strong>Weekday Start Date(s): </strong>&nbsp;&nbsp;
-                        {!props.showGenericWeekdayStartDateText
-                          ? props.commencementWeekdaysDate.toString()
-                          : props.genericWeekdayStartDateText}
+                        <strong>Quantity in Stock:</strong> &nbsp;
+                        <span>
+                          {props.remainingUnits
+                            .toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          &nbsp;
+                          {props.remainingUnits <= 1
+                            ? props.unit
+                            : props.unit + "s"}
+                        </span>
+                      </span>
+                    </Typography>
+                  )}
+                  {props.refNumber && (
+                    <Typography>
+                      <span style={{ fontSize: 14, marginLeft: 10 }}>
+                        <strong> Sku/Reference Number:</strong>
+                        <span>{props.refNumber} </span>
+                      </span>
+                    </Typography>
+                  )}
+                  <Typography>
+                    <span style={{ fontSize: 14, marginLeft: 10 }}>
+                      <strong> Sales Preference:</strong>
+                      <span>{props.salesPreference}</span>
+                    </span>
+                  </Typography>
+                  {props.type && (
+                    <Typography>
+                      <span style={{ fontSize: 14, marginLeft: 10 }}>
+                        <strong> Type:</strong>
+                        <span>{props.type} </span>
                       </span>
                     </Typography>
                   )}
 
-                  {(props.track === "weekends" ||
-                    props.track === "weekdays/weekends") && (
-                    <Typography>
-                      <span style={{ fontSize: 15, marginLeft: 10 }}>
-                        <strong>Weekend Start Date(s): </strong>&nbsp;&nbsp;
-                        {!props.showGenericWeekendStartDateText
-                          ? props.commencementWeekendsDate.toString()
-                          : props.genericWeekendStartDateText}
-                      </span>
-                    </Typography>
-                  )}
-                  {props.hasMentorshipCredit && (
+                  {props.dosage && (
                     <Typography>
                       <span style={{ fontSize: 14, marginLeft: 10 }}>
-                        <strong>Mentorship Credit:</strong>
-                        <span>
-                          {props.mentorshipCredit}&nbsp;Units&nbsp;&nbsp; (to be
-                          used after graduation)
-                        </span>
-                      </span>
-                    </Typography>
-                  )}
-                  {props.hasMentorshipCredit && (
-                    <Typography>
-                      <span style={{ fontSize: 14, marginLeft: 10 }}>
-                        <strong>Total Value of Mentorship Credit:</strong>
-                        <span>
-                          {getCurrencyCode()}
-                          {(
-                            props.mentorshipCredit *
-                            props.costPerMentorshipCredit
-                          )
-                            .toFixed(2)
-                            .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
-                        </span>
-                      </span>
-                    </Typography>
-                  )}
-                  {props.hasMentorshipCredit && (
-                    <Typography>
-                      <span style={{ fontSize: 14, marginLeft: 10 }}>
-                        <strong>Mentorship Duration:</strong>
-                        <span>
-                          {props.mentorshipDuration}&nbsp;&nbsp; (from the day
-                          of graduation )
-                        </span>
-                      </span>
-                    </Typography>
-                  )}
-                  <Typography>
-                    <span style={{ fontSize: 14, marginLeft: 10 }}>
-                      <strong>Payment Options:</strong>
-                      <span>{props.paymentOptions}</span>
-                    </span>
-                  </Typography>
-                  {props.isInstallmentalPaymentAllowed === "yes" && (
-                    <Typography>
-                      <span style={{ fontSize: 14, marginLeft: 10 }}>
-                        <strong>Is installmental Payment Allowed?:</strong>
-                        <span>
-                          {props.isInstallmentalPaymentAllowed
-                            .charAt(0)
-                            .toUpperCase() +
-                            props.isInstallmentalPaymentAllowed.slice(1)}
-                        </span>
-                      </span>
-                    </Typography>
-                  )}
-                  {props.isInstallmentalPaymentAllowed === "yes" && (
-                    <Typography>
-                      <span style={{ fontSize: 14, marginLeft: 10 }}>
-                        <strong>
-                          Maximum Number of Installmental Payment Allowed:
-                        </strong>
-                        <span>
-                          {props.maximumInstallmentalPayment}&nbsp;times
-                        </span>
-                      </span>
-                    </Typography>
-                  )}
-                  <br />
-                  <br />
-                  {props.isCourseAuditable && (
-                    <Typography>
-                      <span
-                        style={{
-                          fontSize: 18,
-                          marginLeft: 14,
-                          //textAlign: "center",
-                        }}
-                      >
-                        You can audit this course for FREE for up to
-                        <strong>
-                          <span>{props.weekdayAuditDays}</span>
-                        </strong>
-                        &nbsp;. You only make payment afterwards when you are
-                        sure the course is a good fit for you
+                        <strong> Dosage:</strong>
+                        <span>{props.dosage} </span>
                       </span>
                     </Typography>
                   )}
@@ -834,7 +744,7 @@ export default function AllProducts(props) {
               <Grid item style={{ width: "100%", border: "1px dotted grey" }}>
                 <ProductInfo
                   benefits={props.benefits}
-                  requestQuote={props.requestQuote}
+                  pricingMechanism={props.pricingMechanism}
                   tools={props.tools}
                   policy={props.policy}
                   currency={props.currency}
@@ -843,6 +753,7 @@ export default function AllProducts(props) {
                   venueLink={props.venueLink}
                   categoryId={props.category}
                   productId={props.courseId}
+                  requestQuote={props.requestQuote}
                   slug={props.slug}
                   categorySlug={props.categorySlug}
                   updateBuyingPathInfoInfo={props.updateBuyingPathInfoInfo}

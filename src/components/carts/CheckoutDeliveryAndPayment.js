@@ -1617,7 +1617,7 @@ function CheckoutDeliveryAndPayment(props) {
           <Grid item></Grid>
         </Grid>
       ) : (
-        <Grid container direction="column" className={classes.rootMobile}>
+        <Grid container direction="row" className={classes.rootMobile}>
           <Grid
             item
             container
@@ -1635,76 +1635,125 @@ function CheckoutDeliveryAndPayment(props) {
               style={{ marginTop: 10, marginBottom: 10 }}
               justifyContent="center"
             >
-              <Box
-                sx={{
-                  //width: 1200,
-                  //height: 450,
-                  width: "80%",
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                <Typography variant="h5">
-                  Enrolling from the United Kingdom? Use the details below:
-                </Typography>
-                <Typography>
-                  <strong>Expected Amount:</strong> &nbsp; &nbsp; &#163;
-                  {totalProductCostForUkForDisplay}
-                </Typography>
-                <Typography>
-                  <strong>Pay To:</strong>
-                </Typography>
-                <Typography>
-                  <strong>Beneficiary:</strong> &nbsp; &nbsp; ControlSoft
-                  Limited
-                </Typography>
-                <Typography>
-                  <strong>Bank Name: </strong>&nbsp; &nbsp; Barclays Bank
-                </Typography>
-                <Typography>
-                  <strong>Account Number: </strong>&nbsp; &nbsp; 02313927
-                </Typography>
-                <Typography>
-                  <strong>Sort Code:</strong> &nbsp; &nbsp; 231486
-                </Typography>
-                <Typography style={{ marginTop: 15 }}>
-                  Send proof of payment to: &nbsp; &nbsp; payment@nextchamp.co
-                </Typography>
+              <form id="checkoutDeliveryAndPayment">
+                <Box
+                  sx={{
+                    //width: 1200,
+                    //height: 450,
+                    width: "100%",
+                  }}
+                  noValidate
+                  autoComplete="off"
+                >
+                  <Field
+                    label=""
+                    id="recipientName"
+                    name="recipientName"
+                    type="text"
+                    onChange={onRecipientNameChange}
+                    component={renderRecipientNameField}
+                    style={{ width: 300 }}
+                  />
+                  <Field
+                    label=""
+                    id="recipientPhoneNumber"
+                    name="recipientPhoneNumber"
+                    onChange={onRecipientPhoneNumberChange}
+                    type="text"
+                    component={renderRecipientPhoneNumberField}
+                    style={{ width: 300 }}
+                  />
+                  <Field
+                    label=""
+                    id="recipientAddress"
+                    name="recipientAddress"
+                    //defaultValue={quantity}
+                    type="text"
+                    onChange={onRecipientAddressChange}
+                    component={renderRecipientAddressField}
+                    style={{ width: 300, marginTop: 10 }}
+                  />
+                  <Grid item container direction="column">
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="recipientCountry"
+                        name="recipientCountry"
+                        //defaultValue={quantity}
+                        type="text"
+                        //onChange={onChange}
+                        component={renderCountryField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="recipientState"
+                        name="recipientState"
+                        //defaultValue={quantity}
+                        type="text"
+                        //onChange={onChange}
+                        component={renderStateField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="recipientCity"
+                        name="recipientCity"
+                        //defaultValue={quantity}
+                        type="text"
+                        //onChange={onChange}
+                        component={renderCityField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
 
-                <Typography>=====================================</Typography>
-
-                <Typography variant="h5">
-                  Enrolling from the United States or Other Countries outside
-                  Nigeria? Use the details below:
-                </Typography>
-                <Typography>
-                  <strong>Expected Amount:</strong>&nbsp; &nbsp; $
-                  {totalProductCostForUsForDisplay}
-                </Typography>
-                <Typography>
-                  <strong>Pay To:</strong>
-                </Typography>
-                <Typography>
-                  <strong>Beneficiary:</strong> &nbsp; &nbsp; ControlSoft
-                  Limited
-                </Typography>
-                <Typography>
-                  <strong>Bank Name: </strong>&nbsp; &nbsp; First Century Bank
-                </Typography>
-                <Typography>
-                  <strong>Account Number: </strong>&nbsp; &nbsp; 4010187581108
-                </Typography>
-                <Typography>
-                  <strong>Routing (ABA):</strong> &nbsp; &nbsp; 061120084
-                </Typography>
-                <Typography style={{ marginTop: 15 }}>
-                  Send proof of payment to: &nbsp; &nbsp; payment@nextchamp.co
-                </Typography>
-              </Box>
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="nearestBusstop"
+                        name="nearestBusstop"
+                        //defaultValue={quantity}
+                        type="text"
+                        onChange={onNearestBusStopChange}
+                        component={renderNearestBusstopField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="postalCode"
+                        name="postalCode"
+                        //defaultValue={quantity}
+                        type="text"
+                        onChange={onPostalCodeChange}
+                        component={renderPostalCodeField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Field
+                        label=""
+                        id="deliveryMode"
+                        name="deliveryMode"
+                        //defaultValue={quantity}
+                        type="text"
+                        //onChange={onChange}
+                        component={renderDeliveryModeField}
+                        //style={{ width: 300, marginTop: 10 }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+              </form>
             </Grid>
           </Grid>
 
-          <Grid
+          {/* <Grid
             item
             container
             style={{
@@ -1745,23 +1794,147 @@ function CheckoutDeliveryAndPayment(props) {
                 )}
               </Button>
             )}
-            {/* {!isOnlinePayment && paymentMethod === "audit" && (
-              <Button
-                variant="contained"
-                className={classes.submitAuditButtonMobile}
-                onClick={onAuditSubmit}
-              >
-                {loading ? (
-                  <CircularProgress size={30} color="inherit" />
-                ) : (
-                  buttonAuditContent()
-                )}
-              </Button>
-            )} */}
+           
 
             {isOnlinePayment &&
               renderOnlinePayment(customerEmail, amountForPayment, orderNumber)}
             {isSuccessful && <ThankYou />}
+          </Grid> */}
+          <Grid
+            item
+            container
+            style={{
+              //width: "35%",
+              marginLeft: 15,
+              border: "1px dashed grey",
+              padding: 15,
+              height: 400,
+            }}
+          >
+            <Typography
+              style={{
+                //width: 250,
+                fontSize: 20,
+                fontWeight: 300,
+                marginTop: 2,
+                marginLeft: 10,
+              }}
+            >
+              Total Cost of Product(s):{getCurrencyCode()}
+              {totalProductCostForDisplay}
+            </Typography>
+            <br />
+            <br />
+            {implementVatCollection && (
+              <Typography
+                style={{
+                  width: 350,
+                  fontSize: 20,
+                  fontWeight: 300,
+                  marginTop: 2,
+                  marginLeft: 10,
+                }}
+              >
+                {`VAT(${vatRate}%)`}:{getCurrencyCode()}
+                {vatForDispplay}
+              </Typography>
+            )}
+
+            {deliveryMode && (
+              <Typography
+                style={{
+                  width: 350,
+                  fontSize: 20,
+                  fontWeight: 300,
+                  marginTop: 2,
+                  marginLeft: 10,
+                }}
+              >
+                {deliveryMode === "sameday"
+                  ? "Same Day Delivery Cost"
+                  : deliveryMode === "priority"
+                  ? "Priority Delivery Cost"
+                  : deliveryMode === "standard"
+                  ? "Standard Delivery Cost"
+                  : "Delivery Cost"}
+                :{getCurrencyCode()}
+                {totalDeliveryCostForDisplay}
+              </Typography>
+            )}
+
+            <Typography
+              style={{
+                //width: 200,
+                fontSize: 23,
+                fontWeight: 700,
+                marginTop: 2,
+                marginLeft: 10,
+              }}
+            >
+              Total Cost:{getCurrencyCode()}
+              {totalOrderCostForDisplay}
+            </Typography>
+
+            {deliveryMode === "standard" && (
+              <Typography className={classes.bankDetails}>
+                {`Your order will be delivered in ${daysToStandardDelivery} from the day it was placed`}
+              </Typography>
+            )}
+            {deliveryMode === "sameday" && (
+              <Typography className={classes.bankDetails}>
+                {`Your order will be delivered same day if the order was placed before noon or  ${daysToSameDayDelivery} from the time it was placed`}
+              </Typography>
+            )}
+            {deliveryMode === "priority" && (
+              <Typography className={classes.bankDetails}>
+                {`Your order will be delivered in ${daysToPriorityDelivery} from the time it was placed`}
+              </Typography>
+            )}
+
+            {renderPaymentMethodField()}
+
+            {!isOnlinePayment && paymentMethod === "payOnDelivery" && (
+              <Button
+                variant="contained"
+                className={classes.submitButton}
+                onClick={onSubmit}
+              >
+                {loading ? (
+                  <CircularProgress size={30} color="inherit" />
+                ) : (
+                  buttonContent()
+                )}
+              </Button>
+            )}
+
+            {isOnlinePayment && !deliveryMode && (
+              <Button
+                variant="contained"
+                className={classes.submitEmptyFieldButton}
+                onClick={onEmptyFieldSubmit}
+              >
+                {loading ? (
+                  <CircularProgress size={30} color="inherit" />
+                ) : (
+                  buttonEmptyFieldsContent()
+                )}
+              </Button>
+            )}
+            {isOnlinePayment &&
+              recipientName &&
+              recipientPhoneNumber &&
+              recipientAddress &&
+              country &&
+              state &&
+              city &&
+              deliveryMode &&
+              renderOnlinePayment(
+                customerEmail,
+                amountForPayment,
+                orderNumber,
+                customerPhoneNumber,
+                customerName
+              )}
           </Grid>
         </Grid>
       )}

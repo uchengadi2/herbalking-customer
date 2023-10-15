@@ -490,8 +490,9 @@ function ShowCustomerCart(props) {
               type: EDIT_CART,
               payload: response.data.data.data,
             });
+            props.cartCounterHandler(-1);
 
-            setLoading(false);
+            //setLoading(false);
             // setIsCheckoutVisible(true);
           } else {
             // props.handleFailedSnackbar(
@@ -515,7 +516,7 @@ function ShowCustomerCart(props) {
     } else {
       //props.handleFailedSnackbar("Something went wrong, please try again!!!");
     }
-
+    setLoading(false);
     history.push(`/checkouts`);
   };
 
