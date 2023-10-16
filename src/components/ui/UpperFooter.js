@@ -302,12 +302,14 @@ function UpperFooter(props) {
                   ) : (
                     <Typography variant="subtitle2" style={{ fontSize: 14 }}>
                       <strong>
-                        Learning is easy but becoming a professional or an
-                        expert is not. <br />
-                        At NextChamp, we are all about making professionals{" "}
+                        Your health is your greatest asset, and at Herbal King,{" "}
                         <br />
-                        and experts through a combination of teaching, <br />
-                        practice, mentoring and assessment <br />
+                        we are committed to helping you protect and enhance it
+                        naturally
+                        <br />
+                        Explore our wide range of herbal supplements and take
+                        <br />
+                        the first step towards a healthier, happier you <br />
                       </strong>
                     </Typography>
                   )}
@@ -368,13 +370,17 @@ function UpperFooter(props) {
                     <Typography variant="subtitle2">Say hello!</Typography>
                   ) : (
                     <Typography variant="subtitle2" style={{ fontSize: 14 }}>
-                      <span> 157 Adetola Street, Aguda, Surulere</span>
+                      <span>
+                        {" "}
+                        Edo House, Plot 1225/129 Bishop Oluwole Street, Victoria
+                        Island, Lagos
+                      </span>
                       <br />
 
-                      <span>info@nextchamp.co</span>
+                      <span>sales@herbalkingmart.com</span>
                       <br />
 
-                      <span>+234 803 201 5819, +234 803 200 5819</span>
+                      <span>+234 0708 999 7673, +234 0806 908 6517</span>
                     </Typography>
                   )}
                   {matchesMD ? (

@@ -799,7 +799,7 @@ export default function OrderProductCard(props) {
               <CardMedia
                 className={classes.mediaMobile}
                 component="img"
-                alt={product.title}
+                alt={product.name}
                 image={imageUrl}
                 //title={product.name}
                 crossOrigin="anonymous"
@@ -807,16 +807,16 @@ export default function OrderProductCard(props) {
             </Grid>
             <Grid item style={{ width: "100%", border: "1px dotted grey" }}>
               <CardContent disableRipple>
-                {product.hasSeries ? (
+                {product.configuration ? (
                   <Typography variant="h4" color="textSecondary" component="p">
-                    {product.title}
+                    {product.name}
                     <span style={{ fontSize: 16, fontWeight: 700 }}>
-                      <em> ({product.series})</em>
+                      <em> ({product.configuration})</em>
                     </span>
                   </Typography>
                 ) : (
                   <Typography variant="h4" color="textSecondary" component="p">
-                    {product.title}
+                    {product.name}
                   </Typography>
                 )}
                 <Typography
@@ -840,7 +840,9 @@ export default function OrderProductCard(props) {
                             .toFixed(2)
                             .replace(/\d(?=(\d{3})+\.)/g, "$&,")
                         : 0}
-                      /person
+                      <span
+                        style={{ fontSize: 12 }}
+                      >{`per ${product.unit}`}</span>
                     </strong>
                   </span>
                 </Typography>
@@ -851,217 +853,177 @@ export default function OrderProductCard(props) {
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Reference Number:</strong>
+                      <strong>Sku:</strong>
                     </span>
                     {product.refNumber}
                   </Typography>
                 )}
-                {product.duration !== undefined && (
+                {props.orderedQuantity !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Duration:</strong>
+                      <strong>Quantity Ordered:</strong>
                     </span>
-                    {product.duration}
+                    {props.orderedQuantity
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
+                    {`${
+                      props.orderedQuantity > 1
+                        ? product.unit + "s"
+                        : product.unit
+                    }`}
                   </Typography>
                 )}
-                {product.commencementDate !== undefined && (
+                {props.dateOrdered !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Start date:</strong>
+                      <strong>Date Ordered:</strong>
                     </span>
-                    {product.commencementDate
-                      ? new Date(product.commencementDate).toDateString()
-                      : "Coming Soon"}
+                    {props.dateOrdered
+                      ? new Date(props.dateOrdered).toDateString()
+                      : ""}
                   </Typography>
                 )}
-                {product.deliveryMethod !== undefined && (
+                {props.deliveryMode !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Delivery Method:</strong>
+                      <strong>Delivery Mode/Shipping Preference:</strong>
                     </span>
-                    {product.deliveryMethod}
+                    {props.deliveryMode}
                   </Typography>
                 )}
-                {product.venue !== undefined && (
+                {props.deliveryStatus !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Venue:</strong>
+                      <strong>Delivery Status:</strong>
                     </span>
-                    {product.venue}
+                    {props.deliveryStatus}
                   </Typography>
                 )}
-                {product.track !== undefined && (
+                {props.daysToDelivery !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Track:</strong>
+                      <strong>Delivery Period from ordered date:</strong>
                     </span>
-                    {product.track}
+                    {props.daysToDelivery}
                   </Typography>
                 )}
-                {product.commencementWeekdaysDate !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Weekday Start Date(s):</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {product.commencementWeekdaysDate.join("|")}
-                    </span>
-                  </Typography>
-                )}
-                {product.commencementWeekendsDate !== undefined && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Weekend Start Date(s):</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {product.commencementWeekendsDate.join("|")}
-                    </span>
-                  </Typography>
-                )}
-                <Typography
-                  variant="h5"
-                  style={{ color: "black", fontSize: 15 }}
-                >
-                  <span style={{ marginRight: 20 }}>
-                    <strong>Weekday Lecture Period:</strong>
-                  </span>
-                  <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {product.weekdaySessionPeriod}
-                  </span>
-                </Typography>
-                <Typography
-                  variant="h5"
-                  style={{ color: "black", fontSize: 15 }}
-                >
-                  <span style={{ marginRight: 20 }}>
-                    <strong>Weekend Lecture Period:</strong>
-                  </span>
-                  <span style={{ marginLeft: 3, textAlign: "center" }}>
-                    {product.weekendSessionPeriod}
-                  </span>
-                </Typography>
-                {product.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Credit:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {product.mentorshipCredit}&nbsp; Units &nbsp;
-                    </span>
-                  </Typography>
-                )}
-                {product.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Value of Mentorship Credit:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {getCurrencyCode()}
-                      {(
-                        product.mentorshipCredit *
-                        product.costPerMentorshipCredit
-                      )
-                        .toFixed(2)
-                        .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
-                    </span>
-                  </Typography>
-                )}
-                {product.hasMentorshipCredit && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Mentorship Duration:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {product.mentorshipDuration}&nbsp;&nbsp;
-                    </span>
-                  </Typography>
-                )}
-                {product.isInstallmentalPaymentAllowed === "yes" && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>Installmental Payment Allowed? :</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {product.isInstallmentalPaymentAllowed
-                        .charAt(0)
-                        .toUpperCase() +
-                        product.isInstallmentalPaymentAllowed.slice(1)}
-                    </span>
-                  </Typography>
-                )}
-                {product.isInstallmentalPaymentAllowed === "yes" && (
-                  <Typography
-                    variant="h5"
-                    style={{ color: "black", fontSize: 15 }}
-                  >
-                    <span style={{ marginRight: 20 }}>
-                      <strong>No. of Installmental Payment:</strong>
-                    </span>
-                    <span style={{ marginLeft: 3, textAlign: "center" }}>
-                      {product.maximumInstallmentalPayment}&nbsp;times
-                    </span>
-                  </Typography>
-                )}
-                {product.passGrade !== undefined && (
+                {props.shopType !== undefined && (
                   <Typography
                     variant="h5"
                     style={{ color: "black", fontSize: 15 }}
                   >
                     <span style={{ marginRight: 20 }}>
                       {" "}
-                      <strong>Minimum NextChamp Grade:</strong>
+                      <strong>Purchased From:</strong>
                     </span>
-                    {product.passGrade}
+                    {props.shopType}
                   </Typography>
                 )}
-                <Typography
-                  variant="h5"
-                  color="textSecondary"
-                  component="p"
-                  style={{ marginTop: 15 }}
-                >
-                  <strong>Course Link : </strong>&nbsp;&nbsp;
-                  {/* {`${product.refNumber ? product.venueLink : ""}`} */}
-                  {product.venueLink}
-                </Typography>
+                <br /> <br />
+                {props.recipientName !== undefined && (
+                  <Typography
+                    variant="h5"
+                    style={{ color: "black", fontSize: 15 }}
+                  >
+                    <span style={{ marginRight: 20 }}>
+                      {" "}
+                      <strong>Recipient Name:</strong>
+                    </span>
+                    {props.recipientName}
+                  </Typography>
+                )}
+                {props.recipientPhoneNumber !== undefined && (
+                  <Typography
+                    variant="h5"
+                    style={{ color: "black", fontSize: 15 }}
+                  >
+                    <span style={{ marginRight: 20 }}>
+                      {" "}
+                      <strong>Recipient Phone Number:</strong>
+                    </span>
+                    {props.recipientPhoneNumber}
+                  </Typography>
+                )}
+                {props.recipientAddress !== undefined && (
+                  <Typography
+                    variant="h5"
+                    style={{ color: "black", fontSize: 15 }}
+                  >
+                    <span style={{ marginRight: 20 }}>
+                      {" "}
+                      <strong>Recipient Address:</strong>
+                    </span>
+                    {props.recipientAddress}
+                  </Typography>
+                )}
+                {props.recipientCityName !== undefined && (
+                  <Typography
+                    variant="h5"
+                    style={{ color: "black", fontSize: 15 }}
+                  >
+                    <span style={{ marginRight: 20 }}>
+                      {" "}
+                      <strong>Recipient City:</strong>
+                    </span>
+                    {props.recipientCityName}
+                  </Typography>
+                )}
+                {props.recipientStateName !== undefined && (
+                  <Typography
+                    variant="h5"
+                    style={{ color: "black", fontSize: 15 }}
+                  >
+                    <span style={{ marginRight: 20 }}>
+                      {" "}
+                      <strong>Recipient State:</strong>
+                    </span>
+                    {props.recipientStateName}
+                  </Typography>
+                )}
+                {props.recipientCountryName !== undefined && (
+                  <Typography
+                    variant="h5"
+                    style={{ color: "black", fontSize: 15 }}
+                  >
+                    <span style={{ marginRight: 20 }}>
+                      {" "}
+                      <strong>Recipient Country:</strong>
+                    </span>
+                    {props.recipientCountryName}
+                  </Typography>
+                )}
+                {product.dosage !== undefined && (
+                  <Typography
+                    variant="h5"
+                    style={{ color: "black", fontSize: 15 }}
+                  >
+                    <span style={{ marginRight: 20 }}>
+                      {" "}
+                      <strong>Dosage:</strong>
+                    </span>
+                    {product.dosage}
+                  </Typography>
+                )}
               </CardContent>
             </Grid>
 
@@ -1074,6 +1036,8 @@ export default function OrderProductCard(props) {
                 location={props.productLocation}
                 locationCountry={props.locationCountry}
                 quantity={props.orderedQuantity}
+                unit={product.unit}
+                minimumDaysToEffectiveReview={minimumDaysToEffectiveReview}
                 cartId={props.cartId}
                 totalDeliveryCost={props.totalDeliveryCost}
                 totalProductCost={props.totalProductCost}

@@ -191,11 +191,12 @@ function AboutUsForm(props) {
               }}
             >
               <strong>
-                Learning is easy but becoming a professional or an expert is not
-                <br /> At NextChamp, we are all about making professionals and
-                <br /> experts through a combination of teaching, practice,
+                Your health is your greatest asset, and at Herbal King,we are
+                committed to helping you protect and enhance it naturally
                 <br />
-                mocking, mentoring and assessment
+                <br /> Explore our wide range of herbal supplements and take the
+                first step towards a healthier, happier you.
+                <br />
                 <br />
               </strong>
             </Typography>

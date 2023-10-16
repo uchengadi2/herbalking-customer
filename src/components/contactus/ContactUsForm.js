@@ -87,8 +87,8 @@ function ContactUsForm(props) {
           <Typography variant="h5" style={{ marginTop: 50 }}>
             <span style={{ color: "orange" }}>Address:</span>{" "}
             <span style={{ marginLeft: 10 }}>
-              157 Adetola Street, Aguda, Surulere{" "}
-              <span style={{ marginLeft: 100 }}> Lagos </span>{" "}
+              Edo House, Plot 1225/129 Bishop Oluwole Street, Victoria Island,
+              Lagos <span style={{ marginLeft: 100 }}></span>{" "}
               {/* <span style={{ marginLeft: 100 }}>
                 Estate, Ilasa, Lagos, Nigeria
               </span> */}
@@ -97,11 +97,11 @@ function ContactUsForm(props) {
           </Typography>
           <Typography variant="h5" style={{ marginTop: 10 }}>
             <span style={{ color: "orange" }}>Email:</span>{" "}
-            <span style={{ marginLeft: 30 }}>info@nextchamp.co </span>
+            <span style={{ marginLeft: 30 }}>sales@herbalkingmart.com </span>
             <br /> <br /> <span style={{ color: "orange" }}>Tel:</span>{" "}
-            <span style={{ marginLeft: 50 }}>+234 803 201 5819</span>
+            <span style={{ marginLeft: 50 }}>+234 0708 999 7673</span>
             <br /> <br />
-            <span style={{ marginLeft: 100 }}>+234 803 200 5819</span>
+            <span style={{ marginLeft: 100 }}>+234 0806 908 6517</span>
           </Typography>
         </Grid>
       </Box>

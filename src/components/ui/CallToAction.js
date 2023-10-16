@@ -10,7 +10,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 
 //import background from "./../../assets/background.jpg";
-import background from "./../../assets/images/footage/footage_image.jpg";
+import background from "./../../assets/images/footage/footage_image.png";
 import mobileBackground from "./../../assets/mobileBackground.jpg";
 import history from "./../../history";
 import BecomePartnerFormContainer from "../partner/BecomePartnerFormContainer";
@@ -103,26 +103,29 @@ export default function CallToAction(props) {
         <Grid container direction="column">
           <Grid item>
             {matchesMD ? (
-              <Typography variant="h2">
-                A Learning Platform for the Next Champions!!! <br />{" "}
-                Revolutionary Professionals
+              <Typography variant="h2" style={{ color: "black" }}>
+                A One-stop Platform for carefully brewed Herbal Supplements!!!{" "}
+                <br /> Revolutionary Testimonies
               </Typography>
             ) : (
               <Typography variant="h2" style={{ fontSize: "1.5rem" }}>
-                A Learning Platform for the Next Champions!!! <br />{" "}
-                Revolutionary Professionals
+                A One-stop Platform for carefully brewed Herbal Supplements!!!{" "}
+                <br /> Revolutionary Testimonies
               </Typography>
             )}
             {matchesMD ? (
-              <Typography variant="subtitle2" style={{ fontSize: "1.5rem" }}>
-                Take advantage of the 21st century
+              <Typography
+                variant="subtitle2"
+                style={{ fontSize: "1.5rem", color: "black" }}
+              >
+                Take advantage of this Platform today
               </Typography>
             ) : (
               <Typography
                 variant="subtitle2"
                 style={{ fontSize: "1rem", marginTop: 20, marginBottom: 20 }}
               >
-                Take advantage of the 21st century
+                Take advantage of this Platform today
               </Typography>
             )}
 

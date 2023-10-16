@@ -73,8 +73,8 @@ function Paystack(props) {
     className: classes.checkout,
     email: props.email,
     amount: props.amount,
-    publicKey: "pk_test_9181f2dcbb5a6bf2cf56c8f2632eaa5e2fd182cb", //wholeroof test
-    //publicKey: "pk_live_5700e72ac96f8aafda7af34e76b1dcfd1b6ec8b2", //wholeroof live
+    publicKey: "pk_test_209acad1bf3004d1adcc1232404a6e6930076d58", //herbalking test
+    //publicKey: "pk_live_2ff0e8d43f92ab5b3419a7fc41a0816f21f4c7dd", //herbalking live
   };
 
   // you can call this function anything
