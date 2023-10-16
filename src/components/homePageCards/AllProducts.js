@@ -240,8 +240,6 @@ export default function AllProducts(props) {
     fetchData().catch(console.error);
   }, [props]);
 
-  console.log("props.currency:", props.currency);
-
   let imageUrl = "";
   if (product) {
     imageUrl = `${baseURL}/images/products/${props.image}`;
