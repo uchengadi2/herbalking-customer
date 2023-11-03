@@ -27,9 +27,12 @@ import LogisticsPartner from "./LogisticsPartner";
 import Footer from "./ui/Footer";
 import CareerPage from "./career/CareerPage";
 import ThankYou from "./thankyou/ThankYou";
+import MainDashboard from "./Dashboard/MainDashboard";
+import Products from "./Dashboard/products/Products";
 
 import OrderPage from "./orders/OrderPage";
 import SearchPage from "./search/SearchPage";
+
 import api from "./../apis/local";
 
 function App() {
@@ -257,6 +260,15 @@ function App() {
             {/* <Route path="/preferences">
               <Preferences />
             </Route> */}
+
+            <Route path="/dashboard/:slug">
+              <Dashboard
+                token={token}
+                setToken={setToken ? setToken : {}}
+                userId={userId}
+                setUserId={setUserId ? setUserId : {}}
+              />
+            </Route>
           </Switch>
         </Router>
       </ThemeProvider>

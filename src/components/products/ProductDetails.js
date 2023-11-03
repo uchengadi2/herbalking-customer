@@ -236,6 +236,10 @@ function ProductDetails(props) {
   const categorySlug = params.catSlug;
   const slug = params.slug;
 
+  console.log("sluggg is:", slug);
+
+  console.log("category slug is:", categorySlug);
+
   const handleBecomeAPartnerOpenDialogBox = () => {
     setBecomePartnerOpen(false);
   };

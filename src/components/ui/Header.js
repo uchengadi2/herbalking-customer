@@ -53,6 +53,8 @@ import api from "./../../apis/local";
 import { FaLaptopHouse } from "react-icons/fa";
 import OrderPage from "../orders/OrderPage";
 import ProfileLayout from "../ProfileLayout";
+import Dashboard from "../Dashboard/Dashboard";
+import MainDashboard from "../Dashboard/MainDashboard";
 
 function ElevationScroll(props) {
   const { children } = props;
@@ -547,11 +549,11 @@ const Header = (props) => {
       return (
         <Fragment>
           <Button
-            onClick={() => <OrderPage />}
+            onClick={() => <MainDashboard />}
             disableRipple
             component={Link}
             // to={`/carts/${props.userId}`}
-            to={`/orders`}
+            to={`/dashboard/maindashboard`}
             className={classes.cart}
           >
             {/* <img alt="company logo" src={logo} className={classes.logo} /> */}
