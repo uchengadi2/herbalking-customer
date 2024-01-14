@@ -138,7 +138,7 @@ function ProductInfo(props) {
     const fetchData = async () => {
       let allData = [];
       api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
-      const response = await api.get(`/categories/${categoryId}`);
+      const response = await api.get(`/categories/${categoryId[0].id}`);
       const items = response.data.data.data;
 
       allData.push({

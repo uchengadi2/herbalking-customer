@@ -7,6 +7,7 @@ import { styled } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RedeemIcon from "@mui/icons-material/Redeem";
+import Divider from "@mui/material/Divider";
 import PlaylistRemoveIcon from "@mui/icons-material/PlaylistRemove";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -40,6 +41,7 @@ function Inventories(props) {
 
   const [open, setOpen] = useState(false);
   const [inventoryList, setInventoryList] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -84,8 +86,6 @@ function Inventories(props) {
     fetchData().catch(console.error);
   }, []);
 
-  console.log("inventory list is:", inventoryList);
-
   useEffect(() => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
@@ -96,6 +96,11 @@ function Inventories(props) {
   };
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const onRowsSelectionHandler = (ids, rows) => {
+    const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
+    setSelectedRows(selectedRowsData);
   };
 
   const renderDataGrid = () => {
@@ -157,50 +162,50 @@ function Inventories(props) {
 
         //editable: true,
       },
-      {
-        field: "redeemaction",
-        headerName: "",
-        width: 30,
-        description: "Redeem Product",
-        renderCell: (params) => (
-          <strong>
-            {/* {params.value.getFullYear()} */}
-            <RedeemIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => [
-                // this.setState({
-                //   editOpen: true,
-                //   id: params.id,
-                //   params: params.row,
-                // }),
-                // history.push(`/products/onboard/${params.id}`),
-              ]}
-            />
-          </strong>
-        ),
-      },
-      {
-        field: "delistaction",
-        headerName: "",
-        width: 30,
-        description: "Delist Product",
-        renderCell: (params) => (
-          <strong>
-            {/* {params.value.getFullYear()} */}
-            <PlaylistRemoveIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => [
-                // this.setState({
-                //   editOpen: true,
-                //   id: params.id,
-                //   params: params.row,
-                // }),
-                // history.push(`/products/onboard/${params.id}`),
-              ]}
-            />
-          </strong>
-        ),
-      },
+      // {
+      //   field: "redeemaction",
+      //   headerName: "",
+      //   width: 30,
+      //   description: "Redeem Product",
+      //   renderCell: (params) => (
+      //     <strong>
+
+      //       <RedeemIcon
+      //         style={{ cursor: "pointer" }}
+      //         onClick={() => [
+      //           // this.setState({
+      //           //   editOpen: true,
+      //           //   id: params.id,
+      //           //   params: params.row,
+      //           // }),
+      //           // history.push(`/products/onboard/${params.id}`),
+      //         ]}
+      //       />
+      //     </strong>
+      //   ),
+      // },
+      // {
+      //   field: "delistaction",
+      //   headerName: "",
+      //   width: 30,
+      //   description: "Delist Product",
+      //   renderCell: (params) => (
+      //     <strong>
+
+      //       <PlaylistRemoveIcon
+      //         style={{ cursor: "pointer" }}
+      //         onClick={() => [
+      //           // this.setState({
+      //           //   editOpen: true,
+      //           //   id: params.id,
+      //           //   params: params.row,
+      //           // }),
+      //           // history.push(`/products/onboard/${params.id}`),
+      //         ]}
+      //       />
+      //     </strong>
+      //   ),
+      // },
     ];
 
     inventoryList.map((inventory, index) => {
@@ -236,8 +241,9 @@ function Inventories(props) {
           },
         }}
         pageSizeOptions={[5]}
-        //checkboxSelection
-        //disableRowSelectionOnClick
+        checkboxSelection
+        disableRowSelectionOnClick
+        onSelectionModelChange={(ids) => onRowsSelectionHandler(ids, rows)}
         sx={{
           boxShadow: 3,
           border: 3,
@@ -255,17 +261,18 @@ function Inventories(props) {
       <Grid container spacing={1} direction="column">
         <Grid item xs>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={9.5}>
               <Typography variant="h4">Inventories</Typography>
             </Grid>
 
-            {/* <Grid item xs={1.8}>
+            <Grid item xs={2.5}>
               <div>
-                <Button variant="contained" onClick={handleOpen}>
-                  Redeem Product
-                </Button>
+                <Stack direction="row" spacing={1.5}>
+                  <Button variant="contained" onClick={handleOpen}>
+                    Remediate
+                  </Button>
 
-                <Backdrop
+                  {/* <Backdrop
                   sx={{
                     color: "#fff",
                     zIndex: (theme) => theme.zIndex.drawer + 1,
@@ -274,9 +281,14 @@ function Inventories(props) {
                   onClick={handleClose}
                 >
                  
-                </Backdrop>
+                </Backdrop> */}
+
+                  <Button variant="contained" onClick={handleOpen}>
+                    Delist
+                  </Button>
+                </Stack>
               </div>
-            </Grid> */}
+            </Grid>
           </Grid>
         </Grid>
         <Grid item xs={6}>

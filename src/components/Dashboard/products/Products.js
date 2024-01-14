@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
 
 import { styled } from "@mui/material/styles";
 import AddTaskIcon from "@mui/icons-material/AddTask";
@@ -38,6 +39,7 @@ function Products(props) {
 
   const [open, setOpen] = useState(false);
   const [productsList, setProductsList] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -65,6 +67,7 @@ function Products(props) {
     fetchData().catch(console.error);
   }, []);
 
+  console.log("selectec rows lemgth is:", selectedRows.length);
   useEffect(() => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
@@ -75,6 +78,11 @@ function Products(props) {
   };
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const onRowsSelectionHandler = (ids, rows) => {
+    const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
+    setSelectedRows(selectedRowsData);
   };
 
   const renderDataGrid = () => {
@@ -115,72 +123,72 @@ function Products(props) {
 
         //editable: true,
       },
-      {
-        field: "editaction",
-        headerName: "",
-        width: 30,
-        description: "Update row",
-        renderCell: (params) => (
-          <strong>
-            {/* {params.value.getFullYear()} */}
-            <EditIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => [
-                // this.setState({
-                //   editOpen: true,
-                //   id: params.id,
-                //   params: params.row,
-                // }),
-                // history.push(`/products/onboard/${params.id}`),
-              ]}
-            />
-          </strong>
-        ),
-      },
-      {
-        field: "deleteaction",
-        headerName: "",
-        width: 30,
-        description: "Update row",
-        renderCell: (params) => (
-          <strong>
-            {/* {params.value.getFullYear()} */}
-            <DeleteIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => [
-                // this.setState({
-                //   editOpen: true,
-                //   id: params.id,
-                //   params: params.row,
-                // }),
-                // history.push(`/products/onboard/${params.id}`),
-              ]}
-            />
-          </strong>
-        ),
-      },
-      {
-        field: "onboardaction",
-        headerName: "",
-        width: 30,
-        description: "Onboard Product",
-        renderCell: (params) => (
-          <strong>
-            {/* {params.value.getFullYear()} */}
-            <AddTaskIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => [
-                // this.setState({
-                //   editOpen: true,
-                //   id: params.id,
-                //   params: params.row,
-                // }),
-                // history.push(`/products/onboard/${params.id}`),
-              ]}
-            />
-          </strong>
-        ),
-      },
+      // {
+      //   field: "editaction",
+      //   headerName: "",
+      //   width: 30,
+      //   description: "Update row",
+      //   renderCell: (params) => (
+      //     <strong>
+
+      //       <EditIcon
+      //         style={{ cursor: "pointer" }}
+      //         onClick={() => [
+      //           // this.setState({
+      //           //   editOpen: true,
+      //           //   id: params.id,
+      //           //   params: params.row,
+      //           // }),
+      //           // history.push(`/products/onboard/${params.id}`),
+      //         ]}
+      //       />
+      //     </strong>
+      //   ),
+      // },
+      // {
+      //   field: "deleteaction",
+      //   headerName: "",
+      //   width: 30,
+      //   description: "Update row",
+      //   renderCell: (params) => (
+      //     <strong>
+      //       {/* {params.value.getFullYear()} */}
+      //       <DeleteIcon
+      //         style={{ cursor: "pointer" }}
+      //         onClick={() => [
+      //           // this.setState({
+      //           //   editOpen: true,
+      //           //   id: params.id,
+      //           //   params: params.row,
+      //           // }),
+      //           // history.push(`/products/onboard/${params.id}`),
+      //         ]}
+      //       />
+      //     </strong>
+      //   ),
+      // },
+      // {
+      //   field: "onboardaction",
+      //   headerName: "",
+      //   width: 30,
+      //   description: "Onboard Product",
+      //   renderCell: (params) => (
+      //     <strong>
+      //       {/* {params.value.getFullYear()} */}
+      //       <AddTaskIcon
+      //         style={{ cursor: "pointer" }}
+      //         onClick={() => [
+      //           // this.setState({
+      //           //   editOpen: true,
+      //           //   id: params.id,
+      //           //   params: params.row,
+      //           // }),
+      //           // history.push(`/products/onboard/${params.id}`),
+      //         ]}
+      //       />
+      //     </strong>
+      //   ),
+      // },
     ];
 
     productsList.map((product, index) => {
@@ -227,11 +235,9 @@ function Products(props) {
           },
         }}
         pageSizeOptions={[5]}
-        //checkboxSelection
-        // disableRowSelectionOnClick={true}
-        // disableColumnSelector={true}
-        style={{ cursor: "pointer" }}
-        onRowDoubleClick={console.log("row was double clicked")}
+        checkboxSelection
+        disableRowSelectionOnClick
+        onSelectionModelChange={(ids) => onRowsSelectionHandler(ids, rows)}
         sx={{
           boxShadow: 3,
           border: 3,
@@ -248,16 +254,17 @@ function Products(props) {
       <Grid container spacing={1} direction="column">
         <Grid item xs>
           <Grid container spacing={2}>
-            <Grid item xs={10}>
+            <Grid item xs={8}>
               {/* <Item>xs=8</Item> */}
               <Typography variant="h4">Products</Typography>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={4}>
               <div>
-                <Button variant="contained" onClick={handleOpen}>
-                  Define Product
-                </Button>
-                <Backdrop
+                <Stack direction="row" spacing={1.5}>
+                  <Button variant="contained" onClick={handleOpen}>
+                    Add
+                  </Button>
+                  {/* <Backdrop
                   sx={{
                     color: "#fff",
                     zIndex: (theme) => theme.zIndex.drawer + 1,
@@ -265,8 +272,38 @@ function Products(props) {
                   open={open}
                   onClick={handleClose}
                 >
-                  {/* <CircularProgress color="inherit" /> */}
-                </Backdrop>
+                 
+                </Backdrop> */}
+                  <Button variant="contained" onClick={handleOpen}>
+                    Edit
+                  </Button>
+                  {/* <Backdrop
+                  sx={{
+                    color: "#fff",
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                  }}
+                  open={open}
+                  onClick={handleClose}
+                >
+                 
+                </Backdrop> */}
+                  <Button variant="contained" onClick={handleOpen}>
+                    Onboard
+                  </Button>
+                  <Button variant="contained" onClick={handleOpen}>
+                    Delete
+                  </Button>
+                  {/* <Backdrop
+                  sx={{
+                    color: "#fff",
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                  }}
+                  open={open}
+                  onClick={handleClose}
+                >
+                 
+                </Backdrop> */}
+                </Stack>
               </div>
             </Grid>
           </Grid>

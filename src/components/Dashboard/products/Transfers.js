@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
 
 import { styled } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
@@ -13,6 +16,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
 import api from "./../../../apis/local";
+import TransferForm from "./TransferForm";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -34,9 +38,14 @@ const useStyles = makeStyles((theme) => ({
 
 function Transfers(props) {
   const classes = useStyles();
+  const theme = useTheme();
+  const matchesMD = useMediaQuery(theme.breakpoints.down("md"));
+  const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
+  const matchesXS = useMediaQuery(theme.breakpoints.down("xs"));
 
   const [open, setOpen] = useState(false);
   const [transfersList, setTransfersList] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -83,6 +92,11 @@ function Transfers(props) {
   };
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const onRowsSelectionHandler = (ids, rows) => {
+    const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
+    setSelectedRows(selectedRowsData);
   };
 
   const renderDataGrid = () => {
@@ -159,50 +173,50 @@ function Transfers(props) {
 
         //editable: true,
       },
-      {
-        field: "editaction",
-        headerName: "",
-        width: 30,
-        description: "Update row",
-        renderCell: (params) => (
-          <strong>
-            {/* {params.value.getFullYear()} */}
-            <EditIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => [
-                // this.setState({
-                //   editOpen: true,
-                //   id: params.id,
-                //   params: params.row,
-                // }),
-                // history.push(`/products/onboard/${params.id}`),
-              ]}
-            />
-          </strong>
-        ),
-      },
-      {
-        field: "deleteaction",
-        headerName: "",
-        width: 30,
-        description: "Update row",
-        renderCell: (params) => (
-          <strong>
-            {/* {params.value.getFullYear()} */}
-            <DeleteIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => [
-                // this.setState({
-                //   editOpen: true,
-                //   id: params.id,
-                //   params: params.row,
-                // }),
-                // history.push(`/products/onboard/${params.id}`),
-              ]}
-            />
-          </strong>
-        ),
-      },
+      // {
+      //   field: "editaction",
+      //   headerName: "",
+      //   width: 30,
+      //   description: "Update row",
+      //   renderCell: (params) => (
+      //     <strong>
+
+      //       <EditIcon
+      //         style={{ cursor: "pointer" }}
+      //         onClick={() => [
+      //           // this.setState({
+      //           //   editOpen: true,
+      //           //   id: params.id,
+      //           //   params: params.row,
+      //           // }),
+      //           // history.push(`/products/onboard/${params.id}`),
+      //         ]}
+      //       />
+      //     </strong>
+      //   ),
+      // },
+      // {
+      //   field: "deleteaction",
+      //   headerName: "",
+      //   width: 30,
+      //   description: "Update row",
+      //   renderCell: (params) => (
+      //     <strong>
+
+      //       <DeleteIcon
+      //         style={{ cursor: "pointer" }}
+      //         onClick={() => [
+      //           // this.setState({
+      //           //   editOpen: true,
+      //           //   id: params.id,
+      //           //   params: params.row,
+      //           // }),
+      //           // history.push(`/products/onboard/${params.id}`),
+      //         ]}
+      //       />
+      //     </strong>
+      //   ),
+      // },
     ];
 
     transfersList.map((transfer, index) => {
@@ -245,8 +259,9 @@ function Transfers(props) {
           },
         }}
         pageSizeOptions={[5]}
-        //checkboxSelection
+        checkboxSelection
         disableRowSelectionOnClick
+        onSelectionModelChange={(ids) => onRowsSelectionHandler(ids, rows)}
         sx={{
           boxShadow: 3,
           border: 3,
@@ -272,16 +287,23 @@ function Transfers(props) {
                 <Button variant="contained" onClick={handleOpen}>
                   Transfer Product
                 </Button>
-                <Backdrop
-                  sx={{
-                    color: "#fff",
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                  }}
+                <Dialog
+                  //style={{ zIndex: 1302 }}
+                  fullScreen={matchesXS}
                   open={open}
-                  onClick={handleClose}
+                  // onClose={() => [setOpen(false), history.push("/utilities/countries")]}
+                  onClose={() => [setOpen(false)]}
                 >
-                  {/* <CircularProgress color="inherit" /> */}
-                </Backdrop>
+                  <DialogContent>
+                    <TransferForm
+                    // token={token}
+                    // userId={userId}
+                    // handleDialogOpenStatus={handleDialogOpenStatus}
+                    // handleSuccessfulCreateSnackbar={handleSuccessfulCreateSnackbar}
+                    // handleFailedSnackbar={handleFailedSnackbar}
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
             </Grid>
           </Grid>

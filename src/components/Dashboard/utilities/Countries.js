@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -9,6 +12,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
+import AddCountryForm from "./AddCountryForm";
 import api from "./../../../apis/local";
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -30,8 +34,13 @@ const useStyles = makeStyles((theme) => ({
 
 function Countries(props) {
   const classes = useStyles();
+  const theme = useTheme();
+  const matchesMD = useMediaQuery(theme.breakpoints.down("md"));
+  const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
+  const matchesXS = useMediaQuery(theme.breakpoints.down("xs"));
   const [open, setOpen] = useState(false);
   const [countryList, setCountryList] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -67,6 +76,11 @@ function Countries(props) {
   };
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const onRowsSelectionHandler = (ids, rows) => {
+    const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
+    setSelectedRows(selectedRowsData);
   };
 
   const renderDataGrid = () => {
@@ -144,6 +158,7 @@ function Countries(props) {
         pageSizeOptions={[5]}
         checkboxSelection
         disableRowSelectionOnClick
+        onSelectionModelChange={(ids) => onRowsSelectionHandler(ids, rows)}
         sx={{
           boxShadow: 3,
           border: 3,
@@ -170,7 +185,7 @@ function Countries(props) {
                 <Button variant="contained" onClick={handleOpen}>
                   Add Country
                 </Button>
-                <Backdrop
+                {/* <Backdrop
                   sx={{
                     color: "#fff",
                     zIndex: (theme) => theme.zIndex.drawer + 1,
@@ -178,8 +193,26 @@ function Countries(props) {
                   open={open}
                   onClick={handleClose}
                 >
-                  {/* <CircularProgress color="inherit" /> */}
-                </Backdrop>
+                  <AddCountryForm />
+                </Backdrop> */}
+
+                <Dialog
+                  //style={{ zIndex: 1302 }}
+                  fullScreen={matchesXS}
+                  open={open}
+                  // onClose={() => [setOpen(false), history.push("/utilities/countries")]}
+                  onClose={() => [setOpen(false)]}
+                >
+                  <DialogContent>
+                    <AddCountryForm
+                    // token={token}
+                    // userId={userId}
+                    // handleDialogOpenStatus={handleDialogOpenStatus}
+                    // handleSuccessfulCreateSnackbar={handleSuccessfulCreateSnackbar}
+                    // handleFailedSnackbar={handleFailedSnackbar}
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
             </Grid>
           </Grid>

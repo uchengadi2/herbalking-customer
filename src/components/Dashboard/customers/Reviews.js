@@ -70,6 +70,10 @@ function Reviews() {
   const handleOpen = () => {
     setOpen(true);
   };
+  useEffect(() => {
+    // 👇️ scroll to top on page load
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
 
   const rows = [
     { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },

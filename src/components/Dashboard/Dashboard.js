@@ -365,7 +365,7 @@ function Dashboard(props) {
                 </ListItemIcon>
                 <ListItemText>Returns</ListItemText>
               </MenuItem>
-              <MenuItem
+              {/* <MenuItem
                 className={
                   slug === "ecommerce-subscriptions" ? classes.selected : null
                 }
@@ -379,8 +379,8 @@ function Dashboard(props) {
                   <SubscriptionsIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Subscriptions</ListItemText>
-              </MenuItem>
-              <MenuItem
+              </MenuItem> */}
+              {/* <MenuItem
                 className={
                   slug === "ecommerce-biddings" ? classes.selected : null
                 }
@@ -394,8 +394,8 @@ function Dashboard(props) {
                   <MonetizationOnIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Biddings</ListItemText>
-              </MenuItem>
-              <MenuItem
+              </MenuItem> */}
+              {/* <MenuItem
                 className={
                   slug === "ecommerce-quotations" ? classes.selected : null
                 }
@@ -409,7 +409,7 @@ function Dashboard(props) {
                   <RequestQuoteIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Quotations</ListItemText>
-              </MenuItem>
+              </MenuItem> */}
               <Divider />
               <Typography style={{ marginLeft: 10, fontWeight: "Bold" }}>
                 Point of Sale (PoS) Transactions
@@ -479,7 +479,7 @@ function Dashboard(props) {
                 </ListItemIcon>
                 <ListItemText>Returns</ListItemText>
               </MenuItem>
-              <MenuItem
+              {/* <MenuItem
                 className={
                   slug === "pos-subscriptions" ? classes.selected : null
                 }
@@ -493,8 +493,8 @@ function Dashboard(props) {
                   <SubscriptionsIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Subscriptions</ListItemText>
-              </MenuItem>
-              <MenuItem
+              </MenuItem> */}
+              {/* <MenuItem
                 className={slug === "pos-invoicing" ? classes.selected : null}
                 selected={slug === "pos-invoicing" ? true : false}
                 onClick={(event) => {
@@ -506,7 +506,7 @@ function Dashboard(props) {
                   <ReceiptIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Invoicing</ListItemText>
-              </MenuItem>
+              </MenuItem> */}
               <Divider />
 
               <Typography style={{ marginLeft: 10, fontWeight: "Bold" }}>
@@ -551,7 +551,7 @@ function Dashboard(props) {
                 </ListItemIcon>
                 <ListItemText>Returns</ListItemText>
               </MenuItem>
-              <MenuItem
+              {/* <MenuItem
                 className={
                   slug === "direct-invoicing" ? classes.selected : null
                 }
@@ -565,7 +565,7 @@ function Dashboard(props) {
                   <ReceiptIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Invoicing</ListItemText>
-              </MenuItem>
+              </MenuItem> */}
               <Divider />
               <Typography style={{ marginLeft: 10, fontWeight: "Bold" }}>
                 Analytics & Reports

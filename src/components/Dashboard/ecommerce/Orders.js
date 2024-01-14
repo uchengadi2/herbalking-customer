@@ -44,7 +44,9 @@ function Orders(props) {
     const fetchData = async () => {
       let allData = [];
       api.defaults.headers.common["Authorization"] = `Bearer ${props.token}`;
-      const response = await api.get(`/transactions`);
+      const response = await api.get(`/transactions`, {
+        params: { shopType: "online" },
+      });
       const workingData = response.data.data.data;
       workingData.map((transaction) => {
         allData.push({
@@ -92,7 +94,7 @@ function Orders(props) {
         });
       });
       setTransactionList(allData);
-      setCurrencyName(allData[0].currency.name.toLowerCase());
+      //setCurrencyName(allData[0].currency.name.toLowerCase());
 
       setLoading(false);
     };

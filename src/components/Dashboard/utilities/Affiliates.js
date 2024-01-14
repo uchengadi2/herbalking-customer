@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Typography from "@mui/material/Typography";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -11,6 +14,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
 import api from "./../../../apis/local";
+import AddAffiliateForm from "./AddAffiliateForm";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -32,9 +36,14 @@ const useStyles = makeStyles((theme) => ({
 
 function Affiliates(props) {
   const classes = useStyles();
+  const theme = useTheme();
+  const matchesMD = useMediaQuery(theme.breakpoints.down("md"));
+  const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
+  const matchesXS = useMediaQuery(theme.breakpoints.down("xs"));
   const [open, setOpen] = useState(false);
 
   const [affiliateList, setAffiliateList] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -79,6 +88,11 @@ function Affiliates(props) {
   };
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const onRowsSelectionHandler = (ids, rows) => {
+    const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
+    setSelectedRows(selectedRowsData);
   };
 
   const renderDataGrid = () => {
@@ -199,6 +213,7 @@ function Affiliates(props) {
         pageSizeOptions={[5]}
         checkboxSelection
         disableRowSelectionOnClick
+        onSelectionModelChange={(ids) => onRowsSelectionHandler(ids, rows)}
         sx={{
           boxShadow: 3,
           border: 3,
@@ -225,16 +240,23 @@ function Affiliates(props) {
                 <Button variant="contained" onClick={handleOpen}>
                   Add Affiliate
                 </Button>
-                <Backdrop
-                  sx={{
-                    color: "#fff",
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                  }}
+                <Dialog
+                  //style={{ zIndex: 1302 }}
+                  fullScreen={matchesXS}
                   open={open}
-                  onClick={handleClose}
+                  // onClose={() => [setOpen(false), history.push("/utilities/countries")]}
+                  onClose={() => [setOpen(false)]}
                 >
-                  {/* <CircularProgress color="inherit" /> */}
-                </Backdrop>
+                  <DialogContent>
+                    <AddAffiliateForm
+                    // token={token}
+                    // userId={userId}
+                    // handleDialogOpenStatus={handleDialogOpenStatus}
+                    // handleSuccessfulCreateSnackbar={handleSuccessfulCreateSnackbar}
+                    // handleFailedSnackbar={handleFailedSnackbar}
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
             </Grid>
           </Grid>

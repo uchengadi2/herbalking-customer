@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import Stack from "@mui/material/Stack";
 
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -16,6 +20,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
 import api from "./../../../apis/local";
+import RemediationForm from "./RemediationForm";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -37,8 +42,13 @@ const useStyles = makeStyles((theme) => ({
 
 function Remediation(props) {
   const classes = useStyles();
+  const theme = useTheme();
+  const matchesMD = useMediaQuery(theme.breakpoints.down("md"));
+  const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
+  const matchesXS = useMediaQuery(theme.breakpoints.down("xs"));
   const [open, setOpen] = React.useState(false);
   const [remediationList, setRemediationList] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -85,6 +95,11 @@ function Remediation(props) {
   };
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const onRowsSelectionHandler = (ids, rows) => {
+    const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
+    setSelectedRows(selectedRowsData);
   };
 
   const renderDataGrid = () => {
@@ -149,73 +164,73 @@ function Remediation(props) {
 
         //editable: true,
       },
-      {
-        field: "transferaction",
-        headerName: "",
-        width: 30,
-        description: "Update row",
-        renderCell: (params) => (
-          <strong>
-            {/* {params.value.getFullYear()} */}
-            <TransferWithinAStationIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => [
-                // this.setState({
-                //   editOpen: true,
-                //   id: params.id,
-                //   params: params.row,
-                // }),
-                // history.push(`/products/onboard/${params.id}`),
-              ]}
-            />
-          </strong>
-        ),
-      },
+      // {
+      //   field: "transferaction",
+      //   headerName: "",
+      //   width: 30,
+      //   description: "Update row",
+      //   renderCell: (params) => (
+      //     <strong>
+      //       {/* {params.value.getFullYear()} */}
+      //       <TransferWithinAStationIcon
+      //         style={{ cursor: "pointer" }}
+      //         onClick={() => [
+      //           // this.setState({
+      //           //   editOpen: true,
+      //           //   id: params.id,
+      //           //   params: params.row,
+      //           // }),
+      //           // history.push(`/products/onboard/${params.id}`),
+      //         ]}
+      //       />
+      //     </strong>
+      //   ),
+      // },
 
-      {
-        field: "editaction",
-        headerName: "",
-        width: 30,
-        description: "Update row",
-        renderCell: (params) => (
-          <strong>
-            {/* {params.value.getFullYear()} */}
-            <EditIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => [
-                // this.setState({
-                //   editOpen: true,
-                //   id: params.id,
-                //   params: params.row,
-                // }),
-                // history.push(`/products/onboard/${params.id}`),
-              ]}
-            />
-          </strong>
-        ),
-      },
-      {
-        field: "delistaction",
-        headerName: "",
-        width: 30,
-        description: "Update row",
-        renderCell: (params) => (
-          <strong>
-            {/* {params.value.getFullYear()} */}
-            <PlaylistRemoveIcon
-              style={{ cursor: "pointer" }}
-              onClick={() => [
-                // this.setState({
-                //   editOpen: true,
-                //   id: params.id,
-                //   params: params.row,
-                // }),
-                // history.push(`/products/onboard/${params.id}`),
-              ]}
-            />
-          </strong>
-        ),
-      },
+      // {
+      //   field: "editaction",
+      //   headerName: "",
+      //   width: 30,
+      //   description: "Update row",
+      //   renderCell: (params) => (
+      //     <strong>
+      //       {/* {params.value.getFullYear()} */}
+      //       <EditIcon
+      //         style={{ cursor: "pointer" }}
+      //         onClick={() => [
+      //           // this.setState({
+      //           //   editOpen: true,
+      //           //   id: params.id,
+      //           //   params: params.row,
+      //           // }),
+      //           // history.push(`/products/onboard/${params.id}`),
+      //         ]}
+      //       />
+      //     </strong>
+      //   ),
+      // },
+      // {
+      //   field: "delistaction",
+      //   headerName: "",
+      //   width: 30,
+      //   description: "Update row",
+      //   renderCell: (params) => (
+      //     <strong>
+      //       {/* {params.value.getFullYear()} */}
+      //       <PlaylistRemoveIcon
+      //         style={{ cursor: "pointer" }}
+      //         onClick={() => [
+      //           // this.setState({
+      //           //   editOpen: true,
+      //           //   id: params.id,
+      //           //   params: params.row,
+      //           // }),
+      //           // history.push(`/products/onboard/${params.id}`),
+      //         ]}
+      //       />
+      //     </strong>
+      //   ),
+      // },
     ];
 
     remediationList.map((remediation, index) => {
@@ -256,8 +271,9 @@ function Remediation(props) {
           },
         }}
         pageSizeOptions={[5]}
-        //checkboxSelection
+        checkboxSelection
         disableRowSelectionOnClick
+        onSelectionModelChange={(ids) => onRowsSelectionHandler(ids, rows)}
         sx={{
           boxShadow: 3,
           border: 3,
@@ -275,25 +291,74 @@ function Remediation(props) {
       <Grid container spacing={1} direction="column">
         <Grid item xs>
           <Grid container spacing={2}>
-            <Grid item xs={10}>
+            <Grid item xs={9}>
               {/* <Item>xs=8</Item> */}
               <Typography variant="h4">Remediation</Typography>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={3}>
               <div>
-                <Button variant="contained" onClick={handleOpen}>
-                  Remedy Product
-                </Button>
-                <Backdrop
-                  sx={{
-                    color: "#fff",
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                  }}
-                  open={open}
-                  onClick={handleClose}
-                >
-                  {/* <CircularProgress color="inherit" /> */}
-                </Backdrop>
+                <Stack direction="row" spacing={1.5}>
+                  <Button variant="contained" onClick={handleOpen}>
+                    Remediate
+                  </Button>
+                  <Dialog
+                    //style={{ zIndex: 1302 }}
+                    fullScreen={matchesXS}
+                    open={open}
+                    // onClose={() => [setOpen(false), history.push("/utilities/countries")]}
+                    onClose={() => [setOpen(false)]}
+                  >
+                    <DialogContent>
+                      <RemediationForm
+                      // token={token}
+                      // userId={userId}
+                      // handleDialogOpenStatus={handleDialogOpenStatus}
+                      // handleSuccessfulCreateSnackbar={handleSuccessfulCreateSnackbar}
+                      // handleFailedSnackbar={handleFailedSnackbar}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                  <Button variant="contained" onClick={handleOpen}>
+                    Delist
+                  </Button>
+                  <Dialog
+                    //style={{ zIndex: 1302 }}
+                    fullScreen={matchesXS}
+                    open={open}
+                    // onClose={() => [setOpen(false), history.push("/utilities/countries")]}
+                    onClose={() => [setOpen(false)]}
+                  >
+                    <DialogContent>
+                      <RemediationForm
+                      // token={token}
+                      // userId={userId}
+                      // handleDialogOpenStatus={handleDialogOpenStatus}
+                      // handleSuccessfulCreateSnackbar={handleSuccessfulCreateSnackbar}
+                      // handleFailedSnackbar={handleFailedSnackbar}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                  <Button variant="contained" onClick={handleOpen}>
+                    Edit
+                  </Button>
+                  <Dialog
+                    //style={{ zIndex: 1302 }}
+                    fullScreen={matchesXS}
+                    open={open}
+                    // onClose={() => [setOpen(false), history.push("/utilities/countries")]}
+                    onClose={() => [setOpen(false)]}
+                  >
+                    <DialogContent>
+                      <RemediationForm
+                      // token={token}
+                      // userId={userId}
+                      // handleDialogOpenStatus={handleDialogOpenStatus}
+                      // handleSuccessfulCreateSnackbar={handleSuccessfulCreateSnackbar}
+                      // handleFailedSnackbar={handleFailedSnackbar}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                </Stack>
               </div>
             </Grid>
           </Grid>
